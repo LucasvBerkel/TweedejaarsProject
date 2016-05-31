@@ -1,0 +1,20 @@
+
+COLOUR     = White/Blue                        ! White text on blue background
+INPUT      = Yellow/Cyan                       ! Input field colours
+TCOLOUR    = Yellow/Blue                       ! Title text
+EditColour = White/Magenta                     ! Default edit field colour
+
+TITLE   = "Taak Selectie"
+
+TYPE   = DOUBLE                                ! Double lined outer box
+SIZE   = 40,10
+
+TEXT = @10,6; Colour=Black/White; "F1"
+TEXT = @16,6; "Help"
+TEXT = @10,7; Colour=LightRed/Blue; "F9"
+TEXT = @16,7; "Stoppen"
+TEXT = @10,8; Colour=LightRed/Blue; "F10"
+TEXT = @16,8; "Doorgaan"
+
+
+FIELD = @10,2;  Name=TTAKEN;  Button="> Selecteer een Taak <"

@@ -1,0 +1,19 @@
+
+COLOUR = White/Black                           ! White text on black background
+INPUT  = Yellow/Cyan                           ! Input field colours
+
+TYPE   = DOUBLE                                ! Double lined outer box
+SIZE   = 80,24                                 ! 80 x 24 (columns/rows)
+
+TEXT   = @10,8;  "Deze velden invullen en afsluiten met ENTER"
+TEXT   = @20,10; "Voornaam     :"
+TEXT   = @20,11; "Achternaam   :"
+TEXT   = @20,13; "Nummer       :"
+TEXT   = @10,18; "Start met '='-toets bevestigen of 'Esc'-toets om te stoppen"
+
+FIELD  = @35,10; Name=Voorn;String(20);Template= "a"
+FIELD  = @35,11; Name=Achtern;String(20);Template= "a"
+FIELD  = @35,13; Name=Id_nr;String(2);
+FIELD  = @35,20; Name=Accept; Colour=LightGreen/Cyan; Button="Start";Confirm
+
+

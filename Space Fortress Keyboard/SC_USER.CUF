@@ -1,0 +1,34 @@
+COLOUR = White/Blue
+INPUT  = Yellow/Cyan
+TCOLOUR = White/Blue
+
+TYPE   = SINGLE
+SIZE   = 40,20
+
+Title = "Ship-Control: User-Parameters Form"
+
+TEXT   = @1,2; "Filename:"
+TEXT   = @1,3; "Day:"
+TEXT   = @1,5; "Avg. Ship Velocity (cm/s):"
+TEXT   = @1,6; "Std. Dev. Ship Velocity (cm/s):"
+TEXT   = @1,8; "Avg. Distance to Fort (cm):"
+TEXT   = @1,9; "Std. Dev. Dist. to Fort (cm):"
+TEXT   = @1,11; "Hit Probability (percentage):"
+TEXT   = @1,12; "No. of Wrappings per Block:"
+TEXT   = @1,13; "No. of Direction Changes per"
+TEXT   = @1,14; "Block (From CCW to CW or vv.):"
+
+FIELD  = @11,2; Name=Filename; String(12); Value="SC_USER.DAT"
+FIELD  = @11,3; Name=Day; Date; Range(,Today); Value=Today
+FIELD  = @33,5; Name=Avg_Sh_V; Numeric(2,1);
+FIELD  = @33,6; Name=SD_Sh_V;Numeric(2,1);
+FIELD  = @33,8; Name=Avg_D_F;Numeric(2,1);
+FIELD  = @33,9; Name=SD_D_F;Numeric(2,1);
+FIELD  = @33,11; Name=P_hit;Numeric(3);Range(0,100); Value=50
+FIELD  = @33,12; Name=Nr_Wrap;Numeric(3);Range(0,200);
+FIELD  = @33,14; Name=Nr_Dir;Numeric(2);Range(0,99);
+
+
+FIELD  = @5,16; Name=Quit; Colour=LightRed/Cyan; Button="Quit"
+FIELD  = @12,16; Name=Accept; Colour=LightGreen/Cyan; Button="Accept"
+

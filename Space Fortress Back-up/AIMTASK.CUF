@@ -1,0 +1,26 @@
+
+COLOUR = White/Black                           ! White text on black background
+INPUT  = Yellow/Cyan                           ! Input field colours
+
+TYPE   = DOUBLE                                ! Double lined outer box
+SIZE   = 80,24                                 ! 80 x 24 (columns/rows)
+TEXT   = @3,2; "SELECTIE-TAAK : Uitleg"
+TEXT   = @3,4; "In het midden van het scherm bevindt zich een groen ruimteschip."
+TEXT   = @3,5; "Hiermee kunt u kogels afschieten door op de rode knop bovenop de joystick"
+TEXT   = @3,6; "te drukken."
+TEXT   = @3,7; "Het ruimteschip kunt u linksom draaien door de joystick naar links"
+TEXT   = @3,8; "te bewegen en rechtsom door deze naar rechts te bewegen."
+TEXT   = @3,9; "Er verschijnen voortdurend mijnen (blauwe vierhoekjes) op het scherm."
+TEXT   = @3,10; "Steeds ‚‚n tegelijk en op een willekeurige plaats."
+TEXT   = @3,11; "Het is de bedoeling dat u met het ruimteschip in twee minuten zoveel"
+TEXT   = @3,12; "mogelijk mijnen afschiet. U krijgt 3 keer twee minuten, de hoogste score" 
+TEXT   = @3,13; "geldt."
+TEXT   = @23,14; "SUCCES !!" 
+TEXT   = @10,16; "Deze velden invullen en afsluiten met ENTER"
+TEXT   = @20,18; "Voornaam     :"
+TEXT   = @20,19; "Achternaam   :"
+TEXT   = @10,21; "Start met '='-toets bevestigen of 'Esc'-toets om te stoppen"
+
+FIELD  = @35,18; Name=Voorn;String(20);Template= "a"
+FIELD  = @35,19; Name=Achtern;String(20);Template= "a"
+FIELD  = @35,22; Name=Accept; Colour=LightGreen/Cyan; Button="Start";Confirm

@@ -1,0 +1,16 @@
+COLOUR = White/Blue
+INPUT  = Yellow/Cyan
+TCOLOUR = White/Blue
+
+TYPE   = SINGLE
+SIZE   = 40,20
+
+Title = "Ship-Control: Game-Parameters Form"
+
+TEXT   = @1,2; "Filename:"
+
+
+FIELD  = @11,2; Name=Filename; String(12); Value="SC_GAME.DAT"
+FIELD  = @5,16; Name=Quit; Colour=LightRed/Cyan; Button="Quit"
+FIELD  = @12,16; Name=Accept; Colour=LightGreen/Cyan; Button="Accept"
+

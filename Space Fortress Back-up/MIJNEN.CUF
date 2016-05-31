@@ -1,0 +1,20 @@
+
+COLOUR = White/Black                           ! White text on black background
+INPUT  = Yellow/Cyan                           ! Input field colours
+
+TYPE   = DOUBLE                                ! Double lined outer box
+SIZE   = 80,24                                 ! 80 x 24 (columns/rows)
+TEXT   = @35,3;  "Einde Spel"
+TEXT   = @10,6;  "Test of je de letters van de speciale mijnen hebt onthouden:" 
+TEXT   = @10,8;  "De letters waren"
+TEXT   = @20,10; "1 :"
+TEXT   = @20,11; "2 :"
+TEXT   = @20,12; "3 :"
+TEXT   = @10,18; "Doorgaan met '='-toets"
+
+FIELD  = @24,10; Name=Mine_1;String(1);Template= "a"
+FIELD  = @24,11; Name=Mine_2;String(1);Template= "a"
+FIELD  = @24,12; Name=Mine_3;String(1);Template= "a"
+FIELD  = @24,20; Name=Accept; Colour=LightGreen/Cyan; Button="Doorgaan";Confirm
+
+
