@@ -566,34 +566,28 @@ Write_Bonus_Message()
  return(0);
 }
 
-Check_Bonus_Input()
-{
-  if((Bonus_Display_Flag==NOT_PRESENT)||
-     (Bonus_Display_Flag==NON_BONUS)); /* useless button press */
-  else
-  if(Bonus_Display_Flag==FIRST_BONUS) Bonus_Wasted_Flag=ON;
-  else
-  if(Bonus_Display_Flag==SECOND_BONUS)
-    if(!Bonus_Wasted_Flag)
-      {
-  if(Key==F1)
-     {
-       No_Of_Points_Bonus_Taken++;
-       Points=Points+100;
-       Update_Points();
-     }
-  else /* only one other alternative */
-    {
-      No_Of_Missiles_Bonus_Taken++;
-      Missile_Stock=Missile_Stock+50;
-      if(Missile_Stock>=100) Missile_Stock=100;
-      Update_Shots();
+Check_Bonus_Input() {
+  if((Bonus_Display_Flag==NOT_PRESENT)||(Bonus_Display_Flag==NON_BONUS)) {
+  } else if(Bonus_Display_Flag==FIRST_BONUS) {
+    Bonus_Wasted_Flag=ON;
+  } else if(Bonus_Display_Flag==SECOND_BONUS) {
+    if(!Bonus_Wasted_Flag) {
+      if(Key==F1) {
+        No_Of_Points_Bonus_Taken++;
+        Points=Points+100;
+        Update_Points();
+      } else {
+        No_Of_Missiles_Bonus_Taken++;
+        Missile_Stock=Missile_Stock+50;
+        if(Missile_Stock>=100) Missile_Stock=100;
+        Update_Shots();
+      }
+    Bonus_Display_Flag=NOT_PRESENT;
+    Bonus_Granted=ON;
+    Xor_Bonus_Char(rn);    /* erase present $ char */
+    Write_Bonus_Message(); /*  Announce_Bonus  */
     }
-  Bonus_Display_Flag=NOT_PRESENT;
-  Bonus_Granted=ON;
-  Xor_Bonus_Char(rn);    /* erase present $ char */
-  Write_Bonus_Message(); /*  Announce_Bonus  */
-       }
+  }
 return(0);
 }
 
