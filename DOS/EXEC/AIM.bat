@@ -1,0 +1,2 @@
+cd C:\AIM\
+OBJ\AIM.EXE

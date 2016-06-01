@@ -1,0 +1,2 @@
+cd C:\SF\
+OBJ\SF.EXE
