@@ -290,6 +290,7 @@ int Draw_Mine (int x, int y, int size)  /* x,y is on screen center location
 
   svcolor=getcolor(); /* save present color */
   setcolor(MINE_COLOR);
+
   moveto(x-size,y);
   lineto(x,y-1.18*size);   /* 1.3/1.1=1.18 */
   lineto(x+size,y);

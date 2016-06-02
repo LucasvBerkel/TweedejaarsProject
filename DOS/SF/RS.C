@@ -212,6 +212,7 @@ void Get_User_Input()
             Check_Mine_Flag=OFF;
             if((Mine_Flag==ALIVE) && (Mine_Type==FRIEND))
     Missile_Type=WASTED;
+        Show_Mine_Type(Mine_Indicator);
         }
 }
 
@@ -340,7 +341,7 @@ Find_Interval()   /* display double-press interval */
         if((interval>=Interval_Lower_Limit)&&(interval<=Interval_Upper_Limit)
              &&(Mine_Flag==ALIVE)&&(Mine_Type==FOE))
     Missile_Type=VS_FOE;   /* rearm missile */
-
+        Show_Mine_Type(Mine_Indicator);
         Update_Interval();
     }
     return(0);
@@ -433,7 +434,7 @@ Init_Game()
                     after game ends */
     No_Of_Bonus_Windows=0;
     Missile_Stock=100;
-    
+
     Select_Mine_Menus();
     /*
     clrscr();
