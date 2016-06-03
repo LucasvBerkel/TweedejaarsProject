@@ -125,19 +125,20 @@ int keyboard (void)
 
     if(inkey==27) return(ESC); /* ESCcape terminates program */
     if(inkey==13) return(ENTER); /* ENTER pauses program */
+    if(inkey==97) return(F1);
+    if(inkey==115) return(F2);
+    if(inkey==100) return(F3);
+    if(inkey==32) return(DOWN);
     if(inkey!=0) return(REGULAR_CRAP);   /* the rest is crap */
-
+    
     /* which leaves inkey==0 */
     xtnd=keystroke.b[1];
+        
         switch (xtnd)
          {
-             case 80 /* DOWN*/ : return(DOWN);
              case 72 /*UP*/    : return(UP);
              case 75 /*LEFT*/  : return(LEFT);
              case 77 /*RIGHT*/ : return(RIGHT);
-             case 59 /*F1*/    : return(F1);
-             case 60 /*F2*/    : return(F2);
-             case 61 /*F3*/    : return(F3);
              default           : return(EXTENDED_CRAP);/* all rest irrelevant */
     }
 }
