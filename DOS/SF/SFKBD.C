@@ -58,7 +58,6 @@ main() {
 void final_display(void) {
     clrscr();
     displ_screen(4,"screen.dat");
-    Score=Points+Velocity+Control+Speed;
     gotoxy(44,8);printf("%d",Score);
     gotoxy(39,12);printf("%d",Ship_Damaged_By_Fortress);
     gotoxy(42,14);printf("%d",Ship_Damaged_By_Mines);

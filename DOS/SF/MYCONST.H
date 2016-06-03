@@ -35,6 +35,7 @@
 #define FORT_LOCK_INTERVAL 20
 #define SHELL_SPEED 7
 #define MAX_NO_OF_MISSILES 6
+#define DELAY 50
 
 #define SHIP_COLOR YELLOW
 #define HEX_COLOR GREEN

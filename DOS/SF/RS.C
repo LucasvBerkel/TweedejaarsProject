@@ -337,7 +337,7 @@ Find_Interval()   /* display double-press interval */
     int interval;
 
     interval=Double_Press_Interval=t2-t1; /* in milliseconds */
-    if((interval<990)&&(interval>90)) /* only when interval makes sense */
+    if((interval<DELAY*20)&&(interval>DELAY)) /* only when interval makes sense */
     {
         if((interval>=Interval_Lower_Limit)&&(interval<=Interval_Upper_Limit)
              &&(Mine_Flag==ALIVE)&&(Mine_Type==FOE))
@@ -650,6 +650,7 @@ Run_SF()
         Open_Graphics();
         Initialize_Graphics();
         Reset_Screen();
+        
         Loop_Counter=0;
         Set_Kbd_Rate(0x8); /* to slow repeat rate 15Hz */
         Capture_Kbd(Get_Key); /* redirect KBD interrupts to  Get_Key() */
@@ -677,9 +678,11 @@ Run_SF()
             Accumulate_Data();
             Handle_Bonus();
             if(!Effect_Flag) {
-                if((elapsed_time=Time_Counter-loop_start_time) < 50)
-                    Mydelay(50-elapsed_time);  /* wait up to 50 milliseconds */
+                if((elapsed_time=Time_Counter-loop_start_time) < DELAY)
+                    Mydelay(DELAY-elapsed_time);  /* wait up to 50 milliseconds */
             } else Effect_Flag=OFF;  /* no delay necessary */
+
+            Score=Points+Velocity+Control+Speed;
         } while((!End_Flag)&&(Loop_Counter < One_Game_Loops));
         /* ESC or three minutes */
 
@@ -866,8 +869,8 @@ Run_Aiming()   /* 1- for training 0- for demo */
          Test_Collisions();
          if(!Effect_Flag)
              {
-     if ( (elapsed_time=Time_Counter-loop_start_time) < 50)
-            Mydelay(50-elapsed_time);  /* wait up to 50 milliseconds */
+     if ( (elapsed_time=Time_Counter-loop_start_time) < DELAY)
+            Mydelay(DELAY-elapsed_time);  /* wait up to 50 milliseconds */
              }
          else Effect_Flag=OFF;  /* no delay necessary */
         } while((!End_Flag)&&(Loop_Counter < 2400));
