@@ -643,8 +643,18 @@ Run_SF()
     unsigned elapsed_time;
     unsigned long loop_start_time;
 
+    // SCORE SAVE FILE
+    FILE *f = fopen("SAVE\\SCORE.TXT", "w");
+    if (f == NULL)
+    {
+        printf("Save file not present\n");
+        exit(1);
+    }
+    fclose(f);
+
     Init_Session();
     Game_Counter=0;
+    fprint("NEW GAME");
     do {   /* loop on number of games here */
         Init_Game();
         Open_Graphics();
@@ -683,6 +693,12 @@ Run_SF()
             } else Effect_Flag=OFF;  /* no delay necessary */
 
             Score=Points+Velocity+Control+Speed;
+
+            // SAVE SCORE
+            f = fopen("SAVE\\SCORE.TXT", "w");
+            fprintf(f, "%d", Score);
+            fclose(f);
+
         } while((!End_Flag)&&(Loop_Counter < One_Game_Loops));
         /* ESC or three minutes */
 
@@ -697,16 +713,17 @@ Run_SF()
         nosound();
         Game_Counter++;
         Close_Graphics();
-        final_display();
-        while(1) {
-            char ex = getch();
-            if(ex==27) {
-                break;
-            }
-        }
+        // final_display();
+        // while(1) {
+        //     char ex = getch();
+        //     if(ex==27) {
+        //         break;
+        //     }
+        // }
         clrscr();
         /* end one game here */
-    } while((Game_Counter< No_Of_Games)&&(!End_Flag));
+    } while(!End_Flag);
+    //} while((Game_Counter< No_Of_Games)&&(!End_Flag));
 
     nosound();   /* just in case */
     sound(400);

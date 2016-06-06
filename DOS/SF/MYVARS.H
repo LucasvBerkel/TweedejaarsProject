@@ -1,4 +1,3 @@
-
 struct jstk_pos{
   int x_center;
   int x_left;
