@@ -1,4 +1,3 @@
-
 struct jstk_pos{
   int x_center;
   int x_left;
@@ -29,12 +28,12 @@ unsigned long t1;  /* double press interval start */
 unsigned long t2;  /* double press interval end */
 
 		/* PRAMATERS */
-int One_Game_Duration=1; 	/****** in minutes 1-6 allowed */
+int One_Game_Duration=3; 	/****** in minutes 1-6 allowed */
 int No_Of_Games=1;  /******** varies 1-9 */
 int Resource_Display_Interval=RESOURCE_DISPLAY_INTERVAL;
 int No_Resource_Display_Interval=NO_RESOURCE_DISPLAY_INTERVAL;
-int Interval_Upper_Limit=400;
-int Interval_Lower_Limit=250;
+int Interval_Upper_Limit=DELAY*20;
+int Interval_Lower_Limit=DELAY*5;
 int Ship_Angular_Step=10;   /* Display increment in degrees */
 int Ship_Max_Speed=5;        /* dots per loop */
 int Ship_Accel=1;            /* dots/(loop*loop) */

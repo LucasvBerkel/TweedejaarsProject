@@ -654,7 +654,6 @@ Run_SF()
 
     Init_Session();
     Game_Counter=0;
-    fprint("NEW GAME");
     do {   /* loop on number of games here */
         Init_Game();
         Open_Graphics();

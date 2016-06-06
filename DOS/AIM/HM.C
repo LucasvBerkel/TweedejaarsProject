@@ -264,7 +264,13 @@ int Show_Mine_Type(char Minetype)
   int x,y;
 
   svcolor=getcolor();
-  setcolor(TEXT_COLOR);
+  if((Mine_Type==FRIEND && Missile_Type==VS_FRIEND) || (Mine_Type==FOE && Missile_Type==VS_FOE)) {
+    setcolor(GREEN);
+  } else if(Missile_Type==WASTED) {
+    setcolor(RED);
+  } else {
+    setcolor(LIGHTRED);
+  }
   setviewport( Xmargin, Panel_Y_Start, Xmargin+MaxX, Panel_Y_End, 1);
   x=IFF_X; y=Data_Line;
   putimage(x,y,buffer1,COPY_PUT); /* erase garbage */
