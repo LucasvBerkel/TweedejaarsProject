@@ -1,2 +1,2 @@
-cd C:\AIM\
+cd C:\AIM
 OBJ\AIM.EXE

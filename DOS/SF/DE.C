@@ -29,7 +29,7 @@ void Open_Graphics(void)
     exit( 1 );
   }
 
-  getpalette( &palette );		/* Read the palette from board	*/
+  //getpalette( &palette );		/* Read the palette from board	*/
   MaxColors = getmaxcolor() + 1;	/* Read maximum number of colors*/
 
   MaxX = getmaxx();

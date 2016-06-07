@@ -645,9 +645,8 @@ Run_SF()
 
     // SCORE SAVE FILE
     FILE *f = fopen("SAVE\\SCORE.TXT", "w");
-    if (f == NULL)
-    {
-        printf("Save file not present\n");
+    if (f == NULL) {
+        printf("A state file is not present.\n");
         exit(1);
     }
     fclose(f);
@@ -701,6 +700,11 @@ Run_SF()
         } while((!End_Flag)&&(Loop_Counter < One_Game_Loops));
         /* ESC or three minutes */
 
+        // RUNNING FILE
+        f = fopen("SAVE\\SCORE.TXT", "w");
+        fprintf(f, "FALSE");
+        fclose(f);
+
         Restore_Tik();
         Reset_Timer();
         Restore_Kbd();
@@ -711,14 +715,22 @@ Run_SF()
         delay(500);
         nosound();
         Game_Counter++;
-        Close_Graphics();
+        
         // final_display();
-        // while(1) {
-        //     char ex = getch();
-        //     if(ex==27) {
-        //         break;
-        //     }
-        // }
+        Close_Graphics();
+        printf("Episode %d score: %d\n", Game_Counter, Score);
+        if(!End_Flag) {
+            while(1) {
+                char ex = getch();
+                if(ex==9) {
+                    break;
+                } else if(ex==27) {
+                    return(0);
+                }
+            }
+        }
+
+        
         clrscr();
         /* end one game here */
     } while(!End_Flag);

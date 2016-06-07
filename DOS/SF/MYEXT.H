@@ -126,7 +126,7 @@ extern double AspectRatio;	/* Aspect ratio of a pixel on the screen*/
 extern int    MaxX, MaxY;	/* The maximum resolution of the screen */
 extern int    MaxColors;	/* The maximum # of colors available	*/
 extern int    ErrorCode;	/* Reports any graphics errors		*/
-extern struct palettetype palette;	/* Used to read palette info	*/
+//extern struct palettetype palette;	/* Used to read palette info	*/
 
 extern int Data_Line;		/* Data line location of control panel */
 extern int Points_X;		/* Points value location within data line */
