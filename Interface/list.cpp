@@ -7,13 +7,15 @@
 #include <boost/python/list.hpp>
 #include <boost/python/iterator.hpp>
  
+#define LENGTH 216000
+
 using namespace std;
 namespace py = boost::python;
 
-int pixels[216000];
+int pixels[LENGTH];
 
 //https://gist.github.com/octavifs/5362272
-py::list toPythonList(vector<int> vec) {
+py::list vec_to_list(vector<int> vec) {
 	typename vector<int>::iterator iter;
 	py::list list;
 	for (iter = vec.begin(); iter != vec.end(); ++iter) {
@@ -23,11 +25,13 @@ py::list toPythonList(vector<int> vec) {
 }
 
 py::list run() {
-	vector<int> v(begin(pixels), end(pixels));
-
-	py::list plist = toPythonList(v);
-
-	return plist;
+    py::list a;
+    // a.append(0);
+    // a *= LENGTH;
+    for (int i = 0; i < LENGTH; ++i) {
+        a.append(pixels[i]);
+    }
+    return a;
 }
 
 BOOST_PYTHON_MODULE(lst) {

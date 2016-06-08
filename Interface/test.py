@@ -7,9 +7,9 @@ import lst, numpy, time
 
 start = time.time()
 
-for i in range(1,1000):
+for i in range(1,100000):
 	a = lst.run()
 	b = numpy.asarray(a)
-	print('\rFrame %d\t\tAverage:%f' % (i, (time.time()-start)/i), end="")
+	print('\rFrame %d | Average: %fFPS' % (i, 1/((time.time()-start)/i)), end="")
 	
-
+print()

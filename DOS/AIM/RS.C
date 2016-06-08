@@ -889,6 +889,11 @@ Run_Aiming()   /* 1- for training 0- for demo */
         } while((!End_Flag)&&(Loop_Counter < 2400));
     /* ESC or three minutes */
 
+    // RUNNING FILE
+    f = fopen("SAVE\\SCORE.TXT", "w");
+    fprintf(f, "FALSE");
+    fclose(f);
+
     Restore_Tik();
     Reset_Timer();
     Restore_Kbd();
@@ -904,6 +909,18 @@ Run_Aiming()   /* 1- for training 0- for demo */
                      }
     Set_Kbd_Rate(0x4); /* to slow repeat rate 15Hz */
     Save_Aiming_Game();
+
+    if(!End_Flag) {
+        while(1) {
+            char ex = getch();
+            if(ex==9) {
+                break;
+            } else if(ex==27) {
+                return(0);
+            }
+        }
+    }
+
     //} while((Game_Counter<No_Of_Games)&&(!End_Flag)); /* ESC or all games played */
 	} while(!End_Flag);
     nosound();   /* just in case */
