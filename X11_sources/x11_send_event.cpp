@@ -28,11 +28,12 @@ void sendPress(int DOSBoxWindowID, int code)
     // Use XStringToKeysym to convert string representations of keycodes from python to keycodes 
     // eg int key=XStringToKeysym("XK_Up");
     // printf("%ld and %ld\n", XStringToKeysym(code.c_str()), XK_space);
-    event.keycode = XKeysymToKeycode(display, code);
+    // printf("%d\n", XK_asciitilde);
+    event.keycode = XKeysymToKeycode(display, code); // Change this back to 'code'
     XSendEvent(display, DOSBoxWindowID, True, KeyPressMask, (XEvent *)&event);
     XFlush(display);
 
-    int ms = 60; // Was originally defined at 100, see if shorter works out
+    int ms = 30; // Was originally defined at 100, see if shorter works out
     usleep(ms * 1000); // Sleep in miliseconds
 
     event.type = KeyRelease;      
@@ -44,9 +45,9 @@ void sendPress(int DOSBoxWindowID, int code)
 
 BOOST_PYTHON_MODULE(sendpress)
 {
-  int code;
-  namespace python = boost::python;
-  python::def("sendPress", &sendPress, "code", &code);
+    int code;
+    namespace python = boost::python;
+    python::def("sendPress", &sendPress, "code", &code);
 }
 
 

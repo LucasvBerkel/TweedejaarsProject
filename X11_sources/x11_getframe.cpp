@@ -40,14 +40,14 @@ boost::python::list getFrame(int DOSBoxWindowID)
   XColor colors;
   XImage *image;
 
-  unsigned long red_mask;
-  unsigned long blue_mask;
-
   image = XGetImage(
      display, DOSBoxWindowID, 0, 0, width, height, AllPlanes, ZPixmap);
 
-  red_mask = image->red_mask;
-  blue_mask = image->blue_mask;
+
+  unsigned long red_mask = image->red_mask;
+  unsigned long blue_mask = image->blue_mask;
+
+
   py::list grays;
 
   // TO DO: nicer scale functionality
@@ -61,7 +61,7 @@ boost::python::list getFrame(int DOSBoxWindowID)
      for (int j = border_size; j < width - border_size; ++++j) {
         // cols++;
          colors.pixel = XGetPixel(image, j, i);
-         grays.append(0.2882*(colors.pixel & blue_mask) + 0.7512*((colors.pixel & red_mask) >> 16)); 
+         grays.append(0.0512*(colors.pixel & blue_mask)  + 0.0182*((colors.pixel & red_mask) >> 16)); 
      }
   }
   // printf( "Cols: %d\n", cols);

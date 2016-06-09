@@ -74,7 +74,7 @@ boost::python::object findDOSBoxWindow()
 }
 
 
-BOOST_PYTHON_MODULE(getwindow)
+BOOST_PYTHON_MODULE(findwindow)
 {
   namespace python = boost::python;
   python::def("findDOSBoxWindow", findDOSBoxWindow);
