@@ -1,1 +1,1 @@
-from gym.envs.dosbox.dosbox_env.py import DOSBoxEnv
+from gym.envs.dosbox.dosbox_env import DOSBoxEnv
