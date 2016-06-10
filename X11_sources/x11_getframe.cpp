@@ -66,7 +66,7 @@ boost::python::list getFrame(int DOSBoxWindowID)
   }
   // printf( "Cols: %d\n", cols);
   // printf("Rows: %d\n", rows);  
-  XFree(image);
+  XDestroyImage(image);
   XCloseDisplay(display);
   return grays;
 }
