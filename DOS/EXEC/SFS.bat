@@ -1,0 +1,2 @@
+cd C:\SFS
+OBJ\SFS.EXE
