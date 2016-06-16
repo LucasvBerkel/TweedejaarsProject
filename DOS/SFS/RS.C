@@ -129,6 +129,7 @@ int keyboard (void)
     if(inkey==115) return(F2);
     if(inkey==100) return(F3);
     if(inkey==32) return(DOWN);
+    if(inkey==8) Restart_Flag=ON;
     if(inkey!=0) return(REGULAR_CRAP);   /* the rest is crap */
     
     /* which leaves inkey==0 */
@@ -366,6 +367,7 @@ void Reset_Screen()
     Rotate_Input=0; /* joystick left/right */
     Accel_Input=0; /* joystick forward */
     End_Flag=OFF;
+    Restart_Flag=OFF;
     Fort_Headings=270;
     Vulner_Counter=0;
     Timing_Flag=OFF; /* if screen reset between consecutive presses */
@@ -394,7 +396,7 @@ void Reset_Screen()
     Update_Points();
     Update_Vulner();
     Update_Interval();
-    //Update_Shots();
+    Update_Shots();
     Update_Control();
     Update_Velocity();
     Update_Speed();
@@ -675,7 +677,7 @@ Run_SF()
             Handle_Missile();
             if(Sound_Flag>1) Sound_Flag--;
             if(Sound_Flag==1) {Sound_Flag--; nosound();}
-            //Handle_Mine();
+            Handle_Mine();
             Test_Collisions();
             Handle_Shell();
             Handle_Fortress();
@@ -684,7 +686,7 @@ Run_SF()
                 Display_Interval_Flag=OFF;
             }
             Accumulate_Data();
-            //Handle_Bonus();
+            Handle_Bonus();
             if(!Effect_Flag) {
                 if((elapsed_time=Time_Counter-loop_start_time) < DELAY)
                     Mydelay(DELAY-elapsed_time);  /* wait up to 50 milliseconds */
@@ -697,7 +699,7 @@ Run_SF()
             fprintf(f, "%d", Score);
             fclose(f);
 
-        } while((!End_Flag)&&(Loop_Counter < One_Game_Loops));
+        } while(!Restart_Flag && !End_Flag&&(Loop_Counter < One_Game_Loops));
         /* ESC or three minutes */
 
         // RUNNING FILE
@@ -719,7 +721,7 @@ Run_SF()
         // final_display();
         Close_Graphics();
         printf("Episode %d score: %d\n", Game_Counter, Score);
-        if(!End_Flag) {
+        if(!End_Flag && !Restart_Flag) {
             while(1) {
                 char ex = getch();
                 if(ex==9) {
@@ -733,14 +735,19 @@ Run_SF()
         
         clrscr();
         /* end one game here */
-    } while(!End_Flag);
+    } while(!End_Flag && !Restart_Flag);
     //} while((Game_Counter< No_Of_Games)&&(!End_Flag));
 
     nosound();   /* just in case */
     sound(400);
     delay(1000);
     nosound();
-    return(0);
+
+    if(Restart_Flag) {
+        return(1);
+    } else {
+        return(0);
+    }
 }
 
 /*************************************************************************/
@@ -787,7 +794,7 @@ Update_Mines()
 
 Update_Score()
 {
-    //Show_Score(Score,Score_X,Data_Line);
+    Show_Score(Score,Score_X,Data_Line);
     return(0);
 }
 
