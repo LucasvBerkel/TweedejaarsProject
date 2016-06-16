@@ -312,7 +312,7 @@ Update_Speed()
 
 Update_Shots()
 {
-    Show_Score(Missile_Stock,Shots_X,Data_Line);
+    //Show_Score(Missile_Stock,Shots_X,Data_Line);
     return(0);
 }
 
@@ -677,7 +677,7 @@ Run_SF()
             Handle_Missile();
             if(Sound_Flag>1) Sound_Flag--;
             if(Sound_Flag==1) {Sound_Flag--; nosound();}
-            Handle_Mine();
+            //Handle_Mine();
             Test_Collisions();
             Handle_Shell();
             Handle_Fortress();
@@ -686,7 +686,7 @@ Run_SF()
                 Display_Interval_Flag=OFF;
             }
             Accumulate_Data();
-            Handle_Bonus();
+            //Handle_Bonus();
             if(!Effect_Flag) {
                 if((elapsed_time=Time_Counter-loop_start_time) < DELAY)
                     Mydelay(DELAY-elapsed_time);  /* wait up to 50 milliseconds */
