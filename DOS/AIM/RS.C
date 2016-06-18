@@ -129,6 +129,7 @@ int keyboard (void)
     if(inkey==115) return(F2);
     if(inkey==100) return(F3);
     if(inkey==32) return(DOWN);
+    if(inkey==8) Restart_Flag=ON;
     if(inkey!=0) return(REGULAR_CRAP);   /* the rest is crap */
     
     /* which leaves inkey==0 */
@@ -366,6 +367,7 @@ void Reset_Screen()
     Rotate_Input=0; /* joystick left/right */
     Accel_Input=0; /* joystick forward */
     End_Flag=OFF;
+    Restart_Flag=OFF;
     Fort_Headings=270;
     Vulner_Counter=0;
     Timing_Flag=OFF; /* if screen reset between consecutive presses */
@@ -797,6 +799,7 @@ void Reset_Aim_Screen()
     Rotate_Input=0; /* joystick left/right */
     Accel_Input=0; /* joystick forward */
     End_Flag=OFF;
+    Restart_Flag=OFF;
     Fort_Headings=270;
     Timing_Flag=OFF; /* if screen reset between consecutive presses */
         /* reset screen */
@@ -886,7 +889,7 @@ Run_Aiming()   /* 1- for training 0- for demo */
         fprintf(f, "%d", Score);
         fclose(f);
 
-        } while((!End_Flag)&&(Loop_Counter < 2400));
+        } while(!Restart_Flag && !End_Flag&&(Loop_Counter < 2400));
     /* ESC or three minutes */
 
     // RUNNING FILE
@@ -898,7 +901,7 @@ Run_Aiming()   /* 1- for training 0- for demo */
     Reset_Timer();
     Restore_Kbd();
     Set_Kbd_Rate(0x4); /* to repeat rate 20Hz */
-    if((!End_Flag)&&(Game_Counter<No_Of_Games))
+    if(!Restart_Flag && !End_Flag&&(Game_Counter<No_Of_Games))
                      { Announce_Game_End();
                          nosound();   /* just in case */
                          sound(600);
@@ -910,7 +913,7 @@ Run_Aiming()   /* 1- for training 0- for demo */
     Set_Kbd_Rate(0x4); /* to slow repeat rate 15Hz */
     Save_Aiming_Game();
 
-    if(!End_Flag) {
+    if(!Restart_Flag && !End_Flag) {
         while(1) {
             char ex = getch();
             if(ex==9) {
@@ -922,7 +925,7 @@ Run_Aiming()   /* 1- for training 0- for demo */
     }
 
     //} while((Game_Counter<No_Of_Games)&&(!End_Flag)); /* ESC or all games played */
-	} while(!End_Flag);
+	} while(!Restart_Flag && !End_Flag);
     nosound();   /* just in case */
     sound(400);
     delay(1000);
@@ -930,5 +933,9 @@ Run_Aiming()   /* 1- for training 0- for demo */
     //Announce_Session_End();
     //getch();  /* show results */
     Close_Graphics();
+
+    if(Restart_Flag) {
+        return(1);
+    }
     return(0);
 }
