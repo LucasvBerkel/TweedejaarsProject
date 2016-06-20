@@ -60,6 +60,7 @@ int Rotate_Input=0;
 int Accel_Input=0;
 int Ship_Display_Update=0;
 char End_Flag=0;
+char Restart_Flag=0;
 
 int Missile_X_Pos[MAX_NO_OF_MISSILES];
 int Missile_Y_Pos[MAX_NO_OF_MISSILES];

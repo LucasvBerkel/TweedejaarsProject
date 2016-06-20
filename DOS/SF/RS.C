@@ -129,6 +129,7 @@ int keyboard (void)
     if(inkey==115) return(F2);
     if(inkey==100) return(F3);
     if(inkey==32) return(DOWN);
+    if(inkey==8) Restart_Flag=ON;
     if(inkey!=0) return(REGULAR_CRAP);   /* the rest is crap */
     
     /* which leaves inkey==0 */
@@ -697,7 +698,7 @@ Run_SF()
             fprintf(f, "%d", Score);
             fclose(f);
 
-        } while((!End_Flag)&&(Loop_Counter < One_Game_Loops));
+        } while(!Restart_Flag&&!End_Flag&&(Loop_Counter < One_Game_Loops));
         /* ESC or three minutes */
 
         // RUNNING FILE
@@ -719,7 +720,7 @@ Run_SF()
         // final_display();
         Close_Graphics();
         printf("Episode %d score: %d\n", Game_Counter, Score);
-        if(!End_Flag) {
+        if(!Restart_Flag && !End_Flag) {
             while(1) {
                 char ex = getch();
                 if(ex==9) {
@@ -733,13 +734,16 @@ Run_SF()
         
         clrscr();
         /* end one game here */
-    } while(!End_Flag);
+    } while(!Restart_Flag && !End_Flag);
     //} while((Game_Counter< No_Of_Games)&&(!End_Flag));
 
     nosound();   /* just in case */
     sound(400);
     delay(1000);
     nosound();
+    if(Restart_Flag) {
+        return(1);
+    }
     return(0);
 }
 
@@ -809,6 +813,7 @@ void Reset_Aim_Screen()
     Rotate_Input=0; /* joystick left/right */
     Accel_Input=0; /* joystick forward */
     End_Flag=OFF;
+    Restart_Flag=OFF;
     Fort_Headings=270;
     Timing_Flag=OFF; /* if screen reset between consecutive presses */
         /* reset screen */
