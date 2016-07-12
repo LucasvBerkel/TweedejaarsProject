@@ -37,7 +37,7 @@
 #define FORT_LOCK_INTERVAL 20
 #define SHELL_SPEED 7
 #define MAX_NO_OF_MISSILES 6
-#define DELAY 50
+#define SF_DELAY 50
 
 // All the color values have been altered to be RGB tuples
 

@@ -60,8 +60,8 @@ int One_Game_Duration=3; 	/****** in minutes 1-6 allowed */
 int No_Of_Games=1;  /******** varies 1-9 */
 int Resource_Display_Interval=RESOURCE_DISPLAY_INTERVAL;
 int No_Resource_Display_Interval=NO_RESOURCE_DISPLAY_INTERVAL;
-int Interval_Upper_Limit=DELAY*20;
-int Interval_Lower_Limit=DELAY*5;
+int Interval_Upper_Limit=SF_DELAY*20;
+int Interval_Lower_Limit=SF_DELAY*5;
 int Ship_Angular_Step=10;   /* Display increment in degrees */
 int Ship_Max_Speed=5;        /* dots per loop */
 int Ship_Accel=1;            /* dots/(loop*loop) */
@@ -213,7 +213,7 @@ int Freeze_Flag=0;
 //	   }game;
 
 char filename[MAX_DIR_PATH];
-char select[MAX_DIR_PATH];
+//char select[MAX_DIR_PATH];
 char curdir[MAX_DIR_PATH];
 int  scr_addr;
 char path[MAX_DIR_PATH];

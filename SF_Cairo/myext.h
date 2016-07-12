@@ -208,7 +208,7 @@ extern int Effect_Flag;
 //	   }game;
 
 extern char filename[];
-extern char select[];
+//extern char select[];
 extern char curdir[];
 extern int  scr_addr;
 extern char path[];

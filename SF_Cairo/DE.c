@@ -1,5 +1,11 @@
 // OS X compilation (something similar for linux I guess, but with other binary paths)
+// gcc -Wall -g DE.c `pkg-config --cflags cairo` `pkg-config --libs cairo` `pkg-config --cflags gtk+-3.0` `pkg-config --libs gtk+-3.0`  -o DE
+// Without gtk support:
 // gcc -Wall -g DE.c -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo -o DE
+
+// To shared library:
+// gcc -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo  -Wall -g -fPIC -c DE.c
+// gcc -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo -shared -o sf_frame_lib.so DE.o
 
 
 /* DISPLAY ELEMENTS	 6 Feb. 90 18:00
@@ -8,11 +14,15 @@
 //#include <graphics.h>
 #include <math.h>
 #include <cairo.h>
+#include <cairo-quartz.h> // Is this available on linux? 
+#include <gtk/gtk.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include "myconst.h"
 #include "myext.h"
+#include "time.h"
 #include "myvars.h"
+#include <string.h> 
 //#include "myvars.h"
 #define TEXT_HEIGHT 4 // The height of character "h" in pixels in Cairo (with monospace font)
 #define TEXT_WIDTH 3 // The height of character "h" in pixels (with monospace font)
@@ -20,6 +30,12 @@
 #define SF_GREEN 0.0, 0.66, 0.0
 #define SF_BLUE 0.33, 1.0, 1.0
 #define SF_ORANGE 1.0, 0.33, 0.33
+#define WINDOW_HEIGHT 240
+#define WINDOW_WIDTH 320
+
+//#include <boost/python/module.hpp>
+//#include <boost/python/def.hpp>
+//#include <boost/python/list.hpp>
 
 /*									*/
 /*	OPEN GRAPHICS: Initializes the graphics system and reports 	*/
@@ -59,23 +75,22 @@ void Open_Graphics(void)
 // Returns the cario surface for drawing
 void Initialize_Graphics(void)
 {
-	int Height,OldmaxX;
+	int Height,OldMaxX;
 //	int t,t1; // t is unused
 	int t1;
 	int x,dx;
 
-	MaxX = 320;
-	MaxY = 240;			/* Originally read the size of the screen	*/
+	MaxX = WINDOW_WIDTH;
+	MaxY = WINDOW_HEIGHT;			/* Originally read the size of the screen	*/
 
-	//MaxX is going to be MaxY eventually (I know this sounds weird but that is how the original
 	// code works
 //	int side_panel_size=(MaxX - MaxY)/2;
-
-	surface = cairo_image_surface_create(CAIRO_FORMAT_RGB24, MaxX, MaxY);
+	printf("DO I HAVE QUARTS Z : %d \n", CAIRO_HAS_QUARTZ_SURFACE);
+//	surface = cairo_image_surface_create(CAIRO_FORMAT_RGB16_565, MaxX, MaxY);
+	surface = cairo_quartz_surface_create(CAIRO_FORMAT_RGB16_565, MaxX, MaxY); // Notice that this isn't an image surface anymore
 	SF_canvas = cairo_create(surface);
 	cairo_set_antialias(SF_canvas, CAIRO_ANTIALIAS_NONE);
 //	cairo_set_line_cap(SF_canvas, CAIRO_LINE_CAP_SQUARE);
-	// Maybe move down after the final init of MaxX
 	
 //	cairo_set_line_width(SF_canvas, 10); // Line width equal to one pixel
 //	cairo_set_line_width(SF_canvas, (239.1 * 1) / ((double) MaxY * 1));
@@ -107,7 +122,6 @@ void Initialize_Graphics(void)
 //	font_reflection_matrix.yy = font_reflection_matrix.yy * -1;
 //	font_reflection_matrix.x0 += side_panel_size; // see (1)
 
-
 	cairo_set_font_matrix(SF_canvas, &font_reflection_matrix);
 	// Translate negative height down because the reflection draws on top of the drawing surface
 	// (i.e. out of frame, directly on top of the frame)
@@ -124,8 +138,6 @@ void Initialize_Graphics(void)
 	cairo_select_font_face(SF_canvas,"Helvetica",CAIRO_FONT_SLANT_NORMAL,CAIRO_FONT_WEIGHT_NORMAL);
 
 
-
-
 	// clears the screen, probably the dos screen, and sets the current graphics write
 	// pointer to (0,0) 
 	//	cleardevice();
@@ -134,7 +146,7 @@ void Initialize_Graphics(void)
 //	Height=textheight("H"); /* Get basic text height */
 	Height = TEXT_HEIGHT;
 
- 	OldmaxX=MaxX;
+ 	OldMaxX=MaxX;
   t1=4*Height;
 
   Panel_Y_End=MaxY;
@@ -155,7 +167,7 @@ void Initialize_Graphics(void)
 //		MaxX=MaxX*AspectRatio;	/********* MaxX and MaxY give a square */
 //		MaxX=MaxX-t1/AspectRatio;	/******** less two panel lines */
 //	}
-	Xmargin=OldmaxX/2-MaxX/2;
+	Xmargin=OldMaxX/2-MaxX/2;
 	cairo_translate(SF_canvas, Xmargin, 0);
 
 	// -- void setviewport(int left, int top, int right, int bottom, int clip);
@@ -208,10 +220,46 @@ float Fsin(int Headings_Degs) /* compute sin of 0 - 359 degrees */
 	return(sin(arc));
 }
 
+void snapCoords(cairo_t *canvas, int x, int y)
+{
+//		printf("Bef: %f %f\n", x, y);
+//    cairo_user_to_device(canvas, &x, &y);
+//		printf("After: %d %d\n", x, y);
+//		&x = round(x) + 0.5;
+//		&y = round(y) + 0.5;
+//		cairo_device_to_user
+//		printf("After [2]: %d %d\n", x, y);
+}
+
 void cairo_line(cairo_t *canvas, int x1, int y1, int x2, int y2)
 {
+//	snapCoords(canvas, &x1, &y1 );
+//	
+//	double x1 = (double) x_1;
+//	double y1 = (double) y_1;
+//	double x2 = (double) x_2;
+//	double y2 = (double) y_2;
+
+	// This code generates straighter and sharper lines, but also drops parts of objects for some 
+	// reason
+//	printf("Bef: %f %f\n", x1, y1); //	cairo_user_to_device(canvas, &x1, &y1);
+//	printf("After: %f %f\n", x1, y1);
+//	x1 = round(x1) + 0.5;
+//	y1 = round(y1) + 0.5;
+//	printf("After [2]: %f %f\n", x1, y1);
+//	cairo_device_to_user(canvas, &x1, &y1);
+//	printf("After [3]: %f %f\n\n\n", x1, y1);
+//
+//	printf("Bef: %f %f\n", x2, y2); //	cairo_user_to_device(canvas, &x2, &y2);
+//	printf("After: %f %f\n", x2, y2);
+//	x2 = round(x2) + 0.5;
+//	y2 = round(y2) + 0.5;
+//	printf("After [2]: %f %f\n", x2, y2);
+//	cairo_device_to_user(canvas, &x2, &y2);
+//	printf("After [3]: %f %f\n\n\n", x2, y2);
 	cairo_move_to(canvas, x1, y1);
 	cairo_line_to(canvas, x2, y2);
+
 }
 
 void cairo_text_at(cairo_t *canvas, int x, int y, const char *string)
@@ -231,7 +279,7 @@ void clip_path_rect(cairo_t *canvas)
 	cairo_path_extents(canvas,&x1,&y1,&x2,&y2);
 	cairo_path_t *ol_path = cairo_copy_path(canvas);
 	cairo_new_path(canvas); 
-	// Create the bounding box (somewhat 
+	// Create the bounding box
 	cairo_rectangle(canvas, x1-1, y1-1, (x2-x1)+1, (y2-y1)+1);
 //	cairo_set_source_rgb(canvas, 1, 0, 0);
 //	cairo_stroke_preserve(canvas);
@@ -268,7 +316,7 @@ void clean()
 	}
 	if (Fort_Should_Update)
 	{
-		clear_prev_path(SF_canvas, PrevMine);
+		clear_prev_path(SF_canvas, PrevFort);
 	}
 	if (Missile_Should_Update)
 	{
@@ -285,13 +333,12 @@ void update_drawing()
 //	cairo_save(cr);
 	if (Ship_Should_Update)
 	{
-
-		Ship_X_Pos = 096.000000;
-		Ship_Y_Pos = 50.000000;
+//		Ship_X_Pos = 096.000000;
+//		Ship_Y_Pos = 50.000000;
 //		Ship_Headings = Fort_Headings;
 //		printf("Ship_Headings: %d \n", Ship_Headings);
 //		printf("Fort_Headings: %d \n", Fort_Headings);
-		Draw_Ship(Ship_X_Pos,Ship_Y_Pos,51,SHIP_SIZE_FACTOR*MaxX);
+		Draw_Ship(Ship_X_Pos,Ship_Y_Pos,Ship_Headings,SHIP_SIZE_FACTOR*MaxX);
 		clip_path_rect(SF_canvas);
 		cairo_stroke(SF_canvas);
 		cairo_reset_clip(SF_canvas);
@@ -305,8 +352,8 @@ void update_drawing()
 	}
 	if (Missile_Should_Update)
 	{
-		Missile_X = 119.000000;
-		Missile_Y = 30.000000;
+//		Missile_X = 119.000000;
+//		Missile_Y = 30.000000;
 		Missile_Heading = 51;
 		Draw_Missile(Missile_X, Missile_Y, Missile_Heading, MISSILE_SIZE_FACTOR*MaxX);
 		clip_path_rect(SF_canvas);
@@ -315,8 +362,8 @@ void update_drawing()
 	}
 	if (Mine_Should_Update)
 	{
-		Mine_X_Pos = 50;
-		Mine_Y_Pos = 50;
+//		Mine_X_Pos = 50;
+//		Mine_Y_Pos = 50;
 		Draw_Mine(Mine_X_Pos,Mine_X_Pos,MINE_SIZE_FACTOR*MaxX);
 		clip_path_rect(SF_canvas);
 		cairo_stroke(SF_canvas);
@@ -576,11 +623,15 @@ void Draw_Mine (int x, int y, int size)	/* x,y is on screen center location
 //	setcolor(MINE_COLOR); // maybe different than blue for easier recogniztion?
 	cairo_set_source_rgb(SF_canvas, SF_BLUE);
 
-	cairo_move_to(SF_canvas,x-size,y);
-	cairo_line_to(SF_canvas,x,y-1.18*size);	 /* 1.3/1.1=1.18 */
-	cairo_line_to(SF_canvas,x+size,y);
-	cairo_line_to(SF_canvas,x,y+1.18*size);
-	cairo_line_to(SF_canvas,x-size,y);
+//	cairo_move_to(SF_canvas,x-size,y);
+//	cairo_line_to(SF_canvas,x,y-1.18*size);	 /* 1.3/1.1=1.18 */
+//	cairo_line_to(SF_canvas,x+size,y);
+//	cairo_line_to(SF_canvas,x,y+1.18*size);
+//	cairo_line_to(SF_canvas,x-size,y);
+	cairo_line(SF_canvas,x-size,y,x,y-1.18*size);
+	cairo_line(SF_canvas,x,y-1.18*size,x+size,y);
+	cairo_line(SF_canvas,x+size,y,x,y+1.18*size);
+	cairo_line(SF_canvas,x,y+1.18*size,x-size,y);
 	PrevMine = cairo_copy_path(SF_canvas);
 //	setcolor(svcolor); /* restore previous color */
 }
@@ -650,6 +701,8 @@ void Draw_Shell(int x, int y, int Headings, int size)
 	cairo_line_to(SF_canvas,x2,y2);
 	cairo_line_to(SF_canvas,xr,yr);
 	cairo_line_to(SF_canvas,x1,y1);
+
+
 //	setcolor(svcolor); /* restore previous color */
 }
 
@@ -674,37 +727,122 @@ int Find_Headings(int x1,int y1,int x2,int y2)
 }
 
 
-int main(int argc, char *argv[])
+void start_drawing()
 {
 	Initialize_Graphics();
-	Draw_Frame();
-
-
 	Ship_Should_Update = 1;
 	Mine_Should_Update = 1;
 	Fort_Should_Update = 1;
 	Missile_Should_Update = 1;
+	srand(time(NULL));
 
+	Ship_X_Pos = 096.000000;
+	Ship_Y_Pos = 50.000000;
+	Missile_X = 119.000000;
+	Missile_Y = 30.000000;
+	Mine_X_Pos = 50;
+	Mine_Y_Pos = 50;
+	Ship_Headings = Fort_Headings;
+}
 
-//	clean();
+void stop_drawing()
+{
+	Close_Graphics();	
+}
+
+int move_update()
+{
+	return (int) ((rand() % (3)) - 1);
+}
+
+unsigned char* update_frame()
+//int main(int argc, char *argv[])
+{
+	if (! (rand() % 5))
+	{
+		Ship_X_Pos = (Ship_X_Pos + move_update()) % MaxX;
+	}
+	if (rand() % 2)
+	{
+		Ship_Y_Pos = (Ship_Y_Pos + rand() % 2) % MaxY;
+	}
+	if (rand() % 2)
+	{
+		Ship_Headings = (Ship_Headings + move_update()) % 360;
+	}
+	Fort_Headings = (Fort_Headings + 1) % 360;
+	if (rand() % 2)
+	{
+		Mine_X_Pos = (Mine_X_Pos + move_update()) % MaxX;
+	}
+	if (rand() % 2)
+	{
+		Mine_Y_Pos = (Mine_Y_Pos + move_update()) % MaxY;
+	}
+	Missile_X = (Missile_X + 1) % MaxX;
+	Missile_Y = abs((Missile_Y - 1) % MaxY);
+	
+	clean();
 	Draw_Hexagone(MaxX/2,MaxY/2,SMALL_HEXAGONE_SIZE_FACTOR*MaxX);
 	clip_path_rect(SF_canvas);
 	cairo_stroke(SF_canvas);
 	cairo_reset_clip(SF_canvas);
 	update_drawing();
+	return cairo_image_surface_get_data(surface);
+}
 
-//  cairo_close_path(SF_canvas);
-//	cairo_clip_extents(SF_canvas, &x1, &y1, &x2, &y2);
-//	printf("Clips: %f %f %f %f'\n", x1, y1, x2, y2);
 
-//	cairo_set_source_rgb(SF_canvas,1,0,0);
-//	cairo_stroke_preserve(SF_canvas);
-// 	cairo_clip_preserve(SF_canvas);
-//	cairo_stroke(SF_canvas);
-//	cairo_stroke(SF_canvas);
-//	cairo_reset_clip(SF_canvas);
-	cairo_surface_write_to_png(surface, "test.png");
-	Close_Graphics();
+static void do_drawing(cairo_t *cr)
+{
+  cairo_set_source_rgb(cr, 0, 0, 0);
+  cairo_select_font_face(cr, "Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+  cairo_set_font_size(cr, 40.0);
+
+  cairo_move_to(cr, 10.0, 50.0);
+  cairo_show_text(cr, "Disziplin ist Macht.");
+}
+
+
+static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data)
+{
+//	printf("Equal to surface %d \n", cairo_surface_get_type(cairo_get_target(cr)) == CAIRO_SURFACE_TYPE_QUARTZ);
+	cairo_set_source_surface(SF_canvas, cairo_get_target(cr), 0, 0);
+	cr = SF_canvas;
+	Draw_Frame();
+	update_frame();
+
+	do_drawing(cr);
+	return FALSE; // Not sure why this should return false
+}
+
+int main(int argc, char *argv[])
+{
+
+  start_drawing();
+
+	// Basic GTK initialization 
+ 	GtkWidget *window;
+  GtkWidget *darea;
+
+  gtk_init(&argc, &argv);
+  window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+
+  darea = gtk_drawing_area_new();
+  gtk_container_add(GTK_CONTAINER(window), darea);
+
+  g_signal_connect(G_OBJECT(darea), "draw", G_CALLBACK(on_draw_event), NULL); 
+  g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+
+  gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
+  gtk_window_set_default_size(GTK_WINDOW(window), WINDOW_WIDTH, WINDOW_HEIGHT); 
+  gtk_window_set_title(GTK_WINDOW(window), "Space Fortress");
+//	gtk_print_context_get_cairo_context();
+
+  gtk_widget_show_all(window);
+  gtk_main();
+	stop_drawing();
+
+  return 0;	
 }
 
 
