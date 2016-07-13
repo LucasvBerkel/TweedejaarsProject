@@ -1,5 +1,7 @@
-// OS X compilation (something similar for linux I guess, but with other binary paths)
+// OS X compilation
 // gcc -Wall -g DE.c `pkg-config --cflags cairo` `pkg-config --libs cairo` `pkg-config --cflags gtk+-3.0` `pkg-config --libs gtk+-3.0`  -o DE
+// Linux compilation
+// gcc -Wall -g DE.c -lm `pkg-config --cflags cairo` `pkg-config --libs cairo` `pkg-config --cflags gtk+-3.0` `pkg-config --libs gtk+-3.0`  -o DE
 // Without gtk support:
 // gcc -Wall -g DE.c -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo -o DE
 
@@ -25,7 +27,7 @@
 #include "myext.h"
 #include "time.h"
 #include "myvars.h"
-#include <string.h> 
+#include <string.h>
 //#include "myvars.h"
 #define TEXT_HEIGHT 4 // The height of character "h" in pixels in Cairo (with monospace font)
 #define TEXT_WIDTH 3 // The height of character "h" in pixels (with monospace font)
@@ -97,20 +99,20 @@ void Initialize_Graphics(cairo_t *cr)
 //	cr = cairo_create(surface);
 	cairo_set_antialias(cr, CAIRO_ANTIALIAS_NONE);
 	cairo_set_line_cap(cr, CAIRO_LINE_CAP_SQUARE);
-	
+
 //	cairo_set_line_width(cr, 10); // Line width equal to one pixel
 //	cairo_set_line_width(cr, (239.1 * 1) / ((double) MaxY * 1));
 	cairo_set_line_width(cr, (239.9 * 1) / ((double) MaxY * 1));
 
 ////	 Cairo uses a different coordinate system than graphics.h, so we reflect Cairo's through
 ////	 the x-asis to make it equal to that of graphics.h.
-////	cairo_matrix_t x_reflection_matrix;	
-	// Reflecting it however means that text will also be reflected. We therefore also use a 
-	// reflection matrix for drawing fonts to reflect text back. 
+////	cairo_matrix_t x_reflection_matrix;
+	// Reflecting it however means that text will also be reflected. We therefore also use a
+	// reflection matrix for drawing fonts to reflect text back.
 //	cairo_matrix_t font_reflection_matrix;
 	// We need the options to turn off font anti-aliasing
 	font_options = cairo_font_options_create();
-	
+
 //	cairo_matrix_init_identity(&x_reflection_matrix);
 //	x_reflection_matrix.yy = -1.0;
 //	cairo_set_matrix(cr, &x_reflection_matrix);
@@ -126,7 +128,7 @@ void Initialize_Graphics(cairo_t *cr)
 	// Translate negative height down because the reflection draws on top of the drawing surface
 	// (i.e. out of frame, directly on top of the frame)
 
-	// (1) Also translate the matrix over the x-axis to emulate the fact that DOS places the SF 
+	// (1) Also translate the matrix over the x-axis to emulate the fact that DOS places the SF
 	// square in the middle.
 //	cairo_translate(cr, side_panel_size, -MaxY);
 //	cairo_translate(cr, 0, -MaxY);
@@ -139,7 +141,7 @@ void Initialize_Graphics(cairo_t *cr)
 
 
 	// clears the screen, probably the dos screen, and sets the current graphics write
-	// pointer to (0,0) 
+	// pointer to (0,0)
 	//	cleardevice();
 
 	//	The "textheight" function returns the height of a string in pixels.
@@ -170,7 +172,7 @@ void Initialize_Graphics(cairo_t *cr)
 	Xmargin=OldMaxX/2-MaxX/2;
 	cairo_translate(cr, Xmargin, 0);
 	// -- void setviewport(int left, int top, int right, int bottom, int clip);
-	// setviewport function is used to restrict drawing to a particular portion on the screen. 	// For example "setviewport(100 , 100, 200, 200, 1)" will restrict our drawing activity 
+	// setviewport function is used to restrict drawing to a particular portion on the screen. 	// For example "setviewport(100 , 100, 200, 200, 1)" will restrict our drawing activity
 	// inside the rectangle(100,100, 200, 200).
 	//
 	// left, top, right, bottom are the coordinates of main diagonal of rectangle in which we wish to restrict our drawing. Also note that the point (left, top) becomes the new origin.
@@ -241,13 +243,13 @@ void snapCoords(cairo_t *canvas, int x, int y)
 void cairo_line(cairo_t *cr, int x1, int y1, int x2, int y2)
 {
 //	snapCoords(canvas, &x1, &y1 );
-//	
+//
 //	double x1 = (double) x_1;
 //	double y1 = (double) y_1;
 //	double x2 = (double) x_2;
 //	double y2 = (double) y_2;
 
-	// This code generates straighter and sharper lines, but also drops parts of objects for some 
+	// This code generates straighter and sharper lines, but also drops parts of objects for some
 	// reason
 //	printf("Bef: %f %f\n", x1, y1); //	cairo_user_to_device(canvas, &x1, &y1);
 //	printf("After: %f %f\n", x1, y1);
@@ -271,7 +273,7 @@ void cairo_line(cairo_t *cr, int x1, int y1, int x2, int y2)
 
 void cairo_text_at(cairo_t *cr, int x, int y, const char *string)
 {
-	cairo_move_to(cr, x, y); 
+	cairo_move_to(cr, x, y);
 	cairo_show_text(cr, string);
 }
 
@@ -285,7 +287,7 @@ void clip_path_rect(cairo_t *cr)
 	double y2;
 	cairo_path_extents(cr,&x1,&y1,&x2,&y2);
 	cairo_path_t *ol_path = cairo_copy_path(cr);
-	cairo_new_path(cr); 
+	cairo_new_path(cr);
 	// Create the bounding box
 	cairo_rectangle(cr, x1-1, y1-1, (x2-x1)+1, (y2-y1)+1);
 //	cairo_set_source_rgb(canvas, 1, 0, 0);
@@ -297,7 +299,7 @@ void clip_path_rect(cairo_t *cr)
 }
 
 	// Clears the pixels on the previous path, i.e. sets them to black
-void clear_prev_path(cairo_t *cr, cairo_path_t *prevPath) 
+void clear_prev_path(cairo_t *cr, cairo_path_t *prevPath)
 {
 	cairo_set_source_rgb(cr, 0, 0, 0);
 	cairo_new_path(cr);
@@ -313,11 +315,11 @@ void clear_prev_path(cairo_t *cr, cairo_path_t *prevPath)
 void clean(cairo_t *cr)
 {
 //	cairo_save(cr);
-	if (Ship_Should_Update) 
+	if (Ship_Should_Update)
 	{
 		clear_prev_path(cr, PrevShip);
 	}
-	if (Mine_Should_Update) 
+	if (Mine_Should_Update)
 	{
 		clear_prev_path(cr, PrevMine);
 	}
@@ -332,7 +334,7 @@ void clean(cairo_t *cr)
 	}
 //	cairo_restore(cr);
 	cairo_new_path(cr);
-	
+
 }
 
 void update_drawing(cairo_t *cr)
@@ -376,7 +378,7 @@ void update_drawing(cairo_t *cr)
 		cairo_stroke(cr);
 		cairo_reset_clip(cr);
 	}
-//	cairo_restore(cr);	
+//	cairo_restore(cr);
 }
 
 void Draw_Frame(cairo_t *cr)
@@ -387,7 +389,7 @@ void Draw_Frame(cairo_t *cr)
 	int x,y,dx;
 
 
-	// See initialize_graphics for description 
+	// See initialize_graphics for description
 //	Height=textheight("H");		/* Get basic text height */
 		Height = TEXT_HEIGHT;
 
@@ -404,21 +406,21 @@ void Draw_Frame(cairo_t *cr)
 //	setviewport( Xmargin, Panel_Y_Start, Xmargin+MaxX, Panel_Y_End, 1);
 	// Emulate this setviewport call with a matrix translation
 	cairo_translate(cr, 0, Panel_Y_Start);
-	
+
 	/* data panel in screen global coordinates */
 
 	// Bottom panel? yes bottom panel
 //  void rectangle(int left, int top, int right, int bottom);
 //	rectangle(0,0,MaxX,MaxY_Panel);
 	cairo_rectangle(cr, 0, 0, MaxX, MaxY_Panel);
-	// The line function is used to draw a line from a point(x1,y1) to point(x2,y2) 
+	// The line function is used to draw a line from a point(x1,y1) to point(x2,y2)
 	// void line(int x1, int y1, int x2, int y2);
-	
+
 //	line(0,2*Height,MaxX,2*Height);
 	// The line on top of the info panel
 	cairo_line(cr, 0, 2*Height, MaxX, 2*Height);
 	cairo_stroke(cr);
-	
+
 			/* write panel headers */
 	if(Game_Type==SPACE_FORTRESS)
 	{
@@ -428,7 +430,7 @@ void Draw_Frame(cairo_t *cr)
 			// Called somewhere else
 			Data_Line=2*Height+4;
 			// I guess gprintf(x_pixel, y_pixel, str);
-		
+
 //		gprintf ( &x, &y,"	PNTS");
 //		x=x+dx; gprintf ( &x, &y," CNTRL");
 //		x=x+dx; gprintf ( &x, &y," VLCTY");
@@ -446,9 +448,9 @@ void Draw_Frame(cairo_t *cr)
 			x=x+dx; cairo_text_at(cr, x, y, "INTRVL");
 			x=x+dx; cairo_text_at(cr, x, y, " SPEED");
 			x=x+dx; cairo_text_at(cr, x, y, " SHOTS");
-	
+
 			/* draw vertical lines between columns */
-	
+
 	//		line(x,0,x,MaxY_Panel);
 	//		x=x-dx; line(x,0,x,MaxY_Panel);
 	//		x=x-dx; line(x,0,x,MaxY_Panel);
@@ -475,28 +477,28 @@ void Draw_Frame(cairo_t *cr)
 	//		gprintf ( &x, &y,"	MINES");
 	//	 x=x+dx; gprintf ( &x, &y," SPEED");
 	//	 x=x+dx; gprintf ( &x, &y," SCORE");
-	
+
 			/* draw vertical lines between columns */
 	//	 x=dx;	 line(x,0,x,MaxY_Panel);
 	//	 x=x+dx; line(x,0,x,MaxY_Panel);
-	
+
 		cairo_text_at(cr, x, y, "	MINES");
 		x=x+dx; cairo_text_at(cr, x, y, " SPEED");
 		x=x+dx; cairo_text_at(cr, x, y, " SCORE");
-	
+
 			/* draw vertical lines between columns */
 		x=dx; cairo_line(cr,x,0,x,MaxY_Panel);
 		x=x+dx; cairo_line(cr,x,0,x,MaxY_Panel);
 		cairo_stroke(cr);
 
 	 }
-	
+
 	// setviewport( Xmargin, 0, Xmargin+MaxX, MaxY, 1); /* in screen global coordinates */
 	// translate back from the previous viewport call
 	cairo_translate(cr, 0, -Panel_Y_Start);
 	// full panel?
 //	rectangle(0,0,MaxX,MaxY); 		/* main frame of the viewport */
-	cairo_rectangle(cr,0,0,MaxX,MaxY); // Maybe drop this or something 
+	cairo_rectangle(cr,0,0,MaxX,MaxY); // Maybe drop this or something
  	cairo_stroke(cr);
 
 
@@ -506,7 +508,7 @@ void Draw_Frame(cairo_t *cr)
 //	setcolor(svcolor); /* restore previous color */
 }
 
-// Draws the hexagon around the fortress, maybe drop this? 
+// Draws the hexagon around the fortress, maybe drop this?
 void Draw_Hexagone(cairo_t *cr,int X_Center,int Y_Center,int Hex_Outer_Radius)
 {
 	int Abs_Y;
@@ -761,7 +763,7 @@ void set_initial_vals(cairo_t *cr)
 
 void start_drawing()
 {
-	// Init SF_canvas here? 
+	// Init SF_canvas here?
 	Initialize_Graphics(SF_canvas);
 	set_initial_vals(SF_canvas);
 }
@@ -769,7 +771,7 @@ void start_drawing()
 void stop_drawing()
 {
 	// Specific SF_canvas function
-	Close_Graphics(SF_canvas);	
+	Close_Graphics(SF_canvas);
 }
 
 int move_update()
@@ -810,7 +812,7 @@ void update_frame(cairo_t *cr)
 	Missile_X = (Missile_X + move_update()) % MaxX;
 	if (Missile_Y == 0)
 	{
-		Missile_Y = MaxY;		
+		Missile_Y = MaxY;
 	}
 	Missile_Y = (Missile_Y - 1) % MaxY;
 	clean(cr);
@@ -842,8 +844,8 @@ static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data
 
 void animation_loop(GtkWidget *darea)
 {
-	int i = 0;
-	for(; i < 1020; i++)
+  int i;
+	for(i = 0; i < 1020; i++)
 	{
 		gtk_widget_queue_draw(darea);
 		while(gtk_events_pending())
@@ -866,7 +868,7 @@ int main(int argc, char *argv[])
 
 	Initialized_Graphics = 0;
 
-	// Basic GTK initialization 
+	// Basic GTK initialization
  	GtkWidget *window;
   GtkWidget *darea;
 
@@ -876,11 +878,11 @@ int main(int argc, char *argv[])
   darea = gtk_drawing_area_new();
   gtk_container_add(GTK_CONTAINER(window), darea);
 
-  g_signal_connect(G_OBJECT(darea), "draw", G_CALLBACK(on_draw_event), NULL); 
+  g_signal_connect(G_OBJECT(darea), "draw", G_CALLBACK(on_draw_event), NULL);
   g_signal_connect(window, "destroy", G_CALLBACK(exit), NULL);
 
   gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
-  gtk_window_set_default_size(GTK_WINDOW(window), WINDOW_WIDTH, WINDOW_HEIGHT); 
+  gtk_window_set_default_size(GTK_WINDOW(window), WINDOW_WIDTH, WINDOW_HEIGHT);
   gtk_window_set_title(GTK_WINDOW(window), "Space Fortress");
 //	gtk_print_context_get_cairo_context();
 
@@ -891,10 +893,5 @@ int main(int argc, char *argv[])
 
 //	stop_drawing(); // GTK handles this I guess
 
-  return 0;	
+  return 0;
 }
-
-
-
-
-
