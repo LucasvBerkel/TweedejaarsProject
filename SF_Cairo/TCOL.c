@@ -53,40 +53,43 @@ void Gen_Explosion(cairo_t *cr, int X_Pos,int Y_Pos,int Radius)
 //  svcolor=getcolor();
   j=0;
   for(i=10;i<Radius;i=i+10)
-     {
+  {
 //       setcolor(LIGHTRED);
-			cr.set_source_rgb(cr, 1.0, 102.0/255.0 102.0/255.0);
+		cr.set_source_rgb(cr, 1.0, 102.0/255.0 102.0/255.0);
 //       sound(200+10*i);
-       for(iarc=i/5;iarc<360+i/5;iarc=iarc+20)
+		for(iarc=i/5;iarc<360+i/5;iarc=iarc+20)
 	  {
 //		 	void arc(int x, int y, int stangle, int endangle, int radius);
 // 			arc function is used to draw an arc with center (x,y) and stangle specifies starting 
 //			angle, endangle specifies the end angle and last parameter specifies the radius of the arc
 //			void cairo_arc (cairo_t *cr, double xc, double yc, double radius, double angle1, double angle2);
-			cairo_arc(cr, X_Pos,Y_Pos,i),;
-	    arc(X_Pos,Y_Pos,iarc,iarc+2,i);
+			cairo_arc(cr, X_Pos,Y_Pos,iarc,iarc+2,i);
+//	    arc(X_Pos,Y_Pos,iarc,iarc+2,i);
 	   }
+		// -- DELAY HERE -- 
 //	Mydelay(250/i);/* 100/i*5 */ // I guess a delay only makes sense when drawing on a window
 //	sound(200+15*i);
 //	setcolor(YELLOW);
-	if (j>0)
-	 for(iarc=j/5;iarc<360+j/5;iarc=iarc+20)
-	   {
+		if (j>0)
+		{
+	 		for(iarc=j/5;iarc<360+j/5;iarc=iarc+20)
+			{
 //	     arc(X_Pos,Y_Pos,iarc,iarc+2,j);
-			cairo_arc(cr,X_Pos,Y_Pos,iarc,iarc+2,j);
-	   }
-       j=i;  /* erase in de_fasage */
-       }
+				cairo_arc(cr,X_Pos,Y_Pos,iarc,iarc+2,j);
+			}
+      j=i;  /* erase in de_fasage */
+		}
+  }
 
-  Last_Pitch=200+10*i;
-  for (i=0;i<150;i++)  /* final audio effect */
-      {
-	Mydelay(5);
-	Last_Pitch=Last_Pitch+80;
-	sound(Last_Pitch);
-      }
-  setcolor(svcolor);
-  nosound();
+//  Last_Pitch=200+10*i;
+//  for (i=0;i<150;i++)  /* final audio effect */
+//  {
+//		Mydelay(5);
+//		Last_Pitch=Last_Pitch+80;
+//		sound(Last_Pitch);
+//  }
+//  setcolor(svcolor);
+//  nosound();
   return(0);
 }
 
