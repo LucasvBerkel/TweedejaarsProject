@@ -67,7 +67,7 @@ void Gen_Explosion(cairo_t *cr, int X_Pos,int Y_Pos,int Radius)
 //	    arc(X_Pos,Y_Pos,iarc,iarc+2,i);
 	   }
 		// -- DELAY HERE -- 
-//	Mydelay(250/i);/* 100/i*5 */ // I guess a delay only makes sense when drawing on a window
+	Mydelay(250/i);/* 100/i*5 */ // I guess a delay only makes sense when drawing on a window
 //	sound(200+15*i);
 //	setcolor(YELLOW);
 		if (j>0)
@@ -121,6 +121,8 @@ void Zero_Vulner_Sound()
 //  return(0);
 }
 
+// -- These kind of animation functions maybe should get some sort of special treatment 
+// within the step function as they redraw the ship with a delay multiple times -- 
 void Jitter_Ship()
 {
   int Jitter_Headings;
@@ -135,6 +137,7 @@ void Jitter_Ship()
     Jitter_Headings=Ship_Headings+2*i;
     Jitter_X_Pos=Ship_X_Pos+i*Fcos(Jitter_Headings);
     Jitter_Y_Pos=Ship_Y_Pos+i*Fsin(Jitter_Headings);
+//		Call update with only ship update on? 
     Draw_Ship(Jitter_X_Pos,Jitter_Y_Pos,Jitter_Headings,
 				   SHIP_SIZE_FACTOR*MaxX);  /* draw ship */
     Mydelay(i*5);
@@ -145,7 +148,7 @@ void Jitter_Ship()
     Jitter_Y_Pos=Ship_Y_Pos+i*Fcos(Jitter_Headings);
     Draw_Ship(Jitter_X_Pos,Jitter_Y_Pos,Jitter_Headings,
 				SHIP_SIZE_FACTOR*MaxX);  /* draw ship */
-    Mydelay(i*5);
+//    Mydelay(i*5);
     Draw_Ship(Jitter_X_Pos,Jitter_Y_Pos,Jitter_Headings,
 				SHIP_SIZE_FACTOR*MaxX);  /* erase ship */
   }
@@ -175,7 +178,7 @@ int Check_Collision(int First_X,int First_Y,int Second_X,
 		     return(0);
 }
 
-Test_Collisions()
+void Test_Collisions()
 {
   int breakflag;
   int i;

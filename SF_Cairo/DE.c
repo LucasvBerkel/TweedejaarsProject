@@ -1,4 +1,5 @@
 // OS X compilation
+// OS X compilation
 // gcc -Wall -g DE.c -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo `pkg-config --cflags gtk+-3.0` `pkg-config --libs gtk+-3.0`  -o DE
 // Linux compilation
 // gcc -Wall -g DE.c -lm `pkg-config --cflags cairo` `pkg-config --libs cairo` `pkg-config --cflags gtk+-3.0` `pkg-config --libs gtk+-3.0`  -o DE
@@ -99,10 +100,12 @@ void Initialize_Graphics(cairo_t *cr)
 //	cr = cairo_create(surface);
 	cairo_set_antialias(cr, CAIRO_ANTIALIAS_NONE);
 	cairo_set_line_cap(cr, CAIRO_LINE_CAP_SQUARE);
+	cairo_set_line_join(cr, CAIRO_LINE_JOIN_ROUND);
+
 
 //	cairo_set_line_width(cr, 10); // Line width equal to one pixel
 //	cairo_set_line_width(cr, (239.1 * 1) / ((double) MaxY * 1));
-	cairo_set_line_width(cr, (239.9 * 1) / ((double) MaxY * 1));
+	cairo_set_line_width(cr, (80 * 1) / ((double) MaxY * 1));
 
 ////	 Cairo uses a different coordinate system than graphics.h, so we reflect Cairo's through
 ////	 the x-asis to make it equal to that of graphics.h.
@@ -137,7 +140,7 @@ void Initialize_Graphics(cairo_t *cr)
 	cairo_get_font_options(cr, font_options);
 	cairo_font_options_set_antialias(font_options, CAIRO_ANTIALIAS_NONE);
 	cairo_set_font_options(cr, font_options);
-	cairo_select_font_face(cr,"Helvetica",CAIRO_FONT_SLANT_NORMAL,CAIRO_FONT_WEIGHT_NORMAL);
+	cairo_select_font_face(cr,"Helvetica",CAIRO_FONT_SLANT_NORMAL,CAIRO_FONT_WEIGHT_BOLD);
 
 
 	// clears the screen, probably the dos screen, and sets the current graphics write
@@ -209,9 +212,7 @@ void Close_Graphics(cairo_t *cr)
 
 void Close_Graphics_SF()
 {
-  cairo_destroy(SF_canvas);
-	cairo_font_options_destroy(font_options);
-  cairo_surface_destroy(surface);
+  Close_Graphics(SF_canvas);
 }
 
 
@@ -519,7 +520,6 @@ void Draw_Hexagone(cairo_t *cr,int X_Center,int Y_Center,int Hex_Outer_Radius)
 	cairo_set_source_rgb(cr, SF_GREEN);
 
 	Abs_Y=Hex_Outer_Radius*0.866;	/* sin(60)=0.866 */
-	// this didn't work for some reason
 	cairo_move_to(cr, X_Center+Hex_Outer_Radius,Y_Center); /* right-hand tip */
 	cairo_line_to(cr, X_Center+Hex_Outer_Radius/2,Y_Center-Abs_Y);
 	cairo_line_to(cr, X_Center-Hex_Outer_Radius/2,Y_Center-Abs_Y);
@@ -634,15 +634,15 @@ void Draw_Mine (cairo_t *cr, int x, int y, int size)	/* x,y is on screen center 
 //	setcolor(MINE_COLOR); // maybe different than blue for easier recogniztion?
 	cairo_set_source_rgb(cr, SF_BLUE);
 
-//	cairo_move_to(cr,x-size,y);
-//	cairo_line_to(cr,x,y-1.18*size);	 /* 1.3/1.1=1.18 */
-//	cairo_line_to(cr,x+size,y);
-//	cairo_line_to(cr,x,y+1.18*size);
-//	cairo_line_to(cr,x-size,y);
-	cairo_line(cr,x-size,y,x,y-1.18*size);
-	cairo_line(cr,x,y-1.18*size,x+size,y);
-	cairo_line(cr,x+size,y,x,y+1.18*size);
-	cairo_line(cr,x,y+1.18*size,x-size,y);
+	cairo_move_to(cr,x-size,y);
+	cairo_line_to(cr,x,y-1.18*size);	 /* 1.3/1.1=1.18 */
+	cairo_line_to(cr,x+size,y);
+	cairo_line_to(cr,x,y+1.18*size);
+	cairo_line_to(cr,x-size,y);
+//	cairo_line(cr,x-size,y,x,y-1.18*size);
+//	cairo_line(cr,x,y-1.18*size,x+size,y);
+//	cairo_line(cr,x+size,y,x,y+1.18*size);
+//	cairo_line(cr,x,y+1.18*size,x-size,y);
 	PrevMine = cairo_copy_path(cr);
 //	setcolor(svcolor); /* restore previous color */
 }
@@ -782,6 +782,8 @@ int move_update()
 
 // Maybe create a seperate SF version? also because returning does not make sense for GTK
 //unsigned char* update_frame(cairo_t *cr)
+
+
 void update_frame(cairo_t *cr)
 {
 	if (! (rand() % 5))
@@ -824,6 +826,12 @@ void update_frame(cairo_t *cr)
 //	return cairo_image_surface_get_data(surface);
 }
 
+void update_frame_SF()
+{
+	update_frame(SF_canvas);
+}
+
+
 static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 {
 //	printf("Equal to surface %d \n", cairo_surface_get_type(cairo_get_target(cr)) == CAIRO_SURFACE_TYPE_QUARTZ);
@@ -845,7 +853,7 @@ static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data
 void animation_loop(GtkWidget *darea)
 {
   int i;
-	for(i = 0; i < 1020; i++)
+	for(i = 0; i < 3420; i++)
 	{
 		gtk_widget_queue_draw(darea);
 		while(gtk_events_pending())

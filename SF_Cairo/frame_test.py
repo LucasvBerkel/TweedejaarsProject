@@ -4,7 +4,7 @@ import numpy as np
 import time
 
 # Maybe create a seperate SF update version?
-update = ctypes.CDLL('./sf_frame_lib.so').update_frame
+update = ctypes.CDLL('./sf_frame_lib.so').update_frame_SF
 init = ctypes.CDLL('./sf_frame_lib.so').start_drawing
 close = ctypes.CDLL('./sf_frame_lib.so').stop_drawing
 n_bytes = 153600 # The stride of the surface times the height of the image from DE.c
