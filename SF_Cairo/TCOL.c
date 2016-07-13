@@ -93,38 +93,43 @@ void Gen_Explosion(cairo_t *cr, int X_Pos,int Y_Pos,int Radius)
   return(0);
 }
 
-Gen_Snap_Effect()
+void Gen_Snap_Effect()
 {
-  int Last_Pitch,i;
+
+// ---- Don't forget to add the delays back in if needed  ----- 
+
+//  int Last_Pitch,i;
+//	int i;
 
   Effect_Flag=ON;
-  Last_Pitch=3000;
-  for (i=0;i<30;i++)  /* final audio effect */
-      {
-	Mydelay(5);
-	Last_Pitch=Last_Pitch-100;
-	sound(Last_Pitch);
-      }
-  Mydelay(100);
-  nosound();
+//  Last_Pitch=3000;
+//  for (i=0;i<30;i++)  /* final audio effect */
+//  {
+//		Mydelay(5); 
+//		Last_Pitch=Last_Pitch-100;
+//		sound(Last_Pitch);
+//  }
+//  Mydelay(100);
+//  nosound();
   return(0);
 }
 
-Zero_Vulner_Sound()
+void Zero_Vulner_Sound()
 {
-  sound(600);
-  Sound_Flag=4;
-  return(0);
+//  sound(600);
+//  Sound_Flag=4;
+//  return(0);
 }
 
-Jitter_Ship()
+void Jitter_Ship()
 {
   int Jitter_Headings;
   int Jitter_X_Pos,Jitter_Y_Pos;
   int i;
 
   Effect_Flag=ON;
-  Draw_Ship(Ship_X_Pos,Ship_Y_Pos,Ship_Headings,SHIP_SIZE_FACTOR*MaxX); /*erase ship */
+	// Call clean() with only ship update on? 
+//  Draw_Ship(Ship_X_Pos,Ship_Y_Pos,Ship_Headings,SHIP_SIZE_FACTOR*MaxX); /*erase ship */
   for (i=8;i>0;i--)
   {
     Jitter_Headings=Ship_Headings+2*i;
