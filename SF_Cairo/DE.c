@@ -14,7 +14,9 @@
 //#include <graphics.h>
 #include <math.h>
 #include <cairo.h>
-#include <cairo-quartz.h> // Is this available on linux? 
+#ifdef __APPLE__
+	#include <cairo-quartz.h> // Is this available on linux? No!
+#endif
 #include <gtk/gtk.h>
 #include <stdlib.h>
 #include <stdio.h>
