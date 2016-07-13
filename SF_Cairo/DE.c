@@ -831,18 +831,19 @@ static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data
 
 		Initialized_Graphics = 1; // at zero to redraw with initialization on every update
 	}
-		Initialize_Graphics(cr);
-		cairo_rectangle(cr, -Xmargin, 0, WINDOW_WIDTH,WINDOW_HEIGHT); // Cheap fix
-		cairo_set_source_rgb(cr, 0, 0, 0);
-		cairo_fill(cr);
-		Draw_Frame(cr);
+	Initialize_Graphics(cr);
+	cairo_rectangle(cr, -Xmargin, 0, WINDOW_WIDTH,WINDOW_HEIGHT); // Cheap fix
+	cairo_set_source_rgb(cr, 0, 0, 0);
+	cairo_fill(cr);
+	Draw_Frame(cr);
 	update_frame(cr);
 	return FALSE; // Not sure why this should return false
 }
 
 void animation_loop(GtkWidget *darea)
 {
-	for(int i = 0; i < 1020; i++)
+	int i = 0;
+	for(; i < 1020; i++)
 	{
 		gtk_widget_queue_draw(darea);
 		while(gtk_events_pending())
