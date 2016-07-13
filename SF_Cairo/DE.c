@@ -20,6 +20,7 @@
 #include <gtk/gtk.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
 #include "myconst.h"
 #include "myext.h"
 #include "time.h"
