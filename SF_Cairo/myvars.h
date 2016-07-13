@@ -19,6 +19,8 @@ int Mine_Should_Update;
 int Fort_Should_Update;
 int Missile_Should_Update;
 
+char Initialized_Graphics;
+
 /* Not that good maybe because for example multiple missile can exist */
 int Missile_X;
 int Missile_Y;

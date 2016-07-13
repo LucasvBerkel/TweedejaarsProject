@@ -28,6 +28,8 @@ extern cairo_t *SF_canvas;
 extern cairo_surface_t *surface;
 extern cairo_font_options_t *font_options;
 
+extern char Initialized_Graphics;
+
 extern cairo_path_t *PrevShip;
 extern cairo_path_t *PrevMissile;
 extern cairo_path_t *PrevFort;
@@ -238,13 +240,13 @@ extern int Fort_Lock_Counter;
 
 extern float Fcos(int Headings_Degs); /* compute cos of 0 - 359 degrees */
 extern float Fsin(int Headings_Degs); /* compute sin of 0 - 359 degrees */
-extern void Draw_Ship (int x, int y, int Headings, int size);
-extern void Draw_Hexagone(int X_Center,int Y_Center,int Hex_Size);
-extern void Draw_Frame();
-extern void Draw_Fort (int x, int y, int Headings, int size);
-extern void Draw_Missile (int x, int y, int Headings, int size);
-extern void Draw_Shell(int x, int y, int Headings, int size);
-extern void Draw_Mine (int x, int y, int size);  /* x,y is on screen center location
+extern void Draw_Ship (cairo_t *cr, int x, int y, int Headings, int size);
+extern void Draw_Hexagone(cairo_t *cr, int X_Center,int Y_Center,int Hex_Size);
+extern void Draw_Frame(cairo_t *cr);
+extern void Draw_Fort (cairo_t *cr, int x, int y, int Headings, int size);
+extern void Draw_Missile (cairo_t *cr, int x, int y, int Headings, int size);
+extern void Draw_Shell(cairo_t *cr, int x, int y, int Headings, int size);
+extern void Draw_Mine (cairo_t *cr, int x, int y, int size);  /* x,y is on screen center location
 					size is half diagonal           */
 
 extern int Find_Headings(int x1,int y1,int x2,int y2);

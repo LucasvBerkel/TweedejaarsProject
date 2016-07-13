@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
-#include <dir.h>
-#include <dos.h>
-#include <conio.h>
-#include <graphics.h>
+//#include <dir.h>
+//#include <dos.h>
+//#include <conio.h>
+//#include <graphics.h>
 #include <stdlib.h>
 #include <time.h>
 
@@ -35,13 +35,13 @@ void open_graphics(void);
 
 main() {
     Open_Graphics();
-    Set_Bonus_Message();
-    Set_Bonus_Chars();
-    Set_Graphics_Eraser();
-    Close_Graphics();
+//    Set_Bonus_Message();
+//    Set_Bonus_Chars();
+//    Set_Graphics_Eraser();
+//    Close_Graphics();
 
-    randomize();
-    delay(0);
+//    randomize();
+//    delay(0);
 
     Run_SF();
 
@@ -56,19 +56,19 @@ main() {
 /**************************************************************************/
 
 void final_display(void) {
-    clrscr();
-    displ_screen(4,"screen.dat");
-    gotoxy(44,8);printf("%d",Score);
-    gotoxy(39,12);printf("%d",Ship_Damaged_By_Fortress);
-    gotoxy(42,14);printf("%d",Ship_Damaged_By_Mines);
-    gotoxy(50,16);printf("%d",Fortress_Destroyed);
-    gotoxy(11,21);printf("%d",Points);
-    gotoxy(30,21);printf("%d",Control);
-    gotoxy(50,21);printf("%d",Velocity);
-    gotoxy(67,21);printf("%d",Speed);
-    gotoxy(27,23);printf("%d",No_Of_Bonus_Intervals);
-    gotoxy(48,23);printf("%d",No_Of_Points_Bonus_Taken);
-    gotoxy(70,23);printf("%d",No_Of_Missiles_Bonus_Taken);
+//    clrscr(); // From conio.h, clears the MS-DOS screen
+//    displ_screen(4,"screen.dat");
+//    gotoxy(44,8);printf("%d",Score);
+//    gotoxy(39,12);printf("%d",Ship_Damaged_By_Fortress);
+//    gotoxy(42,14);printf("%d",Ship_Damaged_By_Mines);
+//    gotoxy(50,16);printf("%d",Fortress_Destroyed);
+//    gotoxy(11,21);printf("%d",Points);
+//    gotoxy(30,21);printf("%d",Control);
+//    gotoxy(50,21);printf("%d",Velocity);
+//    gotoxy(67,21);printf("%d",Speed);
+//    gotoxy(27,23);printf("%d",No_Of_Bonus_Intervals);
+//    gotoxy(48,23);printf("%d",No_Of_Points_Bonus_Taken);
+//    gotoxy(70,23);printf("%d",No_Of_Missiles_Bonus_Taken);
 }
 
 /**************************************************************************/
@@ -80,20 +80,21 @@ void final_display(void) {
 /*                                                                        */
 /**************************************************************************/
 
+// We don't display the score
 void displ_screen(int scr_no,char *scr_file) {
-    FILE *f;
-    int ch,i;
-    if(((f=fopen(scr_file,"r"))==NULL)) {
-        printf("Cannot open %s\n",scr_file);
-        getch();
-        return;
-    }
-    i=0;
-    while(i<scr_no)
-        if ((ch=getc(f))=='@') i++;
-    while (((ch=getc(f))!='@')&&(ch!=EOF))
-        putchar(ch);
-    fclose(f);
+//    FILE *f;
+//    int ch,i;
+//    if(((f=fopen(scr_file,"r"))==NULL)) {
+//        printf("Cannot open %s\n",scr_file);
+//        getch();
+//        return;
+//    }
+//    i=0;
+//    while(i<scr_no)
+//        if ((ch=getc(f))=='@') i++;
+//    while (((ch=getc(f))!='@')&&(ch!=EOF))
+//        putchar(ch);
+//    fclose(f);
 }
 
 /**************************************************************************/
@@ -103,14 +104,14 @@ void displ_screen(int scr_no,char *scr_file) {
 /*                                                                        */
 /**************************************************************************/
 
-void open_graphics(void) {
-    int g_driver,g_mode,g_error;
-
-    g_driver=DETECT;
-    initgraph(&g_driver,&g_mode,"C:\\BORLANDC\\BGI");
-    g_error=graphresult();
-    if(g_error<0) {
-        printf("INITGRAPH ERROR : %s.\n",grapherrormsg(g_error));
-        exit(1);
-    }
+//void open_graphics(void) {
+//    int g_driver,g_mode,g_error;
+//
+//    g_driver=DETECT;
+//    initgraph(&g_driver,&g_mode,"C:\\BORLANDC\\BGI");
+//    g_error=graphresult();
+//    if(g_error<0) {
+//        printf("INITGRAPH ERROR : %s.\n",grapherrormsg(g_error));
+//        exit(1);
+//    }
 }

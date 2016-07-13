@@ -40,8 +40,8 @@ int Wrap_Around_Flag=OFF;
 			    hits of the fortress */
 /*int Ship_Killings_Counter=0; */
 
-
-Gen_Explosion(int X_Pos,int Y_Pos,int Radius)
+// Okay to drop animation? 
+void Gen_Explosion(cairo_t *cr, int X_Pos,int Y_Pos,int Radius)
 {
   int i,j;
   int iarc;
@@ -50,19 +50,21 @@ Gen_Explosion(int X_Pos,int Y_Pos,int Radius)
   int Last_Pitch;
 
   Effect_Flag=ON;
-  svcolor=getcolor();
+//  svcolor=getcolor();
   j=0;
   for(i=10;i<Radius;i=i+10)
      {
-       setcolor(LIGHTRED);
-       sound(200+10*i);
+//       setcolor(LIGHTRED);
+			cr.set_source_rgb(cr, 1.0, 102.0/255.0 102.0/255.0);
+//       sound(200+10*i);
        for(iarc=i/5;iarc<360+i/5;iarc=iarc+20)
 	  {
+		 	void arc(int x, int y, int stangle, int endangle, int radius);
 	    arc(X_Pos,Y_Pos,iarc,iarc+2,i);
 	   }
-	Mydelay(250/i);  /* 100/i*5 */
-	sound(200+15*i);
-	setcolor(YELLOW);
+//	Mydelay(250/i);/* 100/i*5 */ // I guess a delay only makes sense when drawing on a window
+//	sound(200+15*i);
+//	setcolor(YELLOW);
 	if (j>0)
 	 for(iarc=j/5;iarc<360+j/5;iarc=iarc+20)
 	   {
