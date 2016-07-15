@@ -1,12 +1,11 @@
 // OS X compilation
-// OS X compilation
 // gcc -Wall -g DE.c -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo `pkg-config --cflags gtk+-3.0` `pkg-config --libs gtk+-3.0`  -o DE
 // Linux compilation
 // gcc -Wall -g DE.c -lm `pkg-config --cflags cairo` `pkg-config --libs cairo` `pkg-config --cflags gtk+-3.0` `pkg-config --libs gtk+-3.0`  -o DE
 // Without gtk support:
 // gcc -Wall -g DE.c -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo -o DE
 
-// To shared library:
+// To shared library: (comment out GTK related code for this to work) 
 // gcc -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo  -Wall -g -fPIC -c DE.c
 // gcc -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo -shared -o sf_frame_lib.so DE.o
 
@@ -15,19 +14,21 @@
 			definitions */
 //#include <dos.h>
 //#include <graphics.h>
+#ifndef DE_H
+#define DE_H
 #include <math.h>
 #include <cairo.h>
 #ifdef __APPLE__
 	#include <cairo-quartz.h> // Is this available on linux? No!
 #endif
-#include <gtk/gtk.h>
+//#include <gtk/gtk.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
 #include "myconst.h"
 #include "myext.h"
 #include "time.h"
-#include "myvars.h"
+//#include "myvars.h"
 #include <string.h>
 //#include "myvars.h"
 #define TEXT_HEIGHT 4 // The height of character "h" in pixels in Cairo (with monospace font)
@@ -79,7 +80,6 @@ void Open_Graphics(void)
 }
 
 
-// Returns the cario surface for drawing
 void Initialize_Graphics(cairo_t *cr)
 {
 	int Height,OldMaxX;
@@ -89,7 +89,7 @@ void Initialize_Graphics(cairo_t *cr)
 
 	MaxX = WINDOW_WIDTH;
 	MaxY = WINDOW_HEIGHT;			/* Originally read the size of the screen	*/
-	SF_canvas = cr;
+//	SF_canvas = cr;
 
 	// code works
 //	int side_panel_size=(MaxX - MaxY)/2;
@@ -104,8 +104,8 @@ void Initialize_Graphics(cairo_t *cr)
 
 
 //	cairo_set_line_width(cr, 10); // Line width equal to one pixel
-//	cairo_set_line_width(cr, (239.1 * 1) / ((double) MaxY * 1));
-	cairo_set_line_width(cr, (80 * 1) / ((double) MaxY * 1));
+	cairo_set_line_width(cr, (239.1 * 1) / ((double) MaxY * 1));
+//	cairo_set_line_width(cr, (90.1 * 1) / ((double) MaxY * 1));
 
 ////	 Cairo uses a different coordinate system than graphics.h, so we reflect Cairo's through
 ////	 the x-asis to make it equal to that of graphics.h.
@@ -115,7 +115,6 @@ void Initialize_Graphics(cairo_t *cr)
 //	cairo_matrix_t font_reflection_matrix;
 	// We need the options to turn off font anti-aliasing
 	font_options = cairo_font_options_create();
-
 //	cairo_matrix_init_identity(&x_reflection_matrix);
 //	x_reflection_matrix.yy = -1.0;
 //	cairo_set_matrix(cr, &x_reflection_matrix);
@@ -141,7 +140,6 @@ void Initialize_Graphics(cairo_t *cr)
 	cairo_font_options_set_antialias(font_options, CAIRO_ANTIALIAS_NONE);
 	cairo_set_font_options(cr, font_options);
 	cairo_select_font_face(cr,"Helvetica",CAIRO_FONT_SLANT_NORMAL,CAIRO_FONT_WEIGHT_BOLD);
-
 
 	// clears the screen, probably the dos screen, and sets the current graphics write
 	// pointer to (0,0)
@@ -467,7 +465,6 @@ void Draw_Frame(cairo_t *cr)
 			x=x-dx; cairo_line(cr,x,0,x,MaxY_Panel);
 			x=x-dx; cairo_line(cr,x,0,x,MaxY_Panel);
 			cairo_stroke(cr);
-
 	 }
 	 else /* frame for aiming test */
 	 {
@@ -763,9 +760,12 @@ void set_initial_vals(cairo_t *cr)
 
 void start_drawing()
 {
-	// Init SF_canvas here?
+	surface = cairo_image_surface_create(CAIRO_FORMAT_RGB16_565, WINDOW_WIDTH, WINDOW_HEIGHT);
+//	surface = cairo_quartz_surface_create(CAIRO_FORMAT_RGB16_565, WINDOW_WIDTH, WINDOW_HEIGHT);
+	SF_canvas = cairo_create(surface);
 	Initialize_Graphics(SF_canvas);
 	set_initial_vals(SF_canvas);
+	Draw_Frame(SF_canvas); // Draw the basis
 }
 
 void stop_drawing()
@@ -823,46 +823,46 @@ void update_frame(cairo_t *cr)
 	cairo_stroke(cr);
 	cairo_reset_clip(cr);
 	update_drawing(cr);
-//	return cairo_image_surface_get_data(surface);
 }
 
-void update_frame_SF()
+unsigned char* update_frame_SF()
 {
 	update_frame(SF_canvas);
+	return cairo_image_surface_get_data(surface);
 }
 
 
-static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data)
-{
-//	printf("Equal to surface %d \n", cairo_surface_get_type(cairo_get_target(cr)) == CAIRO_SURFACE_TYPE_QUARTZ);
-	if(! Initialized_Graphics)
-	{
-	  set_initial_vals(cr);
-
-		Initialized_Graphics = 1; // at zero to redraw with initialization on every update
-	}
-	Initialize_Graphics(cr);
-	cairo_rectangle(cr, -Xmargin, 0, WINDOW_WIDTH,WINDOW_HEIGHT); // Cheap fix
-	cairo_set_source_rgb(cr, 0, 0, 0);
-	cairo_fill(cr);
-	Draw_Frame(cr);
-	update_frame(cr);
-	return FALSE; // Not sure why this should return false
-}
-
-void animation_loop(GtkWidget *darea)
-{
-  int i;
-	for(i = 0; i < 3420; i++)
-	{
-		gtk_widget_queue_draw(darea);
-		while(gtk_events_pending())
-		{
-    	gtk_main_iteration_do(TRUE);
-		}
-		usleep(1000*30); // 500 miliseconds, usleep() is in microseconds
-	}
-}
+//static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data)
+//{
+////	printf("Equal to surface %d \n", cairo_surface_get_type(cairo_get_target(cr)) == CAIRO_SURFACE_TYPE_QUARTZ);
+//	if(! Initialized_Graphics)
+//	{
+//	  set_initial_vals(cr);
+//
+//		Initialized_Graphics = 1; // at zero to redraw with initialization on every update
+//	}
+//	Initialize_Graphics(cr);
+//	cairo_rectangle(cr, -Xmargin, 0, WINDOW_WIDTH,WINDOW_HEIGHT); // Cheap fix
+//	cairo_set_source_rgb(cr, 0, 0, 0);
+//	cairo_fill(cr);
+//	Draw_Frame(cr);
+//	update_frame(cr);
+//	return FALSE; // Not sure why this should return false
+//}
+//
+//void animation_loop(GtkWidget *darea)
+//{
+//  int i;
+//	for(i = 0; i < 3420; i++)
+//	{
+//		gtk_widget_queue_draw(darea);
+//		while(gtk_events_pending())
+//		{
+//    	gtk_main_iteration_do(TRUE);
+//		}
+//		usleep(1000*30); // 500 miliseconds, usleep() is in microseconds
+//	}
+//}
 
 //void quit_sf()
 //{
@@ -871,35 +871,35 @@ void animation_loop(GtkWidget *darea)
 //	exit(0);
 //}
 
-int main(int argc, char *argv[])
-{
-
-	Initialized_Graphics = 0;
-
-	// Basic GTK initialization
- 	GtkWidget *window;
-  GtkWidget *darea;
-
-  gtk_init(&argc, &argv);
-  window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-
-  darea = gtk_drawing_area_new();
-  gtk_container_add(GTK_CONTAINER(window), darea);
-
-  g_signal_connect(G_OBJECT(darea), "draw", G_CALLBACK(on_draw_event), NULL);
-  g_signal_connect(window, "destroy", G_CALLBACK(exit), NULL);
-
-  gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
-  gtk_window_set_default_size(GTK_WINDOW(window), WINDOW_WIDTH, WINDOW_HEIGHT);
-  gtk_window_set_title(GTK_WINDOW(window), "Space Fortress");
-//	gtk_print_context_get_cairo_context();
-
-  gtk_widget_show_all(window);
-	animation_loop(darea);
-
+//int main(int argc, char *argv[])
+//{
+//	Initialized_Graphics = 0;
+//
+//// Basic GTK initialization
+// 	GtkWidget *window;
+//  GtkWidget *darea;
+//
+//  gtk_init(&argc, &argv);
+//  window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+//
+//  darea = gtk_drawing_area_new();
+//  gtk_container_add(GTK_CONTAINER(window), darea);
+//
+//  g_signal_connect(G_OBJECT(darea), "draw", G_CALLBACK(on_draw_event), NULL);
+//  g_signal_connect(window, "destroy", G_CALLBACK(exit), NULL);
+//
+//  gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
+//  gtk_window_set_default_size(GTK_WINDOW(window), WINDOW_WIDTH, WINDOW_HEIGHT);
+//  gtk_window_set_title(GTK_WINDOW(window), "Space Fortress");
+////	gtk_print_context_get_cairo_context();
+//
+//  gtk_widget_show_all(window);
+//	animation_loop(darea);
+//
 //  gtk_main();
-
+//
 //	stop_drawing(); // GTK handles this I guess
-
-  return 0;
-}
+//
+//  return 0;
+//}
+#endif

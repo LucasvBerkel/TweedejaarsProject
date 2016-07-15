@@ -12,18 +12,14 @@
 #include <math.h>
 #include <cairo.h>
 
-//#include "myconst.h"
-//#include "myext.h"
+#include "myconst.h"
+#include "myext.h"
 
 // Addded
-#include "DE.h"
-//#include "HM.h"
-#ifndef DE_H
+#include "DE"
 #include "myvars.h"
-#endif
 
 //extern Get_Ship_Input(); // not used or something
-/* Uncomment (for HM.c)
 extern void Update_Ship_Dynamics();
 extern void Update_Ship_Display();
 extern void Move_Ship();
@@ -34,9 +30,8 @@ extern void Move_Mine();
 extern void Handle_Mine(cairo_t *cr);
 extern void Fire_Shell();
 extern void Handle_Shell(cairo_t *cr);
-extern void Handle_Fortress(); */
-
-// ------- Uncomment (RE) ------------ //
+extern void Handle_Fortress();
+// ------- Uncomment --------------- //
 //extern Update_Vulner();
 //extern Update_Velocity();
 //extern Update_Control();
@@ -52,12 +47,6 @@ int Wrap_Around_Flag=OFF;
 /* int Last_Missile_Hit=0;  to measure interval between two consecutive
 			    hits of the fortress */
 /*int Ship_Killings_Counter=0; */
-
-// Converts degrees to radians
-float deg2rad(int deg)
-{
-	return deg * (M_PI / 180.0);
-}
 
 // Okay to drop animation? 
 void Gen_Explosion(cairo_t *cr, int X_Pos,int Y_Pos,int Radius)
@@ -84,33 +73,23 @@ void Gen_Explosion(cairo_t *cr, int X_Pos,int Y_Pos,int Radius)
 // 			arc function is used to draw an arc with center (x,y) and stangle specifies starting 
 //			angle, endangle specifies the end angle and last parameter specifies the radius of the arc
 //			void cairo_arc (cairo_t *cr, double xc, double yc, double radius, double angle1, double angle2);
-			cairo_new_sub_path(cr);
-			cairo_arc(cr, X_Pos,Y_Pos, i, deg2rad(iarc), deg2rad(iarc+2));
-
+			cairo_arc(cr, X_Pos,Y_Pos,iarc,iarc+2,i);
 //	    arc(X_Pos,Y_Pos,iarc,iarc+2,i);
-		}
-		cairo_stroke(cr);
-
-//		cairo_stroke(cr);
+	   }
 		// -- DELAY HERE -- 
 //	Mydelay(250/i);/* 100/i*5 */ // I guess a delay only makes sense when drawing on a window
 //	sound(200+15*i);
 //	setcolor(YELLOW);
-		// This most surely does not do anything
 		if (j>0)
 		{
-			cairo_set_source_rgb(cr,1,1,52/255);
 	 		for(iarc=j/5;iarc<360+j/5;iarc=iarc+20)
 			{
-				cairo_new_sub_path(cr);
-				cairo_arc(cr,X_Pos,Y_Pos,j,deg2rad(iarc),deg2rad(iarc+2));
+//	     arc(X_Pos,Y_Pos,iarc,iarc+2,j);
+				cairo_arc(cr,X_Pos,Y_Pos,iarc,iarc+2,j);
 			}
-			cairo_stroke(cr);
-
+      j=i;  /* erase in de_fasage */
 		}
-    j=i;  /* erase in de_fasage */
-	}
-	cairo_stroke(cr);
+  }
 
 //  Last_Pitch=200+10*i;
 //  for (i=0;i<150;i++)  /* final audio effect */
@@ -191,7 +170,7 @@ void Reset_All_Missiles(cairo_t *cr)
 
   for (i=1;i<6;i++)
       if(Missile_Flag[i]==ALIVE)  Missile_Flag[i]=KILL;
-//  Handle_Missile(cr); // Uncomment
+  Handle_Missile(cr);
 }
 
 int Check_Collision(int First_X,int First_Y,int Second_X,
@@ -229,7 +208,7 @@ void Test_Collisions(cairo_t *cr)
 		  Handle_Missile_Flag=ON;
 		  Gen_Snap_Effect();
 		  Mine_Flag=KILL;
-//		  Handle_Mine(cr); // Uncomment when done
+		  Handle_Mine(cr);
 		  Mines=Mines+20;
 //		  Update_Mines(); // Uncomment when done
 		  Score=Mines+Speed;
@@ -261,11 +240,11 @@ void Test_Collisions(cairo_t *cr)
 	   {
 	     Points=Points-50;
 	     Mine_Flag=KILL;
-//	     Handle_Mine(cr); 		/* kill mine */ // Uncomment
+	     Handle_Mine(cr); 		/* kill mine */
 	     if(Shell_Flag==ALIVE)
 	       {
 		  Shell_Flag=KILL;      /* kill shell */
-//		  Handle_Shell(cr); 	// Uncomment when done
+		  Handle_Shell(cr);
 	       }
 	     Reset_All_Missiles(cr);    	/* kill all missiles */
 	     Gen_Snap_Effect();
@@ -294,11 +273,11 @@ void Test_Collisions(cairo_t *cr)
 	       {
 		 Points=Points-50;
 		 Shell_Flag=KILL;        /* kill shell */
-//		 Handle_Shell(cr); // Uncomment when done
+		 Handle_Shell(cr);
 		 if(Mine_Flag==ALIVE)    /* kill  mine  */
 		   {
 		     Mine_Flag=KILL;
-//		     Handle_Mine(cr); /* erase mine and reset counters */ // Uncomment
+		     Handle_Mine(cr); /* erase mine and reset counters */
 		   }
 		 Reset_All_Missiles(cr);
 		 Gen_Snap_Effect();
@@ -339,7 +318,7 @@ void Test_Collisions(cairo_t *cr)
 		 goodshot=OFF; /* redundant */
 		 Gen_Snap_Effect();
 		 Mine_Flag=KILL;
-//		 Handle_Mine(cr); // Uncomment
+		 Handle_Mine(cr);
 	       }
 	  } /* end missile vs. mine */
 
@@ -374,7 +353,7 @@ void Test_Collisions(cairo_t *cr)
 	      {
 		Points=Points+4; /* is this correct */
 		Vulner_Counter++;
-//		Update_Vulner(); // Uncomment 
+//		Update_Vulner(); 
 		Last_Missile_Hit=Loop_Counter;
 	      }
 	    else /* Vulner_Counter<11 */
@@ -397,7 +376,7 @@ void Test_Collisions(cairo_t *cr)
 	 } /* missile vs. fortress */
   } /* end for missile do-loop */
   } /* end else space fortress case */
-//  if(Handle_Missile_Flag) Handle_Missile(cr); /* KILL them all */ // Uncomment
+  if(Handle_Missile_Flag) Handle_Missile(cr); /* KILL them all */
 }
 
 void Accumulate_Data()
@@ -448,24 +427,7 @@ void Accumulate_Data()
 
 int main()
 {
-	start_drawing();
-	Ship_Y_Pos +=50;
-	Gen_Explosion(SF_canvas, Ship_X_Pos, Ship_Y_Pos, 80);
-	Draw_Ship(SF_canvas, Ship_X_Pos, Ship_Y_Pos, 90,SHIP_SIZE_FACTOR*MaxX);
-	double x1;
-	double y1;
-	double x2;
-	double y2;
-	cairo_path_extents(SF_canvas,&x1,&y1,&x2,&y2);
-	cairo_stroke(SF_canvas);
-
-	cairo_set_source_rgb(SF_canvas,1,0,0);
-	cairo_rectangle(SF_canvas, x1, y1, x2-x1, y2-y1);
-	cairo_stroke(SF_canvas);
-	cairo_surface_write_to_png(surface, "exp.png");
-	stop_drawing();
-//	start_drawing(); //	Gen_Explosion(SF_canvas, MaxX/2, MaxY/2, 120);
-//	stop_drawing();
+	printf("Hey tof !  \n");
 }
 
 

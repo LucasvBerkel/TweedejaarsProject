@@ -2,6 +2,7 @@
 #define MYEXT_H
 #include "myconst.h"
 #include "myenums.h"
+#include <cairo.h>
 
 
 // Joystick stuff
