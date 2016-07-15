@@ -212,6 +212,8 @@ int Freeze_Flag=0;
 //	   int Normal_Game_Termination;
 //	   }game;
 
+int Wrap_Around_Flag;
+
 char filename[MAX_DIR_PATH];
 //char select[MAX_DIR_PATH];
 char curdir[MAX_DIR_PATH];

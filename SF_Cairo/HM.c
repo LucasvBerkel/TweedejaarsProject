@@ -12,6 +12,10 @@
 
 #include "myconst.h"
 #include "myext.h"
+#include "myvars.h"
+
+// Added
+#include "DE.h"
 
 int Mine_Alive_Counter=0;
 int Mine_Dead_Counter=0;
@@ -148,7 +152,8 @@ void Fire_Shell(cairo_t *cr)
 
 void Handle_Fortress(cairo_t *cr)
 {
-  int dif,nh;
+//  int dif,nh;
+	int nh;
 
   if( (++Fort_Lock_Counter>FORT_LOCK_INTERVAL)&&(Shell_Flag==DEAD) )
     {
@@ -263,9 +268,9 @@ void Show_Mine_Type(cairo_t *cr, char Minetype)
 
 //  svcolor=getcolor();
   if((Mine_Type==FRIEND && Missile_Type==VS_FRIEND) || (Mine_Type==FOE && Missile_Type==VS_FOE)) {
-    set_source_rgb(cr, 0, 1, 0);
+    cairo_set_source_rgb(cr, 0, 1, 0);
   } else if(Missile_Type==WASTED) {
-    set_source_rgb(cr, 1, 0, 0);
+    cairo_set_source_rgb(cr, 1, 0, 0);
   } else {
 			cairo_set_source_rgb(cr, 1.0, 102.0/255.0, 102.0/255.0); // Light red
 //    setcolor(LIGHTRED);
@@ -275,7 +280,7 @@ void Show_Mine_Type(cairo_t *cr, char Minetype)
 //  setviewport( Xmargin, Panel_Y_Start, Xmargin+MaxX, Panel_Y_End, 1); // ?
   x=IFF_X; y=Data_Line;
 //  putimage(x,y,buffer1,COPY_PUT); /* erase garbage */
-	cairo_text_at(cr, x, y, "%c" Minetype); // Okay syntax?
+cairo_text_at(cr, x, y, &Minetype); // Okay syntax? // Originally was "%c" Minetype
 //  gprintf(&x,&y,"%c",Minetype);
 	cairo_translate(cr, 0, -Panel_Y_Start);
 //  setviewport( Xmargin, 0, Xmargin+MaxX, MaxY, 1);
@@ -291,9 +296,9 @@ void Reset_Mine_Headings()
    Mine_Y_Speed=-Mine_Speed*Fcos(Mine_Headings);
 }
 
-int rand_range(min, max)
+int randrange(min, max)
 {
-	r = (rand() % (max + 1 - min)) + min;
+	return (rand() % (max + 1 - min)) + min;
 }
 
 void Generate_Mine(cairo_t *cr)
@@ -303,8 +308,8 @@ void Generate_Mine(cairo_t *cr)
   {
 //    Mine_X_Pos=random(MaxX); // Maybe not available, what does it do? 
 //    Mine_Y_Pos=random(MaxY);
-		Mine_X_Pos=rand_range(0, MaxX);
-		Mine_Y_Pos=randge(0, MaxY);
+		Mine_X_Pos=randrange(0, MaxX);
+		Mine_Y_Pos=randrange(0, MaxY);
     a=sqrt(pow(Mine_X_Pos-Ship_X_Pos,2)+pow(Mine_Y_Pos-Ship_Y_Pos,2) );
   } while(a < 0.5*MaxX );  /* repeat until distance exceeds min. */
 
@@ -365,7 +370,7 @@ void Handle_Mine(cairo_t *cr)
 		   break;
 		}
   case ALIVE  : {
-		  Move_Mine();
+		  Move_Mine(cr);
 		  if(Mine_Alive_Counter++ >= Mine_Live_Loops)
 		  Mine_Flag=KILL;
 		  if(Mine_Alive_Counter>MISSILE_FORT_TIME_LIMIT)
@@ -384,13 +389,18 @@ void Generate_Aim_Mine(cairo_t *cr)
     float mine_angle;
 
     radius=MaxX/2.2;
-    mine_angle=random(16)*22.5;
-    if(mine_angle>338.0) mine_angle=0.0;
-    mine_distance=radius/2+random(2)*radius/2;
-
-    Mine_X_Pos=MaxX/2 + mine_distance*Fsin(mine_angle);
-       Mine_Y_Pos=MaxY/2 - mine_distance*Fcos(mine_angle);
-    else Mine_Y_Pos=MaxY/2 - mine_distance*Fcos(mine_angle)/GraphSqrFact;
+    mine_angle=randrange(0,16)*22.5;
+    mine_distance=radius/2+randrange(0,2)*radius/2;
+    if(mine_angle>338.0) 
+		{
+			mine_angle=0.0;
+    	Mine_X_Pos=MaxX/2 + mine_distance*Fsin(mine_angle);
+      Mine_Y_Pos=MaxY/2 - mine_distance*Fcos(mine_angle);
+		}
+    else 
+		{
+			Mine_Y_Pos=MaxY/2 - mine_distance*Fcos(mine_angle)/GraphSqrFact;
+		}
 		     /* Y/X square ratio */
 
     Draw_Mine(cr, Mine_X_Pos,Mine_Y_Pos,MINE_SIZE_FACTOR*MaxX);
@@ -520,7 +530,7 @@ void Handle_Missile(cairo_t *cr)
       for(i=1;i<6;i++)
 	 if(Missile_Flag[i]==DEAD) break; /* from for-loop */
       Missile_Flag[i]=ALIVE;
-      Fire_Missile(i);
+      Fire_Missile(cr,i);
       if(Game_Type==SPACE_FORTRESS)
 			{
 	 	 		Missile_Stock--;
@@ -528,3 +538,42 @@ void Handle_Missile(cairo_t *cr)
 			}
    } while(OFF); /* to enable the break command */
 }
+
+
+
+int main()
+{
+	printf("Yo man! \n");
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
