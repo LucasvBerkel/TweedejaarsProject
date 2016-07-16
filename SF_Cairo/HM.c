@@ -249,11 +249,11 @@ void Handle_Speed_Score()
    if(Mine_Alive_Counter<=200) dts=-100;
 
   Speed=Speed+dts;
-//  Update_Speed();
+  Update_Speed(cr);
   if(Game_Type==AIMING_TEST)
     {
       Score=Mines+Speed;
-//      Update_Score();
+      Update_Score(cr);
     }
 }
 
@@ -578,7 +578,7 @@ void Handle_Missile(cairo_t *cr)
       if(Game_Type==SPACE_FORTRESS)
 			{
 	 	 		Missile_Stock--;
-//	  		Update_Shots(); // Uncomment
+	  		Update_Shots(cr);
 			}
    } while(OFF); /* to enable the break command */
 }

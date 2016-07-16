@@ -16,8 +16,10 @@
 #include "myconst.h"
 #include "myvars.h"
 
-#include DE.h
-#include HM.h
+#include "DE.h"
+#include "HM.h"
+
+// I don't think we do anything with this menu stuff
 extern char Friend_Menu[3][1];
 extern char Foe_Menu[3][1];
 extern char Mine_Indicator;
@@ -61,7 +63,6 @@ void Mydelay(unsigned Time)
 
     end=Time_Counter+Time;
     while(Time_Counter<end);
-
 }
 
 // Commented to prevent syntax error (feel free to uncomment)
@@ -261,7 +262,7 @@ void Set_Graphics_Eraser(cairo_t *cr)
 }
 
  I think this shows the user their score when the game is finished
-void Show_Score(int val, int x, int y) /* anywhere within data panel */
+void Show_Score(cairo_t *cr, int val, int x, int y) /* anywhere within data panel */
 {
 //    int svcolor;
 //    svcolor=getcolor();
@@ -291,45 +292,45 @@ void Show_Score(int val, int x, int y) /* anywhere within data panel */
 specifying a return type. I removed all of these return statements and modified the function 
 return type to void to surpress warnings. */ 
 // Magical 8's?
-void Update_Points()
+void Update_Points(cairo_t *cr)
 {
-    Show_Score(Points,Points_X-8,Data_Line);
+    Show_Score(cr, Points,Points_X-8,Data_Line);
 }
 
-void Update_Control()
+void Update_Control(cairo_t *cr)
 {
-    Show_Score(Control,Control_X-8,Data_Line);
+    Show_Score(cr, Control,Control_X-8,Data_Line);
 }
 
-void Update_Velocity()
+void Update_Velocity(cairo_t *cr)
 {
-    Show_Score(Velocity,Velocity_X,Data_Line);
+    Show_Score(cr, Velocity,Velocity_X,Data_Line);
 }
 
-void Update_Vulner()  /* for vulner only */
+void Update_Vulner(cairo_t *cr)  /* for vulner only */
 {
-    Show_Score(Vulner_Counter,Vulner_X,Data_Line);
+    Show_Score(cr, Vulner_Counter,Vulner_X,Data_Line);
 }
 
 /* IFF is missing here */
 
 void Update_Interval()
 {
-    Show_Score(Double_Press_Interval,Interval_X,Data_Line);
+    Show_Score(cr, Double_Press_Interval,Interval_X,Data_Line);
 }
 
 void Update_Speed()
 {
-    Show_Score(Speed,Speed_X-8,Data_Line);
+    Show_Score(cr, Speed,Speed_X-8,Data_Line);
 }
 
 void Update_Shots()
 {
-    Show_Score(Missile_Stock,Shots_X,Data_Line);
+    Show_Score(cr, Missile_Stock,Shots_X,Data_Line);
 }
 
 // What does this do?
-//void Clear_Interval()   /* clear double-press interval */
+void Clear_Interval()   /* clear double-press interval */
 //{
 //        int svcolor;
 //        int x,y;
@@ -341,7 +342,7 @@ void Update_Shots()
 //        putimage(x,y,buffer1,COPY_PUT); /* erase garbage */
 //        setviewport( Xmargin, 0, Xmargin+MaxX, MaxY, 1);   /* restore gaming area */
 //        setcolor(svcolor); /* restore previous color */
-//}
+}
 
 void Find_Interval()   /* display double-press interval */
 {
@@ -360,7 +361,7 @@ void Find_Interval()   /* display double-press interval */
     }
 }
 
-void Reset_Screen()
+void Reset_Screen(cairo_t *cr)
 {
     int i;
         /*  reset variables */
@@ -388,28 +389,28 @@ void Reset_Screen()
     Fort_Lock_Counter=0;
 
         /* reset screen */
-    Draw_Frame();
-    if(AspectRatio==1.0)
-    {
-        Draw_Hexagone(MaxX/2,MaxY/2,BIG_HEXAGONE_SIZE_FACTOR*MaxX);
-        Draw_Hexagone(MaxX/2,MaxY/2,SMALL_HEXAGONE_SIZE_FACTOR*MaxX);
-    }
-    else
-    {
-        Draw_Hexagone(MaxX/2,MaxY/2,BIG_HEXAGONE_SIZE_FACTOR*MaxX/GraphSqrFact);
-        Draw_Hexagone(MaxX/2,MaxY/2,SMALL_HEXAGONE_SIZE_FACTOR*MaxX/GraphSqrFact);
-    }
-    Draw_Fort(MaxX/2,MaxY/2,Fort_Headings,FORT_SIZE_FACTOR*MaxX);
-    Draw_Ship(Ship_X_Pos,Ship_Y_Pos,Ship_Headings,SHIP_SIZE_FACTOR*MaxX);
+    Draw_Frame(cr);
+//    if(AspectRatio==1.0)
+//    {
+//        Draw_Hexagone(cr, MaxX/2,MaxY/2,BIG_HEXAGONE_SIZE_FACTOR*MaxX);
+    Draw_Hexagone(cr, MaxX/2,MaxY/2,SMALL_HEXAGONE_SIZE_FACTOR*MaxX);
+//    }
+//    else
+//    {
+//        Draw_Hexagone(MaxX/2,MaxY/2,BIG_HEXAGONE_SIZE_FACTOR*MaxX/GraphSqrFact);
+//        Draw_Hexagone(MaxX/2,MaxY/2,SMALL_HEXAGONE_SIZE_FACTOR*MaxX/GraphSqrFact);
+//    }
+    Draw_Fort(cr, MaxX/2,MaxY/2,Fort_Headings,FORT_SIZE_FACTOR*MaxX);
+    Draw_Ship(cr, Ship_X_Pos,Ship_Y_Pos,Ship_Headings,SHIP_SIZE_FACTOR*MaxX);
 
             /* reset panel */
-    Update_Points();
-    Update_Vulner();
-    Update_Interval();
-    Update_Shots();
-    Update_Control();
-    Update_Velocity();
-    Update_Speed();
+    Update_Points(cr);
+    Update_Vulner(cr);
+    Update_Interval(cr);
+    Update_Shots(cr);
+    Update_Control(cr);
+    Update_Velocity(cr);
+    Update_Speed(cr);
 
 }  /* end reset screen */
 
@@ -447,9 +448,10 @@ void Init_Game()
     No_Of_Bonus_Windows=0;
     Missile_Stock=100;
 
-    Select_Mine_Menus();
+		// We don't do anything with menus? 
+//    Select_Mine_Menus();
     /*
-    clrscr();
+    clrscr(); // From graphics.h or something
     gotoxy(30,5);
     printf("SPACE  FORTRESS ");
     gotoxy(20,15);
@@ -462,7 +464,7 @@ void Init_Game()
     return(0);
 }
 
-void Display_Bonus_Char(char Bonus_Char)
+void Display_Bonus_Char(cairo_t *cr, char Bonus_Char)
 {
 //    int svcolor;
 //    int x,y;
@@ -476,7 +478,7 @@ void Display_Bonus_Char(char Bonus_Char)
 //    setcolor(svcolor); /* restore previous color */
 }
 
-void Set_Bonus_Chars()
+void Set_Bonus_Chars(cairo_t *cr)
 {
 //    int size,i,j;
 //    int x,y;
@@ -490,7 +492,7 @@ void Set_Bonus_Chars()
 // for (i=0;i<10;i++)
 //         {
 //        bc[i]=malloc(size);
-//        Display_Bonus_Char(Bonus_Char_Vector[i][0]);
+//        Display_Bonus_Char(cr, Bonus_Char_Vector[i][0]);
 //        getimage(x,y,x+16,y+16,bc[i]);
 //        putimage(x,y,bc[i],XOR_PUT);
 //         }
@@ -668,9 +670,9 @@ int Run_SF(cairo_t *cr)
         
         Loop_Counter=0;
         Set_Kbd_Rate(0x8); /* to slow repeat rate 15Hz */
-        Capture_Kbd(Get_Key); /* redirect KBD interrupts to  Get_Key() */
+//        Capture_Kbd(Get_Key); /* redirect KBD interrupts to  Get_Key() */ // Uncomment
         Time_Counter=0;
-        Capture_Tik(Get_Tik);
+//        Capture_Tik(Get_Tik);
         Set_Timer();
 
         do {   /* real time loop of one game */
@@ -683,18 +685,18 @@ int Run_SF(cairo_t *cr)
             while(Freeze_Flag) Get_User_Input();
             Move_Ship();
             Handle_Missile(cr);
-            if(Sound_Flag>1) Sound_Flag--;
-            if(Sound_Flag==1) {Sound_Flag--; nosound();}
-            Handle_Mine();
-            Test_Collisions();
-            Handle_Shell();
-            Handle_Fortress();
+//            if(Sound_Flag>1) Sound_Flag--;
+//            if(Sound_Flag==1) {Sound_Flag--; nosound();}
+            Handle_Mine(cr);
+            Test_Collisions(cr);
+            Handle_Shell(cr);
+            Handle_Fortress(cr);
             if(Display_Interval_Flag) {   /* of double press */
                 if(Mine_Type==FOE) Find_Interval();
                 Display_Interval_Flag=OFF;
             }
             Accumulate_Data();
-            Handle_Bonus();
+            Handle_Bonus(cr);
             if(!Effect_Flag) {
                 if((elapsed_time=Time_Counter-loop_start_time) < SF_DELAY)
                     Mydelay(SF_DELAY-elapsed_time);  /* wait up to 50 milliseconds */
@@ -743,7 +745,7 @@ int Run_SF(cairo_t *cr)
         }
 
         
-        clrscr();
+//        clrscr();  // From graphics.h or something
         /* end one game here */
     } while(!Restart_Flag && !End_Flag);
     //} while((Game_Counter< No_Of_Games)&&(!End_Flag));
@@ -795,15 +797,15 @@ void Announce_Session_End()
 
 void Update_Mines()
 {
-    Show_Score(Mines,Mines_X,Data_Line);
+    Show_Score(cr, Mines,Mines_X,Data_Line);
 }
 
 void Update_Score()
 {
-    Show_Score(Score,Score_X,Data_Line);
+    Show_Score(cr, Score,Score_X,Data_Line);
 }
 
-void Reset_Aim_Screen()
+void Reset_Aim_Screen(cairo_t *cr)
 {
     int i;
         /*  reset variables */
@@ -825,13 +827,13 @@ void Reset_Aim_Screen()
     Fort_Headings=270;
     Timing_Flag=OFF; /* if screen reset between consecutive presses */
         /* reset screen */
-    Draw_Frame();
-    Draw_Ship(Ship_X_Pos,Ship_Y_Pos,Ship_Headings,SHIP_SIZE_FACTOR*MaxX);
+    Draw_Frame(cr);
+    Draw_Ship(cr,Ship_X_Pos,Ship_Y_Pos,Ship_Headings,SHIP_SIZE_FACTOR*MaxX);
 
             /* reset panel */
-    Update_Mines();
-    Update_Speed();
-    Update_Score();
+    Update_Mines(cr);
+    Update_Speed(cr);
+    Update_Score(cr);
 }  /* end reset screen */
 
 void Init_Aim_Session()
@@ -839,7 +841,7 @@ void Init_Aim_Session()
     char a;
     int i;
 
-    clrscr();
+//    clrscr();  // From graphics.h or something
     gotoxy(30,5);
     printf("AIMING TASK TEST");
     gotoxy(1,8);
@@ -856,7 +858,7 @@ void Init_Aim_Session()
         else a=0;
     } while(a==0);
         }
-    clrscr();
+//    clrscr();  // From graphics.h or something
 
     Game_Type=AIMING_TEST;
     Mine_Live_Loops=200;
@@ -864,12 +866,12 @@ void Init_Aim_Session()
 }
 
 void Save_Aiming_Game() {
-    header.Number_Of_Planned_Games=No_Of_Games;
-    header.One_Game_Duration=One_Game_Duration;
-
-    Aiming_Game_Results.mines=Mines;
-    Aiming_Game_Results.speed=Speed;
-    Aiming_Game_Results.score=Score;
+//    header.Number_Of_Planned_Games=No_Of_Games;
+//    header.One_Game_Duration=One_Game_Duration;
+//
+//    Aiming_Game_Results.mines=Mines;
+//    Aiming_Game_Results.speed=Speed;
+//    Aiming_Game_Results.score=Score;
 
 }
 
@@ -890,9 +892,9 @@ void Run_Aiming()   /* 1- for training 0- for demo */
     Mines=0; Speed=0; Score=0;
     Reset_Aim_Screen();
     Loop_Counter=0;
-    Capture_Kbd(Get_Key); /* redirect KBD interrupts to  Get_Key() */
+//    Capture_Kbd(Get_Key); /* redirect KBD interrupts to  Get_Key() */ // Uncomment
     Time_Counter=0;
-    Capture_Tik(Get_Tik);
+//    Capture_Tik(Get_Tik);
     Set_Timer();
     do
         {
@@ -901,11 +903,11 @@ void Run_Aiming()   /* 1- for training 0- for demo */
          Get_User_Input();
             while(Freeze_Flag) Get_User_Input();
          Move_Ship();  /* rotation only */
-         Handle_Missile();
+         Handle_Missile(cr);
          if(Sound_Flag>1) Sound_Flag--;
          if(Sound_Flag==1) {Sound_Flag--; nosound();}
-         Handle_Aim_Mine();
-         Test_Collisions();
+         Handle_Aim_Mine(cr);
+         Test_Collisions(cr);
          if(!Effect_Flag)
              {
      if ( (elapsed_time=Time_Counter-loop_start_time) < SF_DELAY)

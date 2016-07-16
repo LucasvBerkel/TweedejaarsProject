@@ -43,26 +43,26 @@ void Show_Score(int val, int x, int y);
 specifying a return type. I removed all of these return statements and modified the function 
 return type to void to surpress warnings. */ 
 
-void Update_Points();
-void Update_Control();
-void Update_Velocity();
+void Update_Points(cairo_t *cr);
+void Update_Control(cairo_t *cr);
+void Update_Velocity(cairo_t *cr);
 
-void Update_Vulner();
-void Update_Interval();
-void Update_Speed();
-void Update_Shots();
+void Update_Vulner(cairo_t *cr);
+void Update_Interval(cairo_t *cr);
+void Update_Speed(cairo_t *cr);
+void Update_Shots(cairo_t *cr);
 
 void Clear_Interval();
 
 void Find_Interval();
-void Reset_Screen();
+void Reset_Screen(cairo_t *cr);
 
 void Init_Session();
 
-void Init_Game();
+void Init_Game(cairo_t *cr);
 
 void Display_Bonus_Char(char Bonus_Char);
-void Set_Bonus_Chars();
+void Set_Bonus_Chars(cairo_t *cr);
 
 void Xor_Bonus_Char(int n);
 void Set_Bonus_Message();
@@ -73,9 +73,9 @@ int Generate_Non_Bonus_Char();
 
 void Generate_Resource_Character();
 
-void Handle_Bonus();
+void Handle_Bonus(Handle_Bonus);
 
-int Run_SF();
+int Run_SF(cairo_t *cr);
 
 /*************************************************************************/
 
@@ -86,7 +86,7 @@ int Run_SF();
 void Announce_Game_End();
 
 void Announce_Session_End();
-void Update_Mines();
+void Update_Mines(cairo_t *cr);
 void Update_Score();
 
 void Reset_Aim_Screen();
@@ -94,3 +94,8 @@ void Reset_Aim_Screen();
 void Init_Aim_Session();
 
 void Run_Aiming();
+
+
+
+
+

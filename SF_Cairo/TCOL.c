@@ -12,6 +12,8 @@
 #include <math.h>
 #include <cairo.h>
 
+#include "TCOL.h"
+
 //#include "myconst.h"
 //#include "myext.h"
 
@@ -45,10 +47,12 @@ extern void Handle_Fortress(); */
 //extern Mydelay(unsigned Timedelay);
 // --------------------------------- // 
 
-char *Small_Expl_Buffer;
-int Data_Update_Counter=20;
-int Last_Center_Dist;
-int Wrap_Around_Flag=OFF;
+
+// Added in header
+//char *Small_Expl_Buffer;
+//int Data_Update_Counter=20;
+//int Last_Center_Dist;
+//int Wrap_Around_Flag=OFF;
 /* int Last_Missile_Hit=0;  to measure interval between two consecutive
 			    hits of the fortress */
 /*int Ship_Killings_Counter=0; */
@@ -244,10 +248,9 @@ void Test_Collisions(cairo_t *cr)
 		  Mine_Flag=KILL;
 		  Handle_Mine(cr);
 		  Mines=Mines+20;
-		  Update_Mines();
+		  Update_Mines(cr);
 		  Score=Mines+Speed;
-//		  Update_Score(); // Don't forget to uncomment, removed because it calls functions from
-//			TCOL.c that use old headers
+		  Update_Score(cr);
 	      } /* end missile vs. mine for aiming test */
        }
 
@@ -268,7 +271,7 @@ void Test_Collisions(cairo_t *cr)
 	     Points=Points-100;
 	     Gen_Explosion(cr, Ship_X_Pos,Ship_Y_Pos,80);
 	     Ship_Killings_Counter=0;
-//	     Reset_Screen(); // ------- UNCOMMENT -------------- // 
+	     Reset_Screen(cr);
 	   }
 	 else
 	   {
@@ -339,7 +342,7 @@ void Test_Collisions(cairo_t *cr)
 		 goodshot=ON;
 		 Points=Points+20;
 		 Vulner_Counter++;
-//		 Update_Vulner(); // --- UNCOMMENT --- // 
+		 Update_Vulner(cr);
 	       }
 	     else
 	     if((Missile_Type==VS_FOE)&&(Mine_Type==FOE))
@@ -378,7 +381,7 @@ void Test_Collisions(cairo_t *cr)
 					Bonus_Granted=OFF;
 		     }
 		Gen_Explosion(cr, Missile_X_Pos[i],Missile_Y_Pos[i],120);
-//		Reset_Screen(); // -- Uncomment!! 
+		Reset_Screen(cr); // -- Uncomment!! 
 		Handle_Missile_Flag=OFF;
 		Last_Missile_Hit=Loop_Counter;
 		break;  /* no more missiles checks */
@@ -387,7 +390,7 @@ void Test_Collisions(cairo_t *cr)
 	      {
 		Points=Points+4; /* is this correct */
 		Vulner_Counter++;
-//		Update_Vulner(); // Uncomment 
+		Update_Vulner(cr);
 		Last_Missile_Hit=Loop_Counter;
 	      }
 	    else /* Vulner_Counter<11 */
@@ -395,16 +398,16 @@ void Test_Collisions(cairo_t *cr)
 				if(Loop_Counter-Last_Missile_Hit>=6)
 				{
 				  Vulner_Counter++;
-				//	       Update_Vulner(); // --- UNCOMMENT --- //
+					Update_Vulner(cr);
 				  Points=Points+4;
 				  Last_Missile_Hit=Loop_Counter;
 				}
 				else /* double strike before it's OK */
 				{
 				  Vulner_Counter=0; /* for speeeding, ha ha ha .... */
-				//	       Update_Vulner(); // --- UNCOMMENT --- //
+					Update_Vulner(cr);
 				  Last_Missile_Hit=Loop_Counter;
-				  Zero_Vulner_Sound();
+//				  Zero_Vulner_Sound();
 				}
 			}
 	 } /* missile vs. fortress */
@@ -413,7 +416,7 @@ void Test_Collisions(cairo_t *cr)
   if(Handle_Missile_Flag) Handle_Missile(cr); /* KILL them all */
 }
 
-void Accumulate_Data()
+void Accumulate_Data(cairo_t *cr)
 {
   float shipvel;
   int shipcenterdist;
@@ -424,11 +427,11 @@ void Accumulate_Data()
 
 	/* update Velocity */
      shipvel=sqrt(pow(Ship_X_Speed,2)+pow(Ship_Y_Speed,2));
-     if(shipvel<SHIP_GOOD_VELOCITY)
-       {
-	 Velocity=Velocity+7;
-//	 Update_Velocity(); // --- UNCOMMENT --- // 
-       }
+		if(shipvel<SHIP_GOOD_VELOCITY)
+		{
+ 			Velocity=Velocity+7;
+			Update_Velocity(cr); // --- UNCOMMENT --- // 
+		}
 
 	/* update Control */
 
@@ -451,36 +454,34 @@ void Accumulate_Data()
 	 Control=Control-35;
 	 Wrap_Around_Flag=OFF;
        }
-/*		// --- UNCOMMENT --- //
-//     Update_Control();
-//     Update_Points();
-													*/
+     Update_Control(cr);
+     Update_Points(cr);
 
    } /* if data-update-counter */
 }
-
-int main()
-{
-	start_drawing();
-	Ship_Y_Pos +=50;
-	Gen_Explosion(SF_canvas, Ship_X_Pos, Ship_Y_Pos, 80);
-	Draw_Ship(SF_canvas, Ship_X_Pos, Ship_Y_Pos, 90,SHIP_SIZE_FACTOR*MaxX);
-	double x1;
-	double y1;
-	double x2;
-	double y2;
-	cairo_path_extents(SF_canvas,&x1,&y1,&x2,&y2);
-	cairo_stroke(SF_canvas);
-
-	cairo_set_source_rgb(SF_canvas,1,0,0);
-	cairo_rectangle(SF_canvas, x1, y1, x2-x1, y2-y1);
-	cairo_stroke(SF_canvas);
-	cairo_surface_write_to_png(surface, "exp.png");
-	stop_drawing();
-//	start_drawing(); //	Gen_Explosion(SF_canvas, MaxX/2, MaxY/2, 120);
+//
+//int main()
+//{
+//	start_drawing();
+//	Ship_Y_Pos +=50;
+//	Gen_Explosion(SF_canvas, Ship_X_Pos, Ship_Y_Pos, 80);
+//	Draw_Ship(SF_canvas, Ship_X_Pos, Ship_Y_Pos, 90,SHIP_SIZE_FACTOR*MaxX);
+//	double x1;
+//	double y1;
+//	double x2;
+//	double y2;
+//	cairo_path_extents(SF_canvas,&x1,&y1,&x2,&y2);
+//	cairo_stroke(SF_canvas);
+//
+//	cairo_set_source_rgb(SF_canvas,1,0,0);
+//	cairo_rectangle(SF_canvas, x1, y1, x2-x1, y2-y1);
+//	cairo_stroke(SF_canvas);
+//	cairo_surface_write_to_png(surface, "exp.png");
 //	stop_drawing();
-}
-
+////	start_drawing(); ////	Gen_Explosion(SF_canvas, MaxX/2, MaxY/2, 120);
+////	stop_drawing();
+//}
+//
 
 
 
