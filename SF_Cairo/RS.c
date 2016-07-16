@@ -1,4 +1,5 @@
-
+// OS X compilation:
+/* gcc -Wall -g  myvars.c TCOL.c DE.c HM.c RS.c -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo -o RS -Wno-dangling-else -Wno-switch; */
 
 /* test graphics 21.2.90 18:00
             definitions */
@@ -13,11 +14,13 @@
 #include <time.h>
 #include <math.h>
 
-#include "myconst.h"
-#include "myvars.h"
+//#include "myconst.h"
+//#include "myvars.h"
 
 #include "DE.h"
 #include "HM.h"
+#include "TCOL.h"
+#include "RS.h"
 
 // I don't think we do anything with this menu stuff
 extern char Friend_Menu[3][1];
@@ -40,7 +43,7 @@ extern mine_type Mine_Type;
 //extern int Find_Headings(int x1,int y1,int x2,int y2);
 //extern Update_Ship_Dynamics();
 //extern Update_Ship_Display();
-//extern Move_Ship();
+//extern Move_Ship(cr);
 //extern Fire_Shell();
 //extern Handle_Fortress();
 //extern Test_Collisions();
@@ -75,7 +78,7 @@ void Mydelay(unsigned Time)
     /****** capture system clock tiks via indicated routine **********/
 // Commented to prevent syntax error
 //void Capture_Tik(void interrupt far (*func) () )
-{
+//{
 //    /* save old interrupt */
 //    oldtik=getvect(8);
 //    /* install our new interrupt handler */
@@ -143,6 +146,7 @@ int keyboard (void)
 //             case 77 /*RIGHT*/ : return(RIGHT);
 //             default           : return(EXTENDED_CRAP);/* all rest irrelevant */
 //    }
+	return 0; // Make the compiler happy
 }
 
 // Commented to prevent syntax error
@@ -162,7 +166,7 @@ int keyboard (void)
 //            if((Key==F3)&&(Lastkey!=F3)&&(!(Timing_Flag))) { /* first F3 keypress */
 //                t1=Time_Counter;
 //                Timing_Flag=ON;
-//                Check_Mine_Flag=ON; /* is used by Get_User_Input() */
+//                Check_Mine_Flag=ON; /* is used by Get_User_Input(cr) */
 //            }
 //
 //            if((Key==F3)&&(Lastkey==F3)&&(Timing_Flag)) {   /* second F3 keypress */
@@ -196,7 +200,32 @@ void Restore_Kbd()
 //    enable();
 }
 
-void Get_User_Input()
+void Check_Bonus_Input(cairo_t *cr) {
+//    if((Bonus_Display_Flag==NOT_PRESENT)||(Bonus_Display_Flag==NON_BONUS)) {
+//    } else if(Bonus_Display_Flag==FIRST_BONUS) {
+//        Bonus_Wasted_Flag=ON;
+//    } else if(Bonus_Display_Flag==SECOND_BONUS) {
+//        if(!Bonus_Wasted_Flag) {
+//            if(Key==F1) {
+//                No_Of_Points_Bonus_Taken++;
+//                Points=Points+100;
+//                Update_Points(cr);
+//            } else {
+//                No_Of_Missiles_Bonus_Taken++;
+//                Missile_Stock=Missile_Stock+50;
+//                if(Missile_Stock>=100) Missile_Stock=100;
+//                Update_Shots(cr);
+//            }
+//        Bonus_Display_Flag=NOT_PRESENT;
+//        Bonus_Granted=ON;
+//        Xor_Bonus_Char(rn);    /* erase present $ char */
+//        Write_Bonus_Message(cr); /*  Announce_Bonus  */
+//        }
+//    }
+}
+
+
+void Get_User_Input(cairo_t *cr)
 {
     if (New_Input_Flag) /* new input occured */
     {
@@ -205,8 +234,8 @@ void Get_User_Input()
         if (Key==LEFT)  Rotate_Input=-1;      /*   LEFT  */
         if (Key==RIGHT) Rotate_Input=1;       /*   RIGHT */
         if (Key==DOWN)  New_Missile_Flag=ON;  /*   DOWN  */
-        if (Key==F1)    Check_Bonus_Input();        /*   P(oints) */
-        if (Key==F2)    Check_Bonus_Input();        /*   M(issiles) */
+        if (Key==F1)    Check_Bonus_Input(cr);        /*   P(oints) */
+        if (Key==F2)    Check_Bonus_Input(cr);        /*   M(issiles) */
 /*    if (Key==F3)    is handled by kbd interrupt handler */
         if (Key==ENTER) Freeze_Flag=Freeze_Flag^1; /* toggle freeze flag */
         if (Key==ESC)   End_Flag=ON;
@@ -222,7 +251,7 @@ void Get_User_Input()
 
 
 char Keyboard1() /* handles escape key press only */
-//{
+{
 //    union u_type{int a; char b[3];} keystroke;
 //    char inkey=0;
 //
@@ -230,7 +259,7 @@ char Keyboard1() /* handles escape key press only */
 //    keystroke.a=bioskey(0); /* fetch ascii code */
 //    inkey=keystroke.b[0];   /* ..and load code into variable */
 //    return(inkey);
-
+	return 0;  // Make the compiler happy
 }
 
 //int gprintf( int *xloc, int *yloc, char *fmt, ... )
@@ -247,6 +276,7 @@ char Keyboard1() /* handles escape key press only */
 //}
 
 // Not sure what this does
+// I've assumed that this erases the text in the panel but idk why anymore
 void Set_Graphics_Eraser(cairo_t *cr)
 {
 
@@ -254,14 +284,14 @@ void Set_Graphics_Eraser(cairo_t *cr)
 //  buffer1=malloc(size);
 //  getimage(100,100,140,109,buffer1);
 
-	cairo_save(cr);
-	cairo_set_source_rgb(cr, 0, 0, 0);
-	cairo_rectangle(cr, 0, 0, TEXT_WIDTH, TEXT_HEIGHT);
-	cairo_fill();
-	cairo_restore(cr);
+//	cairo_save(cr);
+//	cairo_set_source_rgb(cr, 0, 0, 0);
+//	cairo_rectangle(cr, 0, 0, TEXT_WIDTH, TEXT_HEIGHT);
+//	cairo_fill(cr);
+//	cairo_restore(cr);
 }
 
- I think this shows the user their score when the game is finished
+//I think this shows the user their score when the game is finished
 void Show_Score(cairo_t *cr, int val, int x, int y) /* anywhere within data panel */
 {
 //    int svcolor;
@@ -270,20 +300,20 @@ void Show_Score(cairo_t *cr, int val, int x, int y) /* anywhere within data pane
 
 
     cairo_set_source_rgb(cr, SF_YELLOW);
-    cairo_translate(0, Panel_Y_Start);
+    cairo_translate(cr, 0, Panel_Y_Start);
     /* data panel in screen global coordinates */
 
 //    putimage(x,y,buffer1,COPY_PUT); /* erase garbage */
 		// MaxX/8 is equal to 'xdif', the width of each score rectangle
-		cairo_rectangle(0,x, Y_Panel,  x + MaxX/8); // Not sure if this call is correct (Y_Panel?)
-		cairo_clip_path_rect(cr);
+		cairo_rectangle(cr,0,x,Panel_Y_Start,x+MaxX/8); // Not sure if this call is okay (Y_Panel?)
+		clip_path_rect(cr);
 		cairo_fill(cr);
 
 		sprintf(val_str, "%d", val);
-    cairo_text_at(x,y,val_str);
+    cairo_text_at(cr, x,y,val_str);
 		cairo_reset_clip(cr);
 //    setviewport( Xmargin, 0, Xmargin+MaxX, MaxY, 1);   /* restore gaming area */
-		cairo_translate(0, -Panel_Y_Start);
+		cairo_translate(cr, 0 , -Panel_Y_Start);
 
 //    setcolor(svcolor); /* restore previous color */
 }
@@ -314,24 +344,24 @@ void Update_Vulner(cairo_t *cr)  /* for vulner only */
 
 /* IFF is missing here */
 
-void Update_Interval()
+void Update_Interval(cairo_t *cr)
 {
     Show_Score(cr, Double_Press_Interval,Interval_X,Data_Line);
 }
 
-void Update_Speed()
+void Update_Speed(cairo_t *cr)
 {
     Show_Score(cr, Speed,Speed_X-8,Data_Line);
 }
 
-void Update_Shots()
+void Update_Shots(cairo_t *cr)
 {
     Show_Score(cr, Missile_Stock,Shots_X,Data_Line);
 }
 
 // What does this do?
 void Clear_Interval()   /* clear double-press interval */
-//{
+{
 //        int svcolor;
 //        int x,y;
 //
@@ -344,10 +374,10 @@ void Clear_Interval()   /* clear double-press interval */
 //        setcolor(svcolor); /* restore previous color */
 }
 
-void Find_Interval()   /* display double-press interval */
+void Find_Interval(cairo_t *cr)   /* display double-press interval */
 {
-    int svcolor;
-    int x,y;
+//    int svcolor;
+//    int x,y; // Unused
     int interval;
 
     interval=Double_Press_Interval=t2-t1; /* in milliseconds */
@@ -357,7 +387,7 @@ void Find_Interval()   /* display double-press interval */
              &&(Mine_Flag==ALIVE)&&(Mine_Type==FOE))
     Missile_Type=VS_FOE;   /* rearm missile */
         Show_Mine_Type(cr, Mine_Indicator);
-        Update_Interval();
+        Update_Interval(cr);
     }
 }
 
@@ -384,11 +414,11 @@ void Reset_Screen(cairo_t *cr)
     Timing_Flag=OFF; /* if screen reset between consecutive presses */
     Resource_Flag=OFF;
     Resource_Off_Counter=0;
-    Bonus_Display_Flag=NOT_PRESENT;   /* in case bonus is pressed after
+    Bonus_Display_Flag=NOT_PRESENT;   /* in case bonus is pressed after */
     Bonus_Granted=OFF;
     Fort_Lock_Counter=0;
 
-        /* reset screen */
+    /* reset screen */
     Draw_Frame(cr);
 //    if(AspectRatio==1.0)
 //    {
@@ -423,8 +453,6 @@ void Init_Session() {
 
 void Init_Game()
 {
-    int i;
-
     Score=0;
     Points=0;
     Velocity=0;
@@ -457,11 +485,10 @@ void Init_Game()
     gotoxy(20,15);
     Select_Mine_Menus();
     printf("Your foe mines are:");
-    for(i=0;i<3;i++) printf("    %c",Foe_Menu[i][0]);
+    for(int i=0;i<3;i++) printf("    %c",Foe_Menu[i][0]);
     gotoxy(1,24);
     printf("Type any  key to continue ..\n");
     getch();*/
-    return(0);
 }
 
 void Display_Bonus_Char(cairo_t *cr, char Bonus_Char)
@@ -501,7 +528,7 @@ void Set_Bonus_Chars(cairo_t *cr)
 // What does this even do in the game [3]
 void Xor_Bonus_Char(int n)   /* write and erase bonus character */
 {
-    int x,y;
+//    int x,y;
 
     /* get right location */
 //    x=MaxX/2 - 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
@@ -542,37 +569,15 @@ void Write_Bonus_Message()
 // putimage(x,y,buffer2,XOR_PUT);
 }
 
-void Check_Bonus_Input() {
-//    if((Bonus_Display_Flag==NOT_PRESENT)||(Bonus_Display_Flag==NON_BONUS)) {
-//    } else if(Bonus_Display_Flag==FIRST_BONUS) {
-//        Bonus_Wasted_Flag=ON;
-//    } else if(Bonus_Display_Flag==SECOND_BONUS) {
-//        if(!Bonus_Wasted_Flag) {
-//            if(Key==F1) {
-//                No_Of_Points_Bonus_Taken++;
-//                Points=Points+100;
-//                Update_Points();
-//            } else {
-//                No_Of_Missiles_Bonus_Taken++;
-//                Missile_Stock=Missile_Stock+50;
-//                if(Missile_Stock>=100) Missile_Stock=100;
-//                Update_Shots();
-//            }
-//        Bonus_Display_Flag=NOT_PRESENT;
-//        Bonus_Granted=ON;
-//        Xor_Bonus_Char(rn);    /* erase present $ char */
-//        Write_Bonus_Message(); /*  Announce_Bonus  */
-//        }
-//    }
-}
 
 int Generate_Non_Bonus_Char()
 {
 //     int rn;
 //
-//     do { rn=random(10); }
+//     do { rn=randrange(0,10); }
 //     while(rn==Bonus_Indication_Index);
 //     return(rn);
+	return 0; // Make the compiler happy
 }
 
 void Generate_Resource_Character()
@@ -583,7 +588,7 @@ void Generate_Resource_Character()
     if((lastchar==NON_BONUS)&&
          (No_Of_Bonus_Windows<MAX_BONUS_WINDOWS))
 
-             if(random(10)<7) /* display first bonus */
+             if(randrange(0,10)<7) /* display first bonus */
      {
          No_Of_Bonus_Windows++;
          rn=Bonus_Indication_Index;
@@ -665,8 +670,8 @@ int Run_SF(cairo_t *cr)
     do {   /* loop on number of games here */
         Init_Game();
         Open_Graphics();
-        Initialize_Graphics();
-        Reset_Screen();
+        Initialize_Graphics(cr); // Probably not needed (or depends on GTK/versus array render)
+        Reset_Screen(cr);
         
         Loop_Counter=0;
         Set_Kbd_Rate(0x8); /* to slow repeat rate 15Hz */
@@ -681,9 +686,9 @@ int Run_SF(cairo_t *cr)
 						// and then draw all in need of an update
             loop_start_time=Time_Counter;
             Loop_Counter++;
-            Get_User_Input();
-            while(Freeze_Flag) Get_User_Input();
-            Move_Ship();
+            Get_User_Input(cr);
+            while(Freeze_Flag) Get_User_Input(cr);
+            Move_Ship(cr);
             Handle_Missile(cr);
 //            if(Sound_Flag>1) Sound_Flag--;
 //            if(Sound_Flag==1) {Sound_Flag--; nosound();}
@@ -692,11 +697,11 @@ int Run_SF(cairo_t *cr)
             Handle_Shell(cr);
             Handle_Fortress(cr);
             if(Display_Interval_Flag) {   /* of double press */
-                if(Mine_Type==FOE) Find_Interval();
+                if(Mine_Type==FOE) Find_Interval(cr);
                 Display_Interval_Flag=OFF;
             }
-            Accumulate_Data();
-            Handle_Bonus(cr);
+            Accumulate_Data(cr);
+            Handle_Bonus();
             if(!Effect_Flag) {
                 if((elapsed_time=Time_Counter-loop_start_time) < SF_DELAY)
                     Mydelay(SF_DELAY-elapsed_time);  /* wait up to 50 milliseconds */
@@ -724,18 +729,20 @@ int Run_SF(cairo_t *cr)
         Restore_Kbd();
         Set_Kbd_Rate(0x4); /* to repeat rate 20Hz */
 
-        nosound();   /* just in case */
-        sound(400);
-        delay(500);
-        nosound();
+//        nosound();   /* just in case */
+//        sound(400);
+//        delay(500);
+//        nosound();
         Game_Counter++;
         
         // final_display();
-        Close_Graphics();
+        Close_Graphics(cr);
+				// Pretty sure we can skip this
         printf("Episode %d score: %d\n", Game_Counter, Score);
         if(!Restart_Flag && !End_Flag) {
             while(1) {
-                char ex = getch();
+								char ex = 0;
+//                char ex = getch(); // getch reads one keyboard input char from the user
                 if(ex==9) {
                     break;
                 } else if(ex==27) {
@@ -750,10 +757,10 @@ int Run_SF(cairo_t *cr)
     } while(!Restart_Flag && !End_Flag);
     //} while((Game_Counter< No_Of_Games)&&(!End_Flag));
 
-    nosound();   /* just in case */
-    sound(400);
-    delay(1000);
-    nosound();
+//    nosound();   /* just in case */
+//    sound(400);
+//    delay(1000);
+//    nosound();
     if(Restart_Flag) {
         return(1);
     }
@@ -766,18 +773,19 @@ int Run_SF(cairo_t *cr)
 
 /**************************************************************************/
 
+// Not needed
 void Announce_Game_End()
 {
-    int svcolor;
-    int x,y;
-
-    svcolor=getcolor();
-    setcolor(TEXT_COLOR);
-    x=0.35*MaxX; y=0.7*MaxY;
-    gprintf(&x,&y,"GAME IS OVER !");
-    x=0.25*MaxX; y=0.8*MaxY;
-    gprintf(&x,&y,"<press any key to continue>");
-    setcolor(svcolor); /* restore previous color */
+//    int svcolor;
+//    int x,y;
+//
+//    svcolor=getcolor();
+//    setcolor(TEXT_COLOR);
+//    x=0.35*MaxX; y=0.7*MaxY;
+//    gprintf(&x,&y,"GAME IS OVER !");
+//    x=0.25*MaxX; y=0.8*MaxY;
+//    gprintf(&x,&y,"<press any key to continue>");
+//    setcolor(svcolor); /* restore previous color */
 }
 
 // Skip this?
@@ -795,12 +803,12 @@ void Announce_Session_End()
 //    setcolor(svcolor); /* restore previous color */
 }
 
-void Update_Mines()
+void Update_Mines(cairo_t *cr)
 {
     Show_Score(cr, Mines,Mines_X,Data_Line);
 }
 
-void Update_Score()
+void Update_Score(cairo_t *cr)
 {
     Show_Score(cr, Score,Score_X,Data_Line);
 }
@@ -829,6 +837,7 @@ void Reset_Aim_Screen(cairo_t *cr)
         /* reset screen */
     Draw_Frame(cr);
     Draw_Ship(cr,Ship_X_Pos,Ship_Y_Pos,Ship_Headings,SHIP_SIZE_FACTOR*MaxX);
+		stroke_in_clip(cr);
 
             /* reset panel */
     Update_Mines(cr);
@@ -838,27 +847,27 @@ void Reset_Aim_Screen(cairo_t *cr)
 
 void Init_Aim_Session()
 {
-    char a;
-    int i;
-
-//    clrscr();  // From graphics.h or something
-    gotoxy(30,5);
-    printf("AIMING TASK TEST");
-    gotoxy(1,8);
-    printf("The default # of games is 3, would you like to change it? (Y/N):");
-    a=Keyboard1();
-    if((a==121)||(a==89))  /* y=121 and Y=89 */
-        {
-         printf("\n\nPlease type new number of games (1-9):");
-         do { a=Keyboard1();
-        if((a>=49)&&(a<=57)) { No_Of_Games=a-48;
-                 printf(" %d\n",No_Of_Games);
-                 delay(500);
-                         }
-        else a=0;
-    } while(a==0);
-        }
-//    clrscr();  // From graphics.h or something
+//    char a;
+//    int i;
+//
+////    clrscr();  // From graphics.h or something
+//    gotoxy(30,5);
+//    printf("AIMING TASK TEST");
+//    gotoxy(1,8);
+//    printf("The default # of games is 3, would you like to change it? (Y/N):");
+//    a=Keyboard1();
+//    if((a==121)||(a==89))  /* y=121 and Y=89 */
+//        {
+//         printf("\n\nPlease type new number of games (1-9):");
+//         do { a=Keyboard1();
+//        if((a>=49)&&(a<=57)) { No_Of_Games=a-48;
+//                 printf(" %d\n",No_Of_Games);
+//                 delay(500);
+//                         }
+//        else a=0;
+//    } while(a==0);
+//        }
+////    clrscr();  // From graphics.h or something
 
     Game_Type=AIMING_TEST;
     Mine_Live_Loops=200;
@@ -875,22 +884,22 @@ void Save_Aiming_Game() {
 
 }
 
-void Run_Aiming()   /* 1- for training 0- for demo */
+void Run_Aiming(cairo_t *cr)   /* 1- for training 0- for demo */
 {
     unsigned elapsed_time;
     unsigned long loop_start_time;
 
     Init_Aim_Session();
     Open_Graphics();
-    Initialize_Graphics();
-    Set_Graphics_Eraser();
+    Initialize_Graphics(cr);
+    Set_Graphics_Eraser(cr);
     Game_Counter=0; /* no of games played */
     Set_Kbd_Rate(0x8); /* to slow repeat rate .. */
     do
     {
     Game_Counter++;
     Mines=0; Speed=0; Score=0;
-    Reset_Aim_Screen();
+    Reset_Aim_Screen(cr);
     Loop_Counter=0;
 //    Capture_Kbd(Get_Key); /* redirect KBD interrupts to  Get_Key() */ // Uncomment
     Time_Counter=0;
@@ -900,12 +909,12 @@ void Run_Aiming()   /* 1- for training 0- for demo */
         {
          loop_start_time=Time_Counter;
          Loop_Counter++;
-         Get_User_Input();
-            while(Freeze_Flag) Get_User_Input();
-         Move_Ship();  /* rotation only */
+         Get_User_Input(cr);
+            while(Freeze_Flag) Get_User_Input(cr);
+         Move_Ship(cr);  /* rotation only */
          Handle_Missile(cr);
-         if(Sound_Flag>1) Sound_Flag--;
-         if(Sound_Flag==1) {Sound_Flag--; nosound();}
+//         if(Sound_Flag>1) Sound_Flag--;
+//         if(Sound_Flag==1) {Sound_Flag--; nosound();}
          Handle_Aim_Mine(cr);
          Test_Collisions(cr);
          if(!Effect_Flag)
@@ -923,21 +932,31 @@ void Run_Aiming()   /* 1- for training 0- for demo */
     Set_Kbd_Rate(0x4); /* to repeat rate 20Hz */
     if((!End_Flag)&&(Game_Counter<No_Of_Games))
                      { Announce_Game_End();
-                         nosound();   /* just in case */
-                         sound(600);
-                         delay(1000);
-                         nosound();
+//                         nosound();   /* just in case */
+//                         sound(600);
+//                         delay(1000);
+//                         nosound();
                          while(keyboard()); /* clear keyboard */
-                         getch();
+//                         getch();
                      }
-    Set_Kbd_Rate(0x4); /* to slow repeat rate 15Hz */
+//    Set_Kbd_Rate(0x4); /* to slow repeat rate 15Hz */
     Save_Aiming_Game();
     } while((Game_Counter<No_Of_Games)&&(!End_Flag)); /* ESC or all games played */
-    nosound();   /* just in case */
-    sound(400);
-    delay(1000);
-    nosound();
+//    nosound();   /* just in case */
+//    sound(400);
+//    delay(1000);
+//    nosound();
     Announce_Session_End();
-    getch();  /* show results */
-    Close_Graphics();
+//    getch();  /* show results */
+    Close_Graphics(cr);
 }
+
+
+int main()
+{
+	printf("Yo man! \n");
+}
+
+
+
+

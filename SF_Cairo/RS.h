@@ -1,3 +1,12 @@
+// To try: define stuff in every file individually with guards (myvars is not needed in DE)
+#ifndef GLOBALS 
+#define GLOBALS
+#include "myconst.h"
+#include "myext.h"
+//#include "myvars.h"
+#endif
+
+#include <cairo.h>
 //void Mydelay(unsigned Time);
 //{
 //    unsigned long end;
@@ -13,6 +22,9 @@
 
 //void Capture_Tik(void interrupt far (*func) () )
 //Restore_Tik();
+
+
+
 
 void Set_Timer();
 
@@ -37,7 +49,7 @@ void Get_User_Input();
 
 void Set_Graphics_Eraser();
 
-void Show_Score(int val, int x, int y);
+void Show_Score(cairo_t *cr, int val, int x, int y);
 
 /* Every update_X function here had a "return(0)" zero statement on it's last line, without  
 specifying a return type. I removed all of these return statements and modified the function 
@@ -59,21 +71,21 @@ void Reset_Screen(cairo_t *cr);
 
 void Init_Session();
 
-void Init_Game(cairo_t *cr);
+void Init_Game();
 
-void Display_Bonus_Char(char Bonus_Char);
+void Display_Bonus_Char(cairo_t *cr, char Bonus_Char);
 void Set_Bonus_Chars(cairo_t *cr);
 
 void Xor_Bonus_Char(int n);
 void Set_Bonus_Message();
 void Write_Bonus_Message();
 
-void Check_Bonus_Input();
+void Check_Bonus_Input(cairo_t *cr);
 int Generate_Non_Bonus_Char();
 
 void Generate_Resource_Character();
 
-void Handle_Bonus(Handle_Bonus);
+void Handle_Bonus();
 
 int Run_SF(cairo_t *cr);
 
@@ -87,15 +99,12 @@ void Announce_Game_End();
 
 void Announce_Session_End();
 void Update_Mines(cairo_t *cr);
-void Update_Score();
+void Update_Score(cairo_t *cr);
 
-void Reset_Aim_Screen();
+void Reset_Aim_Screen(cairo_t *cr);
 
 void Init_Aim_Session();
 
-void Run_Aiming();
-
-
-
+void Run_Aiming(cairo_t *cr);
 
 

@@ -12,17 +12,22 @@
 #include <math.h>
 #include <cairo.h>
 
+#include "DE.h"
+#include "HM.h"
+#include "RS.h"
 #include "TCOL.h"
 
 //#include "myconst.h"
 //#include "myext.h"
 
 // Addded
-#include "DE.h"
 //#include "HM.h"
-#ifndef DE_H
-#include "myvars.h"
-#endif
+
+
+char *Small_Expl_Buffer;
+int Data_Update_Counter=20;
+int Last_Center_Dist;
+int Wrap_Around_Flag=OFF;
 
 //extern Get_Ship_Input(); // not used or something
 /* Uncomment (for HM.c)
@@ -459,7 +464,7 @@ void Accumulate_Data(cairo_t *cr)
 
    } /* if data-update-counter */
 }
-//
+
 //int main()
 //{
 //	start_drawing();
@@ -481,7 +486,6 @@ void Accumulate_Data(cairo_t *cr)
 ////	start_drawing(); ////	Gen_Explosion(SF_canvas, MaxX/2, MaxY/2, 120);
 ////	stop_drawing();
 //}
-//
 
 
 

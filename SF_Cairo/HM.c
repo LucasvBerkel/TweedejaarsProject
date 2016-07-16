@@ -10,14 +10,27 @@
 #include <math.h>
 //#include <cairo.h>
 
-#include "myconst.h"
-#include "myext.h"
-#include "myvars.h"
+//#include "myconst.h"
+//#include "myext.h"
+//#include "myvars.h"
 
 // Added
 #include "DE.h"
 #include "HM.h"
-//#include "RS.h"
+#include "RS.h"
+
+mine_type Mine_Type;
+int Mine_Alive_Counter=0;
+int Mine_Dead_Counter=0;
+int Missile_Delay_Counter=0;
+
+char Char_Set[10][1]={"Y","M","P","B","Q","K","C","W","R","Z"};
+char Tmp_Char_Set[10][1];
+
+char Foe_Menu[3][1];
+char Friend_Menu[3][1];
+char Mine_Indicator;
+
 
 //int Get_Random_Index(int vec[])
 //{
@@ -184,7 +197,7 @@ void Handle_Fortress(cairo_t *cr)
   }
 }
 
-void Handle_Speed_Score()
+void Handle_Speed_Score(cairo_t *cr)
 {
   int interval;
   int dts;
@@ -297,7 +310,7 @@ void Show_Mine_Type(cairo_t *cr, char Minetype)
 //  putimage(x,y,buffer1,COPY_PUT); /* erase garbage */
 	char Minetype_str[15];
 	sprintf(Minetype_str, "%c", Minetype);
-	cairo_text_at(cr, x, y, Minetype_str); // Okay syntax? // Originally was "%c" Minetype
+	cairo_text_at(cr, x, y, Minetype_str); // Originally was "%c" Minetype
 //  gprintf(&x,&y,"%c",Minetype);
 	cairo_translate(cr, 0, -Panel_Y_Start);
 //  setviewport( Xmargin, 0, Xmargin+MaxX, MaxY, 1);
@@ -313,7 +326,7 @@ void Reset_Mine_Headings()
    Mine_Y_Speed=-Mine_Speed*Fcos(Mine_Headings);
 }
 
-int randrange(min, max)
+int randrange(int min, int max)
 {
 	return (rand() % (max + 1 - min)) + min;
 }
@@ -373,7 +386,7 @@ void Handle_Mine(cairo_t *cr)
  switch(Mine_Flag)
  {
   case KILL  : {
-		  Handle_Speed_Score();
+		  Handle_Speed_Score(cr);
 //		  Draw_Mine(cr, Mine_X_Pos,Mine_Y_Pos,MINE_SIZE_FACTOR*MaxX);
 //			clear_prev_path(cr, PrevMine);
 				Mine_Should_Clean = 1;
@@ -439,7 +452,7 @@ void Handle_Aim_Mine(cairo_t *cr)
  switch(Mine_Flag)
  {
   case KILL  : {
-		  Handle_Speed_Score();
+		  Handle_Speed_Score(cr);
 //		  Draw_Mine(cr, Mine_X_Pos,Mine_Y_Pos,MINE_SIZE_FACTOR*MaxX);
 //							/* erase mine */
 //			clear_prev_path(cr, PrevMine);
@@ -584,12 +597,12 @@ void Handle_Missile(cairo_t *cr)
 }
 
 
-
-int main()
-{
-	printf("Yo man! \n");
-}
-
+//
+//int main()
+//{
+//	printf("Yo man! \n");
+//}
+//
 
 
 

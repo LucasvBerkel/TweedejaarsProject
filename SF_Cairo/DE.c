@@ -17,7 +17,7 @@
 #ifndef DE_H
 #define DE_H
 #include <math.h>
-#include <cairo.h>
+//#include <cairo.h>
 #ifdef __APPLE__
 	#include <cairo-quartz.h> // Is this available on linux? No!
 #endif
@@ -25,12 +25,15 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+#ifndef GLOBALS
+#define GLOBALS
 #include "myconst.h"
 #include "myext.h"
-#include "time.h"
+//#include "myvars.h"
+#endif
 //#include "myvars.h"
 #include <string.h>
-//#include "myvars.h"
+//#include "RS.h" // Not needed at all, but to see if above code works
 #include "DE.h"
 
 //#include <boost/python/module.hpp>

@@ -53,7 +53,17 @@ extern int Missile_Should_Clean[MAX_NO_OF_MISSILES]; // Make this an array for a
 /* Not that good maybe because for example multiple missile can exist */
 extern int Missile_X;
 extern int Missile_Y;
-extern int Missile_Heading;
+extern int Missile_Heading; //
+
+// Added variables that only were present in myvars.c,
+extern int Freeze_Flag;
+extern int Interval_Lower_Limit;
+extern int Interval_Upper_Limit;
+extern int Bonus_Indication_Index;
+extern int No_Resource_Display_Interval;
+extern int One_Game_Loops;
+extern int Resource_Display_Interval;
+extern char Restart_Flag;
 
 extern unsigned long t0;  /* time when FOE mine is born */
 extern unsigned long t1;  /* double press interval start */

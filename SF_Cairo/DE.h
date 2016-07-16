@@ -1,3 +1,5 @@
+#include <cairo.h>
+
 #define TEXT_HEIGHT 4 // The height of character "h" in pixels in Cairo (with monospace font)
 #define TEXT_WIDTH 3 // The height of character "h" in pixels (with monospace font)
 #define SF_YELLOW 1.0, 1.0, 0.33
@@ -6,6 +8,7 @@
 #define SF_ORANGE 1.0, 0.33, 0.33
 #define WINDOW_HEIGHT 240
 #define WINDOW_WIDTH 320
+
 
 void Open_Graphics(void);
 
