@@ -16,6 +16,7 @@
 
 // Added
 #include "DE.h"
+//#include "RS.h"
 
 int Mine_Alive_Counter=0;
 int Mine_Dead_Counter=0;
@@ -124,11 +125,15 @@ void Update_Ship_Dynamics()
 
 void Update_Ship_Display(cairo_t *cr)
 {
-		/* erase ship in old location */
-  Draw_Ship(cr,Ship_X_Old_Pos,Ship_Y_Old_Pos,Ship_Old_Headings,SHIP_SIZE_FACTOR
-							     *MaxX);
+//		/* erase ship in old location */
+	clear_prev_path(cr, PrevShip);
+//  Draw_Ship(cr,Ship_X_Old_Pos,Ship_Y_Old_Pos,Ship_Old_Headings,SHIP_SIZE_FACTOR
+//							     *MaxX);
 		/* draw ship in new location */
+
   Draw_Ship(cr,Ship_X_Pos,Ship_Y_Pos,Ship_Headings,SHIP_SIZE_FACTOR*MaxX);
+	stroke_in_clip(cr);
+	
 }
 
 void Move_Ship(cairo_t *cr)
@@ -145,7 +150,8 @@ void Fire_Shell(cairo_t *cr)
   Shell_X_Speed=SHELL_SPEED*Fsin(Shell_Headings);
   Shell_Y_Speed=-SHELL_SPEED*Fcos(Shell_Headings);
   Draw_Shell(cr, Shell_X_Pos,Shell_Y_Pos,Shell_Headings,
-				SHELL_SIZE_FACTOR*MaxX);  /* first time */
+				SHELL_SIZE_FACTOR*MaxX);  /* first time */ // First time??
+	stroke_in_clip(cr);
 //  sound(800);
 //  Sound_Flag=6;
 }
@@ -164,14 +170,16 @@ void Handle_Fortress(cairo_t *cr)
 
   nh=Find_Headings(MaxX/2,MaxY/2,Ship_X_Pos,Ship_Y_Pos);
   if (abs(Fort_Headings-nh)>10)
-     {
-       Draw_Fort(cr, MaxX/2,MaxY/2,Fort_Headings,FORT_SIZE_FACTOR*MaxX);
-						/* erase old position */
-       Fort_Headings=nh;
-       Draw_Fort(cr, MaxX/2,MaxY/2,Fort_Headings,FORT_SIZE_FACTOR*MaxX);
-						/* draw new position */
-       Fort_Lock_Counter=0;  /* reset firing counter */
-     }
+  {
+		clear_prev_path(cr, PrevShip);
+		//       Draw_Fort(cr, MaxX/2,MaxY/2,Fort_Headings,FORT_SIZE_FACTOR*MaxX);
+		//						/* erase old position */
+		Fort_Headings=nh;
+		Draw_Fort(cr, MaxX/2,MaxY/2,Fort_Headings,FORT_SIZE_FACTOR*MaxX);
+		stroke_in_clip(cr);
+		/* draw new position */
+		Fort_Lock_Counter=0;  /* reset firing counter */
+  }
 }
 
 void Handle_Speed_Score()
@@ -276,11 +284,13 @@ void Show_Mine_Type(cairo_t *cr, char Minetype)
 //    setcolor(LIGHTRED);
   }
 	// What does this viewport do in context?
-		cairo_translate(cr, 0, Panel_Y_Start);
+	cairo_translate(cr, 0, Panel_Y_Start);
 //  setviewport( Xmargin, Panel_Y_Start, Xmargin+MaxX, Panel_Y_End, 1); // ?
   x=IFF_X; y=Data_Line;
 //  putimage(x,y,buffer1,COPY_PUT); /* erase garbage */
-cairo_text_at(cr, x, y, &Minetype); // Okay syntax? // Originally was "%c" Minetype
+	char Minetype_str[15];
+	sprintf(Minetype_str, "%c", Minetype);
+	cairo_text_at(cr, x, y, Minetype_str); // Okay syntax? // Originally was "%c" Minetype
 //  gprintf(&x,&y,"%c",Minetype);
 	cairo_translate(cr, 0, -Panel_Y_Start);
 //  setviewport( Xmargin, 0, Xmargin+MaxX, MaxY, 1);
@@ -314,7 +324,10 @@ void Generate_Mine(cairo_t *cr)
   } while(a < 0.5*MaxX );  /* repeat until distance exceeds min. */
 
   Reset_Mine_Headings();
+
   Draw_Mine(cr,Mine_X_Pos,Mine_Y_Pos,MINE_SIZE_FACTOR*MaxX);  /* draw mine first time */
+	stroke_in_clip(cr);
+
 
   if(randrange(0,2)) Mine_Type=FRIEND; // was random(2)
   else
@@ -330,12 +343,16 @@ void Generate_Mine(cairo_t *cr)
 
 void Move_Mine(cairo_t *cr)
 {
+//		stroke_in_clip(cr);
+		// Do something with cairo_save() if approiate 
     Draw_Mine(cr, Mine_X_Pos,Mine_Y_Pos,MINE_SIZE_FACTOR*MaxX); /* erase mine */
+		clear_prev_path(cr, PrevMine);	
 
     Mine_X_Pos=Mine_X_Pos+Mine_X_Speed;      /* update position */
     Mine_Y_Pos=Mine_Y_Pos+Mine_Y_Speed;
 
     Draw_Mine(cr, Mine_X_Pos,Mine_Y_Pos,MINE_SIZE_FACTOR*MaxX);  /* redraw mine */
+		stroke_in_clip(cr);
 
     if(--Mine_Course_Count<=0)  Reset_Mine_Headings();
     if(   (Mine_X_Pos<0) || (Mine_X_Pos>MaxX)
@@ -349,7 +366,8 @@ void Handle_Mine(cairo_t *cr)
  {
   case KILL  : {
 		  Handle_Speed_Score();
-		  Draw_Mine(cr, Mine_X_Pos,Mine_Y_Pos,MINE_SIZE_FACTOR*MaxX);
+//		  Draw_Mine(cr, Mine_X_Pos,Mine_Y_Pos,MINE_SIZE_FACTOR*MaxX);
+			clear_prev_path(cr, PrevMine);
 							/* erase mine */
 		  Mine_Flag=DEAD;
 		  Mine_Dead_Counter=0;
@@ -405,6 +423,7 @@ void Generate_Aim_Mine(cairo_t *cr)
 
     Draw_Mine(cr, Mine_X_Pos,Mine_Y_Pos,MINE_SIZE_FACTOR*MaxX);
 	     /* draw mine */
+		stroke_in_clip(cr);
 }
 
 void Handle_Aim_Mine(cairo_t *cr)
@@ -415,6 +434,7 @@ void Handle_Aim_Mine(cairo_t *cr)
 		  Handle_Speed_Score();
 		  Draw_Mine(cr, Mine_X_Pos,Mine_Y_Pos,MINE_SIZE_FACTOR*MaxX);
 							/* erase mine */
+			clear_prev_path(cr, PrevMine);
 		  Mine_Flag=DEAD;
 		  Mine_Dead_Counter=0;
 		  break;
@@ -444,6 +464,7 @@ void Handle_Shell(cairo_t *cr)
   case KILL  : {
 		  Draw_Shell(cr, Shell_X_Pos,Shell_Y_Pos,Shell_Headings,
 			    SHELL_SIZE_FACTOR*MaxX); /* erase shell */
+			clear_prev_path(cr, PrevMine);
 		  Shell_Flag=DEAD;
 		  break;
 		}
@@ -451,7 +472,7 @@ void Handle_Shell(cairo_t *cr)
   case ALIVE  : {
 		  Draw_Shell(cr, Shell_X_Pos,Shell_Y_Pos,Shell_Headings,
 				       SHELL_SIZE_FACTOR*MaxX);
-						/* erase shell */
+			clear_prev_path(cr, PrevMine);
 		  Shell_X_Pos=Shell_X_Pos+Shell_X_Speed;
 		  Shell_Y_Pos=Shell_Y_Pos+Shell_Y_Speed;
 		  if( (Shell_X_Pos<0) || (Shell_X_Pos>MaxX)
@@ -460,6 +481,7 @@ void Handle_Shell(cairo_t *cr)
 		  else
 		    Draw_Shell(cr, Shell_X_Pos,Shell_Y_Pos,Shell_Headings,
 					SHELL_SIZE_FACTOR*MaxX);
+				stroke_in_clip(cr);
 		}
  } /* end switch */
 }
@@ -474,12 +496,14 @@ void Fire_Missile(cairo_t *cr, int Index)
  Missile_Y_Speed[Index]=-Missile_Speed*Fcos(Ship_Headings);
  Draw_Missile(cr,Missile_X_Pos[Index],Missile_Y_Pos[Index],
 	      Missile_Headings[Index],MISSILE_SIZE_FACTOR*MaxX);
+	stroke_in_clip(cr);
+
 							/* first time */
 // sound(1000);
 // Sound_Flag=4;
 }
 
-
+// Use PrevMine etc. in these kinds of functions (the moves/handles and alike)
 void Handle_Missile(cairo_t *cr)
 {
  int i;
@@ -490,8 +514,9 @@ void Handle_Missile(cairo_t *cr)
       switch(Missile_Flag[i])
       {
 	 case KILL  : {
-			Draw_Missile(cr, Missile_X_Pos[i],Missile_Y_Pos[i],
-			     Missile_Headings[i],MISSILE_SIZE_FACTOR*MaxX);  /* erase missile */
+			clear_prev_path(cr,PrevMissile);
+//			Draw_Missile(cr, Missile_X_Pos[i],Missile_Y_Pos[i],
+//			     Missile_Headings[i],MISSILE_SIZE_FACTOR*MaxX);  /* erase missile */
 			Missile_Flag[i]=DEAD;
 			Missiles_Counter--;
 			break;
@@ -503,14 +528,18 @@ void Handle_Missile(cairo_t *cr)
 			    Missile_Flag[i]=KILL;
 			 else
 			  {
-			    Draw_Missile(cr, Missile_X_Pos[i],Missile_Y_Pos[i],
-			      Missile_Headings[i],MISSILE_SIZE_FACTOR*MaxX);
-							/* erase old */
+//			    Draw_Missile(cr, Missile_X_Pos[i],Missile_Y_Pos[i],
+//			      Missile_Headings[i],MISSILE_SIZE_FACTOR*MaxX);
+//							/* erase old */
+					clear_prev_path(cr,PrevMissile);
+
 			    Missile_X_Pos[i]=Missile_X_Pos[i]+Missile_X_Speed[i];
 			    Missile_Y_Pos[i]=Missile_Y_Pos[i]+Missile_Y_Speed[i];
 			    Draw_Missile(cr, Missile_X_Pos[i],Missile_Y_Pos[i],
 			     Missile_Headings[i],MISSILE_SIZE_FACTOR*MaxX);
 							  /* draw new */
+					stroke_in_clip(cr);
+
 			   }
 			 }
       } /* end switch */

@@ -2,13 +2,13 @@
 
 /* test graphics 21.2.90 18:00
             definitions */
-#include <stdarg.h>
+//#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <graphics.h>
-#include <process.h>
-#include <bios.h>
-#include <alloc.h>
+//#include <graphics.h>
+//#include <process.h>
+//#include <bios.h>
+//#include <alloc.h>
 //#include <dos.h>
 #include <time.h>
 #include <math.h>
@@ -16,41 +16,43 @@
 #include "myconst.h"
 #include "myvars.h"
 
+#include DE.h
+
 extern char Friend_Menu[3][1];
 extern char Foe_Menu[3][1];
 extern char Mine_Indicator;
 extern mine_type Mine_Type;
 
-        /* Functions  */
-extern void Open_Graphics(void);
-extern void Close_Graphics(void);
-extern float Fcos(int Headings_Degs);
-extern float Fsin(int Headings_Degs);
-extern Draw_Ship (int x, int y, int Headings, int size);
-extern int Draw_Hexagone(int X_Center,int Y_Center,int Hex_Size);
-extern void Draw_Frame();
-extern Draw_Fort (int x, int y, int Headings, int size );
-extern Draw_Missile (int x, int y, int Headings, int size);
-extern Draw_Shell(int x, int y, int Headings, int size);
-extern Draw_Mine (int x, int y, int size);
-extern int Find_Headings(int x1,int y1,int x2,int y2);
-extern Update_Ship_Dynamics();
-extern Update_Ship_Display();
-extern Move_Ship();
-extern Fire_Shell();
-extern Handle_Fortress();
-extern Test_Collisions();
-extern Generate_Mine();
-extern Move_Mine();
-extern Handle_Mine();
-extern Handle_Shell();
-extern Handle_Missile();
-extern Accumulate_Data();
-extern Push_Buttons();
-extern Joystick();
-extern Setup_Mouse_Handler();
-extern Reset_Mouse_Handler();
-extern Initialize_Graphics();
+        /* Functions  */ // Done with the header
+//extern void Open_Graphics(void);
+//extern void Close_Graphics(void);
+//extern float Fcos(int Headings_Degs);
+//extern float Fsin(int Headings_Degs);
+//extern Draw_Ship (int x, int y, int Headings, int size);
+//extern int Draw_Hexagone(int X_Center,int Y_Center,int Hex_Size);
+//extern void Draw_Frame();
+//extern Draw_Fort (int x, int y, int Headings, int size );
+//extern Draw_Missile (int x, int y, int Headings, int size);
+//extern Draw_Shell(int x, int y, int Headings, int size);
+//extern Draw_Mine (int x, int y, int size);
+//extern int Find_Headings(int x1,int y1,int x2,int y2);
+//extern Update_Ship_Dynamics();
+//extern Update_Ship_Display();
+//extern Move_Ship();
+//extern Fire_Shell();
+//extern Handle_Fortress();
+//extern Test_Collisions();
+//extern Generate_Mine();
+//extern Move_Mine();
+//extern Handle_Mine();
+//extern Handle_Shell();
+//extern Handle_Missile(cairo_t *cr);
+//extern Accumulate_Data();
+//extern Push_Buttons();
+//extern Joystick();
+//extern Setup_Mouse_Handler();
+//extern Reset_Mouse_Handler();
+//extern Initialize_Graphics();
 
 
 void Mydelay(unsigned Time)
@@ -62,137 +64,135 @@ void Mydelay(unsigned Time)
 
 }
 
-void interrupt far Get_Tik()
-{
-    Time_Counter++;
-    oldtik(); /*  now perform the old BIOS handler to keep things clean */
-}
+// Commented to prevent syntax error (feel free to uncomment)
+//void interrupt far Get_Tik()
+//{
+//    Time_Counter++;
+//    oldtik(); /*  now perform the old BIOS handler to keep things clean */
+//}
 
     /****** capture system clock tiks via indicated routine **********/
-
-void Capture_Tik(void interrupt far (*func) () )
+// Commented to prevent syntax error
+//void Capture_Tik(void interrupt far (*func) () )
 {
-    /* save old interrupt */
-    oldtik=getvect(8);
-    /* install our new interrupt handler */
-    disable();
-    setvect(8,func);
-    enable();
+//    /* save old interrupt */
+//    oldtik=getvect(8);
+//    /* install our new interrupt handler */
+//    disable();
+//    setvect(8,func);
+//    enable();
+//}
+
+void Restore_Tik()
+{
+//    disable();
+//    setvect(8,oldtik);   /* restore old interrupt handler */
+//    enable();
 }
 
-Restore_Tik()
+void Set_Timer()
 {
-    disable();
-    setvect(8,oldtik);   /* restore old interrupt handler */
-    enable();
-    return(0);
+//    outportb(0x43,0x36);
+//    outportb(0x40,1193&0xFF); /* 100 Hz */
+//    outportb(0x40,1193>>8);
 }
 
-Set_Timer()
+void Reset_Timer()
 {
-    outportb(0x43,0x36);
-    outportb(0x40,1193&0xFF); /* 100 Hz */
-    outportb(0x40,1193>>8);
-    return(0);
+//    outportb(0x43,0x36);  /* 36 talk to control register */
+//    outportb(0x40,0xFFFF);
+//    outportb(0x40,0xFFFF>>8);
 }
 
-Reset_Timer()
+void Set_Kbd_Rate(unsigned char Rate)
 {
-    outportb(0x43,0x36);  /* 36 talk to control register */
-    outportb(0x40,0xFFFF);
-    outportb(0x40,0xFFFF>>8);
-    return(0);
-}
-
-Set_Kbd_Rate(unsigned char Rate)
-{
-    _AH=0x3;
-    _AL=0x5;
-    _BH=0;
-    _BL=Rate;   /* repeat rate of 20 Hz */
-    geninterrupt(0x16);
-    return(0);
+//    _AH=0x3;
+//    _AL=0x5;
+//    _BH=0;
+//    _BL=Rate;   /* repeat rate of 20 Hz */
+//    geninterrupt(0x16);
 }
 
 int keyboard (void)
 {
-    union u_type{int a; char b[3];} keystroke;
-    char inkey=0;
-    char xtnd=0;
-
-    if(bioskey(1)==0) return(NO_INPUT);  /* key relieved, no input */
-    keystroke.a=bioskey(0);   /* fetch ascii code */
-    inkey=keystroke.b[0];     /* ..and load code into variable */
-
-    if(inkey==27) return(ESC); /* ESCcape terminates program */
-    if(inkey==13) return(ENTER); /* ENTER pauses program */
-    if(inkey==97) return(F1);
-    if(inkey==115) return(F2);
-    if(inkey==100) return(F3);
-    if(inkey==32) return(DOWN);
-    if(inkey==8) Restart_Flag=ON;
-    if(inkey!=0) return(REGULAR_CRAP);   /* the rest is crap */
-    
-    /* which leaves inkey==0 */
-    xtnd=keystroke.b[1];
-        
-        switch (xtnd)
-         {
-             case 72 /*UP*/    : return(UP);
-             case 75 /*LEFT*/  : return(LEFT);
-             case 77 /*RIGHT*/ : return(RIGHT);
-             default           : return(EXTENDED_CRAP);/* all rest irrelevant */
-    }
+//    union u_type{int a; char b[3];} keystroke;
+//    char inkey=0;
+//    char xtnd=0;
+//
+//    if(bioskey(1)==0) return(NO_INPUT);  /* key relieved, no input */
+//    keystroke.a=bioskey(0);   /* fetch ascii code */
+//    inkey=keystroke.b[0];     /* ..and load code into variable */
+//
+//    if(inkey==27) return(ESC); /* ESCcape terminates program */
+//    if(inkey==13) return(ENTER); /* ENTER pauses program */
+//    if(inkey==97) return(F1);
+//    if(inkey==115) return(F2);
+//    if(inkey==100) return(F3);
+//    if(inkey==32) return(DOWN);
+//    if(inkey==8) Restart_Flag=ON;
+//    if(inkey!=0) return(REGULAR_CRAP);   /* the rest is crap */
+//    
+//    /* which leaves inkey==0 */
+//    xtnd=keystroke.b[1];
+//        
+//        switch (xtnd)
+//         {
+//             case 72 /*UP*/    : return(UP);
+//             case 75 /*LEFT*/  : return(LEFT);
+//             case 77 /*RIGHT*/ : return(RIGHT);
+//             default           : return(EXTENDED_CRAP);/* all rest irrelevant */
+//    }
 }
 
-void interrupt far Get_Key() {
-    int tmp;
-    oldfunc(); /* now perform the old BIOS handler to keep things clean */
+// Commented to prevent syntax error
+//void interrupt far Get_Key() {
+//    int tmp;
+//    oldfunc(); /* now perform the old BIOS handler to keep things clean */
+//
+//    tmp=keyboard();
+//    if(tmp) {        /* throw away zeros, they indicate key release! */
+//        New_Input_Flag=ON;
+//        Lastkey=Key;
+//        Key=tmp;
+//
+//        /***** now handle double press time interval measurement  ******/
+//
+//        if(Key==F3) {
+//            if((Key==F3)&&(Lastkey!=F3)&&(!(Timing_Flag))) { /* first F3 keypress */
+//                t1=Time_Counter;
+//                Timing_Flag=ON;
+//                Check_Mine_Flag=ON; /* is used by Get_User_Input() */
+//            }
+//
+//            if((Key==F3)&&(Lastkey==F3)&&(Timing_Flag)) {   /* second F3 keypress */
+//                t2=Time_Counter;
+//                Timing_Flag=OFF;
+//                Key=0;   /* to enable consecutive double_press */
+//                /* where with next keypress Lastkey=0 */
+//                Display_Interval_Flag=ON;  /* is used in main */
+//            }
+//            New_Input_Flag=OFF;   /* input was handled here */
+//        } /* end double press */
+//    } /* end if(tmp) */
+//}
 
-    tmp=keyboard();
-    if(tmp) {        /* throw away zeros, they indicate key release! */
-        New_Input_Flag=ON;
-        Lastkey=Key;
-        Key=tmp;
-
-        /***** now handle double press time interval measurement  ******/
-
-        if(Key==F3) {
-            if((Key==F3)&&(Lastkey!=F3)&&(!(Timing_Flag))) { /* first F3 keypress */
-                t1=Time_Counter;
-                Timing_Flag=ON;
-                Check_Mine_Flag=ON; /* is used by Get_User_Input() */
-            }
-
-            if((Key==F3)&&(Lastkey==F3)&&(Timing_Flag)) {   /* second F3 keypress */
-                t2=Time_Counter;
-                Timing_Flag=OFF;
-                Key=0;   /* to enable consecutive double_press */
-                /* where with next keypress Lastkey=0 */
-                Display_Interval_Flag=ON;  /* is used in main */
-            }
-            New_Input_Flag=OFF;   /* input was handled here */
-        } /* end double press */
-    } /* end if(tmp) */
-}
-
+// Commented to prevent syntax error
 /****** capture any keyboard input via indicated routine **********/
-void Capture_Kbd(void interrupt far (*func) () )
-{
-    /* save old interrupt */
-    oldfunc=getvect(9);
-    /* install our new interrupt handler */
-    disable();
-    setvect(9,func);
-    enable();
-}
+//void Capture_Kbd(void interrupt far (*func) () )
+//{
+////    /* save old interrupt */
+////    oldfunc=getvect(9);
+////    /* install our new interrupt handler */
+////    disable();
+////    setvect(9,func);
+////    enable();
+//}
 
-Restore_Kbd()
+void Restore_Kbd()
 {
-    disable();
-    setvect(9,oldfunc);   /* restore old interrupt handler */
-    enable();
-    return(0);
+//    disable();
+//    setvect(9,oldfunc);   /* restore old interrupt handler */
+//    enable();
 }
 
 void Get_User_Input()
@@ -215,67 +215,82 @@ void Get_User_Input()
             Check_Mine_Flag=OFF;
             if((Mine_Flag==ALIVE) && (Mine_Type==FRIEND))
     Missile_Type=WASTED;
-        Show_Mine_Type(Mine_Indicator);
+        Show_Mine_Type(cr, Mine_Indicator);
         }
 }
 
 
 char Keyboard1() /* handles escape key press only */
-{
-    union u_type{int a; char b[3];} keystroke;
-    char inkey=0;
-
-    while(bioskey(1)==0);   /* key relieved, no input */
-    keystroke.a=bioskey(0); /* fetch ascii code */
-    inkey=keystroke.b[0];   /* ..and load code into variable */
-    return(inkey);
+//{
+//    union u_type{int a; char b[3];} keystroke;
+//    char inkey=0;
+//
+//    while(bioskey(1)==0);   /* key relieved, no input */
+//    keystroke.a=bioskey(0); /* fetch ascii code */
+//    inkey=keystroke.b[0];   /* ..and load code into variable */
+//    return(inkey);
 
 }
 
-int gprintf( int *xloc, int *yloc, char *fmt, ... )
-{
-    va_list  argptr;      /* Argument list pointer  */
-    char str[140];      /* Buffer to build sting into */
-    int cnt;        /* Result of SPRINTF for return */
+//int gprintf( int *xloc, int *yloc, char *fmt, ... )
+//{
+//    va_list  argptr;      /* Argument list pointer  */
+//    char str[140];      /* Buffer to build sting into */
+//    int cnt;        /* Result of SPRINTF for return */
+//
+//    va_start( argptr, fmt );    /* Initialize va_ functions */
+//    cnt = vsprintf( str, fmt, argptr ); /* prints string to buffer  */
+//    outtextxy( *xloc, *yloc, str ); /* Send string in graphics mode */
+//    va_end( argptr );     /* Close va_ functions    */
+//    return( cnt );      /* Return the conversion count  */
+//}
 
-    va_start( argptr, fmt );    /* Initialize va_ functions */
-    cnt = vsprintf( str, fmt, argptr ); /* prints string to buffer  */
-    outtextxy( *xloc, *yloc, str ); /* Send string in graphics mode */
-    va_end( argptr );     /* Close va_ functions    */
-    return( cnt );      /* Return the conversion count  */
+// Not sure what this does
+void Set_Graphics_Eraser(cairo_t *cr)
+{
+
+//  size=imagesize(0,0,40,9);        /*length of 5 characters*/
+//  buffer1=malloc(size);
+//  getimage(100,100,140,109,buffer1);
+
+	cairo_save(cr);
+	cairo_set_source_rgb(cr, 0, 0, 0);
+	cairo_rectangle(cr, 0, 0, TEXT_WIDTH, TEXT_HEIGHT);
+	cairo_fill();
+	cairo_restore(cr);
 }
 
-Set_Graphics_Eraser()
-{
-    int size;
-
-    size=imagesize(0,0,40,9);        /*length of 5 characters*/
-    buffer1=malloc(size);
-    getimage(100,100,140,109,buffer1);
-    return(0);
-}
-
+ I think this shows the user their score when the game is finished
 void Show_Score(int val, int x, int y) /* anywhere within data panel */
 {
-    int svcolor;
+//    int svcolor;
+//    svcolor=getcolor();
+		char val_str[15];
 
-    svcolor=getcolor();
-    setcolor(TEXT_COLOR);
-    setviewport( Xmargin, Panel_Y_Start, Xmargin+MaxX, Panel_Y_End, 1);
 
+    cairo_set_source_rgb(cr, SF_YELLOW);
+    cairo_translate(0, Panel_Y_Start);
     /* data panel in screen global coordinates */
 
-    putimage(x,y,buffer1,COPY_PUT); /* erase garbage */
-    gprintf(&x,&y,"%d",val);
+//    putimage(x,y,buffer1,COPY_PUT); /* erase garbage */
+		// MaxX/8 is equal to 'xdif', the width of each score rectangle
+		cairo_rectangle(0,x, Y_Panel,  x + MaxX/8); // Not sure if this call is correct (Y_Panel?)
+		cairo_clip_path_rect(cr);
+		cairo_fill(cr);
 
-    setviewport( Xmargin, 0, Xmargin+MaxX, MaxY, 1);   /* restore gaming area */
-    setcolor(svcolor); /* restore previous color */
+		sprintf(val_str, "%d", val);
+    cairo_text_at(x,y,val_str);
+		cairo_reset_clip(cr);
+//    setviewport( Xmargin, 0, Xmargin+MaxX, MaxY, 1);   /* restore gaming area */
+		cairo_translate(0, -Panel_Y_Start);
+
+//    setcolor(svcolor); /* restore previous color */
 }
 
 /* Every update_X function here had a "return(0)" zero statement on it's last line, without  
 specifying a return type. I removed all of these return statements and modified the function 
 return type to void to surpress warnings. */ 
-
+// Magical 8's?
 void Update_Points()
 {
     Show_Score(Points,Points_X-8,Data_Line);
@@ -313,19 +328,20 @@ void Update_Shots()
     Show_Score(Missile_Stock,Shots_X,Data_Line);
 }
 
-void Clear_Interval()   /* clear double-press interval */
-{
-        int svcolor;
-        int x,y;
-
-        svcolor=getcolor();
-        setcolor(TEXT_COLOR);
-        setviewport( Xmargin, Panel_Y_Start, Xmargin+MaxX, Panel_Y_End, 1);
-        x=Interval_X; y=Data_Line;
-        putimage(x,y,buffer1,COPY_PUT); /* erase garbage */
-        setviewport( Xmargin, 0, Xmargin+MaxX, MaxY, 1);   /* restore gaming area */
-        setcolor(svcolor); /* restore previous color */
-}
+// What does this do?
+//void Clear_Interval()   /* clear double-press interval */
+//{
+//        int svcolor;
+//        int x,y;
+//
+//        svcolor=getcolor();
+//        setcolor(TEXT_COLOR);
+//        setviewport( Xmargin, Panel_Y_Start, Xmargin+MaxX, Panel_Y_End, 1);
+//        x=Interval_X; y=Data_Line;
+//        putimage(x,y,buffer1,COPY_PUT); /* erase garbage */
+//        setviewport( Xmargin, 0, Xmargin+MaxX, MaxY, 1);   /* restore gaming area */
+//        setcolor(svcolor); /* restore previous color */
+//}
 
 void Find_Interval()   /* display double-press interval */
 {
@@ -339,7 +355,7 @@ void Find_Interval()   /* display double-press interval */
         if((interval>=Interval_Lower_Limit)&&(interval<=Interval_Upper_Limit)
              &&(Mine_Flag==ALIVE)&&(Mine_Type==FOE))
     Missile_Type=VS_FOE;   /* rearm missile */
-        Show_Mine_Type(Mine_Indicator);
+        Show_Mine_Type(cr, Mine_Indicator);
         Update_Interval();
     }
 }
@@ -448,110 +464,113 @@ void Init_Game()
 
 void Display_Bonus_Char(char Bonus_Char)
 {
-    int svcolor;
-    int x,y;
-    svcolor=getcolor();
-    setcolor(TEXT_COLOR);
-    settextstyle(DEFAULT_FONT,HORIZ_DIR,2);
-    x=MaxX/2 - 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
-    y=MaxY/2 + 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
-    gprintf(&x,&y,"%c",Bonus_Char);
-    settextstyle(DEFAULT_FONT,HORIZ_DIR,0);
-    setcolor(svcolor); /* restore previous color */
+//    int svcolor;
+//    int x,y;
+//    svcolor=getcolor();
+//    setcolor(TEXT_COLOR);
+//    settextstyle(DEFAULT_FONT,HORIZ_DIR,2);
+//    x=MaxX/2 - 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
+//    y=MaxY/2 + 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
+//    gprintf(&x,&y,"%c",Bonus_Char);
+//    settextstyle(DEFAULT_FONT,HORIZ_DIR,0);
+//    setcolor(svcolor); /* restore previous color */
 }
 
 void Set_Bonus_Chars()
 {
-    int size,i,j;
-    int x,y;
-
-    /* set character Size */
-    size=imagesize(0,0,16,16);
-    /* get right location */
-    x=MaxX/2 - 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
-    y=MaxY/2 + 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
-
- for (i=0;i<10;i++)
-         {
-        bc[i]=malloc(size);
-        Display_Bonus_Char(Bonus_Char_Vector[i][0]);
-        getimage(x,y,x+16,y+16,bc[i]);
-        putimage(x,y,bc[i],XOR_PUT);
-         }
+//    int size,i,j;
+//    int x,y;
+//
+//    /* set character Size */
+//    size=imagesize(0,0,16,16);
+//    /* get right location */
+//    x=MaxX/2 - 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
+//    y=MaxY/2 + 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
+//
+// for (i=0;i<10;i++)
+//         {
+//        bc[i]=malloc(size);
+//        Display_Bonus_Char(Bonus_Char_Vector[i][0]);
+//        getimage(x,y,x+16,y+16,bc[i]);
+//        putimage(x,y,bc[i],XOR_PUT);
+//         }
 }
 
+// What does this even do in the game [3]
 void Xor_Bonus_Char(int n)   /* write and erase bonus character */
 {
     int x,y;
 
     /* get right location */
-    x=MaxX/2 - 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
-    y=MaxY/2 + 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
-
-    putimage(x,y,bc[n],XOR_PUT);
+//    x=MaxX/2 - 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
+//    y=MaxY/2 + 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
+//
+//    putimage(x,y,bc[n],XOR_PUT);
 
 }
 
+// What does this even do in the game [2]
 void Set_Bonus_Message()
 {
-    int size;
-    int svcolor;
-    int x,y;
-
-    svcolor=getcolor();
-    setcolor(TEXT_COLOR);
-    x=MaxX/2 - 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
-    y=MaxY/2 + 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
-    gprintf(&x,&y,"Bonus");
-    setcolor(svcolor); /* restore previous color */
-
-    size=imagesize(0,0,40,9);        /*length of 5 characters*/
-    buffer2=malloc(size);
-    getimage(x,y,x+40,y+9,buffer2);
-    putimage(x,y,buffer2,XOR_PUT);
-    setcolor(svcolor);
+//    int size;
+//    int svcolor;
+//    int x,y;
+//
+//    svcolor=getcolor();
+//    setcolor(TEXT_COLOR);
+//    x=MaxX/2 - 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
+//    y=MaxY/2 + 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
+//    gprintf(&x,&y,"Bonus");
+//    setcolor(svcolor); /* restore previous color */
+//
+//    size=imagesize(0,0,40,9);        /*length of 5 characters*/
+//    buffer2=malloc(size);
+//    getimage(x,y,x+40,y+9,buffer2);
+//    putimage(x,y,buffer2,XOR_PUT);
+//    setcolor(svcolor);
 }
 
+// What does this even do in the game
 void Write_Bonus_Message()
 {
- int x,y;
-
- x=MaxX/2 - 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
- y=MaxY/2 + 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
- putimage(x,y,buffer2,XOR_PUT);
+// int x,y;
+//
+// x=MaxX/2 - 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
+// y=MaxY/2 + 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
+// putimage(x,y,buffer2,XOR_PUT);
 }
 
 void Check_Bonus_Input() {
-    if((Bonus_Display_Flag==NOT_PRESENT)||(Bonus_Display_Flag==NON_BONUS)) {
-    } else if(Bonus_Display_Flag==FIRST_BONUS) {
-        Bonus_Wasted_Flag=ON;
-    } else if(Bonus_Display_Flag==SECOND_BONUS) {
-        if(!Bonus_Wasted_Flag) {
-            if(Key==F1) {
-                No_Of_Points_Bonus_Taken++;
-                Points=Points+100;
-                Update_Points();
-            } else {
-                No_Of_Missiles_Bonus_Taken++;
-                Missile_Stock=Missile_Stock+50;
-                if(Missile_Stock>=100) Missile_Stock=100;
-                Update_Shots();
-            }
-        Bonus_Display_Flag=NOT_PRESENT;
-        Bonus_Granted=ON;
-        Xor_Bonus_Char(rn);    /* erase present $ char */
-        Write_Bonus_Message(); /*  Announce_Bonus  */
-        }
-    }
+//    if((Bonus_Display_Flag==NOT_PRESENT)||(Bonus_Display_Flag==NON_BONUS)) {
+//    } else if(Bonus_Display_Flag==FIRST_BONUS) {
+//        Bonus_Wasted_Flag=ON;
+//    } else if(Bonus_Display_Flag==SECOND_BONUS) {
+//        if(!Bonus_Wasted_Flag) {
+//            if(Key==F1) {
+//                No_Of_Points_Bonus_Taken++;
+//                Points=Points+100;
+//                Update_Points();
+//            } else {
+//                No_Of_Missiles_Bonus_Taken++;
+//                Missile_Stock=Missile_Stock+50;
+//                if(Missile_Stock>=100) Missile_Stock=100;
+//                Update_Shots();
+//            }
+//        Bonus_Display_Flag=NOT_PRESENT;
+//        Bonus_Granted=ON;
+//        Xor_Bonus_Char(rn);    /* erase present $ char */
+//        Write_Bonus_Message(); /*  Announce_Bonus  */
+//        }
+//    }
 }
 
 int Generate_Non_Bonus_Char()
 {
-     int rn;
-
-     do { rn=random(10); }
-     while(rn==Bonus_Indication_Index);
-     return(rn);
+//     int rn;
+//
+//     do { rn=random(10); }
+//     while(rn==Bonus_Indication_Index);
+//     return(rn);
 }
 
 void Generate_Resource_Character()
@@ -626,7 +645,7 @@ void Handle_Bonus()
      }
 }
 
-int Run_SF()
+int Run_SF(cairo_t *r)
 {
     unsigned elapsed_time;
     unsigned long loop_start_time;
@@ -663,7 +682,7 @@ int Run_SF()
             Get_User_Input();
             while(Freeze_Flag) Get_User_Input();
             Move_Ship();
-            Handle_Missile();
+            Handle_Missile(cr);
             if(Sound_Flag>1) Sound_Flag--;
             if(Sound_Flag==1) {Sound_Flag--; nosound();}
             Handle_Mine();
@@ -757,18 +776,19 @@ void Announce_Game_End()
     setcolor(svcolor); /* restore previous color */
 }
 
+// Skip this?
 void Announce_Session_End()
 {
-    int svcolor;
-    int x,y;
-
-    svcolor=getcolor();
-    setcolor(TEXT_COLOR);
-    x=0.35*MaxX; y=0.7*MaxY;
-    gprintf(&x,&y,"SESSION IS OVER !");
-    x=0.25*MaxX; y=0.8*MaxY;
-    gprintf(&x,&y,"<press any key to continue>");
-    setcolor(svcolor); /* restore previous color */
+//    int svcolor;
+//    int x,y;
+//
+//    svcolor=getcolor();
+//    setcolor(TEXT_COLOR);
+//    x=0.35*MaxX; y=0.7*MaxY;
+//    gprintf(&x,&y,"SESSION IS OVER !");
+//    x=0.25*MaxX; y=0.8*MaxY;
+//    gprintf(&x,&y,"<press any key to continue>");
+//    setcolor(svcolor); /* restore previous color */
 }
 
 void Update_Mines()

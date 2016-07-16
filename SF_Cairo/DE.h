@@ -44,6 +44,7 @@ void stop_drawing();
 int move_update();
 void update_frame(cairo_t *cr);
 unsigned char* update_frame_SF();
+void stroke_in_clip(cairo_t *cr);
 
 //static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data);
 //void animation_loop(GtkWidget *darea);

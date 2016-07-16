@@ -263,6 +263,8 @@ void cairo_line(cairo_t *cr, int x1, int y1, int x2, int y2)
 
 }
 
+
+
 void cairo_text_at(cairo_t *cr, int x, int y, const char *string)
 {
 	cairo_move_to(cr, x, y);
@@ -294,13 +296,19 @@ void clip_path_rect(cairo_t *cr)
 void clear_prev_path(cairo_t *cr, cairo_path_t *prevPath)
 {
 	cairo_set_source_rgb(cr, 0, 0, 0);
-	cairo_new_path(cr);
+//	cairo_new_path(cr); assume the context is empty
 	cairo_append_path(cr, prevPath);
 	clip_path_rect(cr);
 	cairo_stroke(cr);
 	cairo_reset_clip(cr);
 }
 
+void stroke_in_clip(cairo_t *cr)
+{
+	clip_path_rect(cr);
+	cairo_stroke(cr);
+	cairo_reset_clip(cr);
+}
 
 
 // Cleans all the previous paths from the context for the objects in need of an update
@@ -340,16 +348,12 @@ void update_drawing(cairo_t *cr)
 //		printf("Ship_Headings: %d \n", Ship_Headings);
 //		printf("Fort_Headings: %d \n", Fort_Headings);
 		Draw_Ship(cr, Ship_X_Pos,Ship_Y_Pos,Ship_Headings,SHIP_SIZE_FACTOR*MaxX);
-		clip_path_rect(cr);
-		cairo_stroke(cr);
-		cairo_reset_clip(cr);
+		stroke_in_clip(cr);
 	}
 	if (Fort_Should_Update)
 	{
 		Draw_Fort(cr, MaxX/2,MaxY/2,Fort_Headings,FORT_SIZE_FACTOR*MaxX);
-		clip_path_rect(cr);
-		cairo_stroke(cr);
-		cairo_reset_clip(cr);
+		stroke_in_clip(cr);
 	}
 	if (Missile_Should_Update)
 	{
@@ -357,18 +361,14 @@ void update_drawing(cairo_t *cr)
 //		Missile_Y = 30.000000;
 		Missile_Heading = 51;
 		Draw_Missile(cr, Missile_X, Missile_Y, Missile_Heading, MISSILE_SIZE_FACTOR*MaxX);
-		clip_path_rect(cr);
-		cairo_stroke(cr);
-		cairo_reset_clip(cr);
+		stroke_in_clip(cr);
 	}
 	if (Mine_Should_Update)
 	{
 //		Mine_X_Pos = 50;
 //		Mine_Y_Pos = 50;
 		Draw_Mine(cr, Mine_X_Pos,Mine_X_Pos,MINE_SIZE_FACTOR*MaxX);
-		clip_path_rect(cr);
-		cairo_stroke(cr);
-		cairo_reset_clip(cr);
+		stroke_in_clip(cr);
 	}
 //	cairo_restore(cr);
 }

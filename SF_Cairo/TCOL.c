@@ -161,28 +161,41 @@ void Jitter_Ship(cairo_t *cr)
   Effect_Flag=ON;
 	// Call clean() with only ship update on? 
   Draw_Ship(cr,Ship_X_Pos,Ship_Y_Pos,Ship_Headings,SHIP_SIZE_FACTOR*MaxX); /*erase ship */
+	stroke_in_clip(cr);
+	
   for (i=8;i>0;i--)
   {
     Jitter_Headings=Ship_Headings+2*i;
     Jitter_X_Pos=Ship_X_Pos+i*Fcos(Jitter_Headings);
     Jitter_Y_Pos=Ship_Y_Pos+i*Fsin(Jitter_Headings);
 //		Call update with only ship update on? 
+		clear_prev_path(cr, PrevShip);
     Draw_Ship(cr,Jitter_X_Pos,Jitter_Y_Pos,Jitter_Headings,
 				   SHIP_SIZE_FACTOR*MaxX);  /* draw ship */
+		stroke_in_clip(cr);
+
 //    Mydelay(i*5); // Uncomment!!!!!!
+		clear_prev_path(cr, PrevShip);
     Draw_Ship(cr,Jitter_X_Pos,Jitter_Y_Pos,Jitter_Headings,
 				SHIP_SIZE_FACTOR*MaxX);  /* erase ship */
+		stroke_in_clip(cr);
     Jitter_Headings=Ship_Headings-2*i;
     Jitter_X_Pos=Ship_X_Pos+i*Fsin(Jitter_Headings);
     Jitter_Y_Pos=Ship_Y_Pos+i*Fcos(Jitter_Headings);
+		clear_prev_path(cr, PrevShip);
     Draw_Ship(cr,Jitter_X_Pos,Jitter_Y_Pos,Jitter_Headings,
 				SHIP_SIZE_FACTOR*MaxX);  /* draw ship */
+		stroke_in_clip(cr);
 //    Mydelay(i*5);
+		clear_prev_path(cr, PrevShip);
     Draw_Ship(cr,Jitter_X_Pos,Jitter_Y_Pos,Jitter_Headings,
 				SHIP_SIZE_FACTOR*MaxX);  /* erase ship */
+		stroke_in_clip(cr);
   }
+	clear_prev_path(cr, PrevShip);
 	Draw_Ship(cr,Ship_X_Pos,Ship_Y_Pos,Ship_Headings,
 	   SHIP_SIZE_FACTOR*MaxX); /* restore ship to its previous position */
+	stroke_in_clip(cr);
 }
 
 void Reset_All_Missiles(cairo_t *cr)

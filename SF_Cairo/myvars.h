@@ -242,4 +242,4 @@ int No_Of_Bonus_Windows=0;
 int Fort_Lock_Counter=0;
 int Effect_Flag=OFF;
 
-#endif
+#endif                      

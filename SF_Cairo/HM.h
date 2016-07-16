@@ -19,24 +19,24 @@ void Select_Mine_Menus();
 
 void Update_Ship_Dynamics();
 
-void Update_Ship_Display();
-void Move_Ship();
+void Update_Ship_Display(cairo_t *cr);
+void Move_Ship(cairo_t *cr);
 
-void Fire_Shell();
-void Handle_Fortress(); 
+void Fire_Shell(cairo_t *cr);
+void Handle_Fortress(cairo_t *cr); 
 
 void Handle_Speed_Score();
-void Clear_Mine_Type();
+void Clear_Mine_Type(cairo_t *cr);
 
 void Show_Mine_Type(char Minetype);
 void Reset_Mine_Headings();
 
-void Generate_Mine();
-void Move_Mine();
+void Generate_Mine(cairo_t *cr);
+void Move_Mine(cairo_t *cr);
 
 void Handle_Mine(cairo_t *cr);
-void Generate_Aim_Mine();
-void Handle_Aim_Mine();
+void Generate_Aim_Mine(cairo_t *cr);
+void Handle_Aim_Mine(cairo_t *cr);
 
 void Handle_Shell(cairo_t *cr);
 void Fire_Missile(int Index);
