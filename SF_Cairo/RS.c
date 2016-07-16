@@ -17,7 +17,7 @@
 #include "myvars.h"
 
 #include DE.h
-
+#include HM.h
 extern char Friend_Menu[3][1];
 extern char Foe_Menu[3][1];
 extern char Mine_Indicator;
@@ -645,7 +645,7 @@ void Handle_Bonus()
      }
 }
 
-int Run_SF(cairo_t *r)
+int Run_SF(cairo_t *cr)
 {
     unsigned elapsed_time;
     unsigned long loop_start_time;
@@ -699,6 +699,8 @@ int Run_SF(cairo_t *r)
                 if((elapsed_time=Time_Counter-loop_start_time) < SF_DELAY)
                     Mydelay(SF_DELAY-elapsed_time);  /* wait up to 50 milliseconds */
             } else Effect_Flag=OFF;  /* no delay necessary */
+						clean(cr);
+						update_drawing(cr);
 
             Score=Points+Velocity+Control+Speed;
 

@@ -10,14 +10,22 @@ cairo_surface_t *surface;
 cairo_font_options_t *font_options;
 
 cairo_path_t *PrevShip;
-cairo_path_t *PrevMissile;
+cairo_path_t *PrevMissile[MAX_NO_OF_MISSILES]; // Initialized in Initialize_Graphics
 cairo_path_t *PrevFort;
 cairo_path_t *PrevMine;
+cairo_path_t *PrevShell;
 
 int Ship_Should_Update;
 int Mine_Should_Update;
 int Fort_Should_Update;
-int Missile_Should_Update;
+int Missile_Should_Update[MAX_NO_OF_MISSILES] = {0};
+int Shell_Should_Update;
+
+int Ship_Should_Clean;
+int Mine_Should_Clean;
+int Fort_Should_Clean;
+int Missile_Should_Clean[MAX_NO_OF_MISSILES] = {0};
+int Shell_Should_Clean;
 
 char Initialized_Graphics;
 

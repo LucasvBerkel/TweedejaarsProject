@@ -204,7 +204,7 @@ void Reset_All_Missiles(cairo_t *cr)
 
   for (i=1;i<6;i++)
       if(Missile_Flag[i]==ALIVE)  Missile_Flag[i]=KILL;
-//  Handle_Missile(cr); // Uncomment
+  Handle_Missile(cr);
 }
 
 int Check_Collision(int First_X,int First_Y,int Second_X,
@@ -242,9 +242,9 @@ void Test_Collisions(cairo_t *cr)
 		  Handle_Missile_Flag=ON;
 		  Gen_Snap_Effect();
 		  Mine_Flag=KILL;
-//		  Handle_Mine(cr); // Uncomment when done
+		  Handle_Mine(cr);
 		  Mines=Mines+20;
-//		  Update_Mines(); // Uncomment when done
+		  Update_Mines();
 		  Score=Mines+Speed;
 //		  Update_Score(); // Don't forget to uncomment, removed because it calls functions from
 //			TCOL.c that use old headers
@@ -274,12 +274,12 @@ void Test_Collisions(cairo_t *cr)
 	   {
 	     Points=Points-50;
 	     Mine_Flag=KILL;
-//	     Handle_Mine(cr); 		/* kill mine */ // Uncomment
+	     Handle_Mine(cr); 		/* kill mine */
 	     if(Shell_Flag==ALIVE)
-	       {
-		  Shell_Flag=KILL;      /* kill shell */
-//		  Handle_Shell(cr); 	// Uncomment when done
-	       }
+	     {
+		  	Shell_Flag=KILL;      /* kill shell */
+		  	Handle_Shell(cr); 
+	     }
 	     Reset_All_Missiles(cr);    	/* kill all missiles */
 	     Gen_Snap_Effect();
 	     Jitter_Ship(cr);		/* leaves ship on screen */
@@ -307,11 +307,11 @@ void Test_Collisions(cairo_t *cr)
 	       {
 		 Points=Points-50;
 		 Shell_Flag=KILL;        /* kill shell */
-//		 Handle_Shell(cr); // Uncomment when done
+		 Handle_Shell(cr); // Uncomment when done
 		 if(Mine_Flag==ALIVE)    /* kill  mine  */
 		   {
 		     Mine_Flag=KILL;
-//		     Handle_Mine(cr); /* erase mine and reset counters */ // Uncomment
+		     Handle_Mine(cr); /* erase mine and reset counters */
 		   }
 		 Reset_All_Missiles(cr);
 		 Gen_Snap_Effect();
@@ -352,7 +352,7 @@ void Test_Collisions(cairo_t *cr)
 		 goodshot=OFF; /* redundant */
 		 Gen_Snap_Effect();
 		 Mine_Flag=KILL;
-//		 Handle_Mine(cr); // Uncomment
+		 Handle_Mine(cr);
 	       }
 	  } /* end missile vs. mine */
 
@@ -410,7 +410,7 @@ void Test_Collisions(cairo_t *cr)
 	 } /* missile vs. fortress */
   } /* end for missile do-loop */
   } /* end else space fortress case */
-//  if(Handle_Missile_Flag) Handle_Missile(cr); /* KILL them all */ // Uncomment
+  if(Handle_Missile_Flag) Handle_Missile(cr); /* KILL them all */
 }
 
 void Accumulate_Data()

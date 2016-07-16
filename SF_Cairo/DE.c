@@ -134,6 +134,22 @@ void Initialize_Graphics(cairo_t *cr)
 	cairo_set_font_options(cr, font_options);
 	cairo_select_font_face(cr,"Helvetica",CAIRO_FONT_SLANT_NORMAL,CAIRO_FONT_WEIGHT_BOLD);
 
+	cairo_path_t *empty_path = cairo_copy_path(cr);
+	PrevShip = empty_path;
+	// Sets all the values in the array to the empty path
+	// Gives a vague warning, probably because this only works for types with the size of an int
+	// (source: SO)
+//	memset(PrevMissile, empty_path, MAX_NO_OF_MISSILES);  
+//	PrevMissile = {empty_path};
+	// Attemps above don't work, so we initialize manually
+	for(int i = 0; i < MAX_NO_OF_MISSILES; i++)
+	{
+		PrevMissile[i] = empty_path;
+	}
+	
+	PrevFort = empty_path;
+	PrevMine = empty_path;
+
 	// clears the screen, probably the dos screen, and sets the current graphics write
 	// pointer to (0,0)
 	//	cleardevice();
@@ -315,22 +331,33 @@ void stroke_in_clip(cairo_t *cr)
 void clean(cairo_t *cr)
 {
 //	cairo_save(cr);
-	if (Ship_Should_Update)
+	if (Ship_Should_Clean)
 	{
 		clear_prev_path(cr, PrevShip);
+		Ship_Should_Clean = 0;
 	}
-	if (Mine_Should_Update)
+	if (Mine_Should_Clean)
 	{
 		clear_prev_path(cr, PrevMine);
+		Mine_Should_Clean = 0;
 	}
-	if (Fort_Should_Update)
+	if (Fort_Should_Clean)
 	{
 		clear_prev_path(cr, PrevFort);
+		Fort_Should_Clean = 0;
 	}
-	if (Missile_Should_Update)
+	for(int i=1;i<MAX_NO_OF_MISSILES;i++) 
 	{
-		// Add code that allows for multiple missiles
-		clear_prev_path(cr, PrevMissile);
+		if (Missile_Should_Clean[i])
+		{
+			clear_prev_path(cr, PrevMissile[i]);
+			Missile_Should_Clean[i] = 0;
+		}
+	}
+	if(Shell_Should_Clean)
+	{
+		clear_prev_path(cr, PrevShell);
+		Shell_Should_Clean = 0;
 	}
 //	cairo_restore(cr);
 	cairo_new_path(cr);
@@ -339,38 +366,39 @@ void clean(cairo_t *cr)
 
 void update_drawing(cairo_t *cr)
 {
-//	cairo_save(cr);
 	if (Ship_Should_Update)
 	{
-//		Ship_X_Pos = 096.000000;
-//		Ship_Y_Pos = 50.000000;
-//		Ship_Headings = Fort_Headings;
-//		printf("Ship_Headings: %d \n", Ship_Headings);
-//		printf("Fort_Headings: %d \n", Fort_Headings);
 		Draw_Ship(cr, Ship_X_Pos,Ship_Y_Pos,Ship_Headings,SHIP_SIZE_FACTOR*MaxX);
 		stroke_in_clip(cr);
+		Ship_Should_Update = 0;
 	}
 	if (Fort_Should_Update)
 	{
 		Draw_Fort(cr, MaxX/2,MaxY/2,Fort_Headings,FORT_SIZE_FACTOR*MaxX);
 		stroke_in_clip(cr);
+		Fort_Should_Update = 0;
 	}
-	if (Missile_Should_Update)
+	for(int i=1;i<MAX_NO_OF_MISSILES;i++)
 	{
-//		Missile_X = 119.000000;
-//		Missile_Y = 30.000000;
-		Missile_Heading = 51;
-		Draw_Missile(cr, Missile_X, Missile_Y, Missile_Heading, MISSILE_SIZE_FACTOR*MaxX);
-		stroke_in_clip(cr);
+		if (Missile_Should_Update[i])
+		{
+			Draw_Missile(cr, Missile_X, Missile_Y, Missile_Heading, MISSILE_SIZE_FACTOR*MaxX, i);
+			stroke_in_clip(cr);
+			Missile_Should_Update[i] = 0;
+		}
 	}
 	if (Mine_Should_Update)
 	{
-//		Mine_X_Pos = 50;
-//		Mine_Y_Pos = 50;
 		Draw_Mine(cr, Mine_X_Pos,Mine_X_Pos,MINE_SIZE_FACTOR*MaxX);
 		stroke_in_clip(cr);
+		Mine_Should_Update = 0;
 	}
-//	cairo_restore(cr);
+	if(Shell_Should_Update)
+	{
+		Draw_Shell(cr, Shell_X_Pos,Shell_Y_Pos,Shell_Headings,SHELL_SIZE_FACTOR*MaxX);
+		stroke_in_clip(cr);
+		Shell_Should_Update = 0;
+	}
 }
 
 void Draw_Frame(cairo_t *cr)
@@ -637,7 +665,7 @@ void Draw_Mine (cairo_t *cr, int x, int y, int size)	/* x,y is on screen center 
 //	setcolor(svcolor); /* restore previous color */
 }
 
-void Draw_Missile (cairo_t *cr, int x, int y, int Headings, int size)
+void Draw_Missile (cairo_t *cr, int x, int y, int Headings, int size, int missile_idx)
 {
 	int x1,y1;	/* ship's aft location */
 	int x2,y2;	/* ship's nose location */
@@ -668,7 +696,7 @@ void Draw_Missile (cairo_t *cr, int x, int y, int Headings, int size)
 	xl=xc+0.25*size*Fsin(Left_Wing_Headings);
 	yl=yc-0.25*size*Fcos(Left_Wing_Headings);
 	cairo_line(cr,xc,yc,xl,yl);
-	PrevMissile = cairo_copy_path(cr);
+	PrevMissile[missile_idx] = cairo_copy_path(cr);
 //	setcolor(svcolor); /* restore previous color */
 }
 
@@ -702,8 +730,7 @@ void Draw_Shell(cairo_t *cr, int x, int y, int Headings, int size)
 	cairo_line_to(cr,x2,y2);
 	cairo_line_to(cr,xr,yr);
 	cairo_line_to(cr,x1,y1);
-
-
+	PrevShell = cairo_copy_path(cr);
 //	setcolor(svcolor); /* restore previous color */
 }
 
@@ -732,7 +759,7 @@ void set_initial_vals(cairo_t *cr)
 	Ship_Should_Update = 1;
 	Mine_Should_Update = 1;
 	Fort_Should_Update = 1;
-	Missile_Should_Update = 1;
+	memset(Missile_Should_Update, 1, MAX_NO_OF_MISSILES);
 	srand(time(NULL));
 
 	Ship_X_Pos = 096.000000;
@@ -742,13 +769,6 @@ void set_initial_vals(cairo_t *cr)
 	Mine_X_Pos = 50;
 	Mine_Y_Pos = 50;
 	Ship_Headings = Fort_Headings;
-
-	cairo_path_t *empty_path = cairo_copy_path(cr);
-	PrevShip = empty_path;
-	PrevMissile = empty_path;
-	PrevFort = empty_path;
-	PrevMine = empty_path;
-
 }
 
 void start_drawing()

@@ -31,7 +31,7 @@ void Draw_Hexagone(cairo_t *cr,int X_Center,int Y_Center,int Hex_Outer_Radius);
 void Draw_Ship(cairo_t *cr, int x, int y, int Headings, int size);
 void Draw_Fort(cairo_t *cr, int x, int y, int Headings, int size );
 void Draw_Mine (cairo_t *cr, int x, int y, int size);
-void Draw_Missile (cairo_t *cr, int x, int y, int Headings, int size);
+void Draw_Missile (cairo_t *cr, int x, int y, int Headings, int size, int missile_idx);
 void Draw_Shell(cairo_t *cr, int x, int y, int Headings, int size);
 
 int Find_Headings(int x1,int y1,int x2,int y2);

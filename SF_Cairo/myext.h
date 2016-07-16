@@ -32,14 +32,23 @@ extern cairo_font_options_t *font_options;
 extern char Initialized_Graphics;
 
 extern cairo_path_t *PrevShip;
-extern cairo_path_t *PrevMissile;
+extern cairo_path_t *PrevMissile[MAX_NO_OF_MISSILES];
 extern cairo_path_t *PrevFort;
 extern cairo_path_t *PrevMine;
+extern cairo_path_t *PrevShell;
 
 extern int Ship_Should_Update;
 extern int Mine_Should_Update;
 extern int Fort_Should_Update;
-extern int Missile_Should_Update;
+extern int Missile_Should_Update[MAX_NO_OF_MISSILES]; // Make this an array for all the missiles
+extern int Shell_Should_Update;
+
+
+extern int Ship_Should_Clean;
+extern int Mine_Should_Clean;
+extern int Shell_Should_Clean;
+extern int Fort_Should_Clean;
+extern int Missile_Should_Clean[MAX_NO_OF_MISSILES]; // Make this an array for all the missiles
 
 /* Not that good maybe because for example multiple missile can exist */
 extern int Missile_X;
@@ -245,7 +254,7 @@ extern void Draw_Ship (cairo_t *cr, int x, int y, int Headings, int size);
 extern void Draw_Hexagone(cairo_t *cr, int X_Center,int Y_Center,int Hex_Size);
 extern void Draw_Frame(cairo_t *cr);
 extern void Draw_Fort (cairo_t *cr, int x, int y, int Headings, int size);
-extern void Draw_Missile (cairo_t *cr, int x, int y, int Headings, int size);
+extern void Draw_Missile (cairo_t *cr, int x, int y, int Headings, int size, int missile_idx);
 extern void Draw_Shell(cairo_t *cr, int x, int y, int Headings, int size);
 extern void Draw_Mine (cairo_t *cr, int x, int y, int size);  /* x,y is on screen center location
 					size is half diagonal           */
