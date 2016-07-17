@@ -13,17 +13,17 @@ update.restype = ctypes.POINTER(ctypes.c_ubyte * n_bytes) # c_ubyte is equal to 
 init()
 
 i = 0
-t_end = time.time() + 10
+seconds = 1
+t_end = time.time() + seconds
 while time.time() < t_end:
 	new_frame = update().contents
 	img = np.ctypeslib.as_array(new_frame)
 	img = np.reshape(img, (240,320,2)) # Don't ask me why this works, has to do with 16bit RGB
 #	img = np.delete(img, 3, 2) # Don't do this, really slow and not needed for the grayscale conv
 	gray_image = cv2.cvtColor(img, cv2.COLOR_BGR5552GRAY) # use this for 16 bit RGB
+	cv2.imwrite('./test_images/test' + str(i) + '.png', gray_image)
 	i += 1
-	break 
-print(i/10) 
-cv2.imwrite('./test_images/test' + str(i) + '.png', gray_image)
+print(i/seconds) 
 
 #	img = np.ctypeslib.as_array(new_frame)
 #	img = np.reshape(img, (240,320,4)) 

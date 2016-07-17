@@ -401,7 +401,7 @@ void Reset_Screen(cairo_t *cr)
     Ship_Y_Speed=0.0;
     Ship_Headings=0;
     Mine_Flag=DEAD;
-    for(i=1;i<6;i++) Missile_Flag[i]=DEAD;
+    for(i=0;i<MAX_NO_OF_MISSILES;i++) Missile_Flag[i]=DEAD;
     Missile_Type=VS_FRIEND;
     Missile_Vs_Mine_Only=OFF;
     Missiles_Counter=0;
@@ -823,7 +823,7 @@ void Reset_Aim_Screen(cairo_t *cr)
     Ship_Y_Speed=0.0;
     Ship_Headings=0;
     Mine_Flag=DEAD;
-    for(i=1;i<6;i++) Missile_Flag[i]=DEAD;
+    for(i=0;i<MAX_NO_OF_MISSILES;i++) Missile_Flag[i]=DEAD;
     Missile_Type=VS_FRIEND;
     Missile_Vs_Mine_Only=OFF;
     Missiles_Counter=0;

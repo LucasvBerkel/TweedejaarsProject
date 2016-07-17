@@ -211,7 +211,7 @@ void Reset_All_Missiles(cairo_t *cr)
 {
   int i;
 
-  for (i=1;i<6;i++)
+  for (i=0;i<MAX_NO_OF_MISSILES;i++)
       if(Missile_Flag[i]==ALIVE)  Missile_Flag[i]=KILL;
   Handle_Missile(cr);
 }
@@ -240,7 +240,7 @@ void Test_Collisions(cairo_t *cr)
 
   if(Game_Type==AIMING_TEST)
     {
-      for(i=1;i<6;i++)   /* for all  possible missiles */
+      for(i=0;i<MAX_NO_OF_MISSILES;i++)   /* for all  possible missiles */
        {                  /* check against mine only */
 	 if(Mine_Flag==ALIVE)
 	   if(Missile_Flag[i]==ALIVE)
@@ -328,7 +328,7 @@ void Test_Collisions(cairo_t *cr)
 	   }
 
   if(!breakflag)
-  for(i=1;i<6;i++)   /* for all  possible missiles */
+  for(i=0;i<MAX_NO_OF_MISSILES;i++)   /* for all  possible missiles */
   {                  /* check against mine and fortress */
     if(Mine_Flag==ALIVE)
       if(Missile_Flag[i]==ALIVE)

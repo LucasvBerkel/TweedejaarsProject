@@ -1,13 +1,14 @@
+// Probably add in myvars.c somewhere
 // OS X compilation
-// gcc -Wall -g DE.c -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo `pkg-config --cflags gtk+-3.0` `pkg-config --libs gtk+-3.0`  -o DE
+// gcc -Wall -g myvars.c DE.c -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo `pkg-config --cflags gtk+-3.0` `pkg-config --libs gtk+-3.0` -o DE
 // Linux compilation
-// gcc -Wall -g DE.c -lm `pkg-config --cflags cairo` `pkg-config --libs cairo` `pkg-config --cflags gtk+-3.0` `pkg-config --libs gtk+-3.0`  -o DE
+// gcc -Wall -g myvars.c DE.c -lm `pkg-config --cflags cairo` `pkg-config --libs cairo` `pkg-config --cflags gtk+-3.0` `pkg-config --libs gtk+-3.0`  -o DE
 // Without gtk support:
 // gcc -Wall -g DE.c -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo -o DE
 
 // To shared library: (comment out GTK related code for this to work) 
-// gcc -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo  -Wall -g -fPIC -c DE.c
-// gcc -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo -shared -o sf_frame_lib.so DE.o
+// gcc -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo  -Wall -g -fPIC -c  myvars.c DE.c
+// gcc -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo -shared -o sf_frame_lib.so myvars.o DE.o
 
 
 /* DISPLAY ELEMENTS	 6 Feb. 90 18:00
@@ -21,19 +22,19 @@
 #ifdef __APPLE__
 	#include <cairo-quartz.h> // Is this available on linux? No!
 #endif
-//#include <gtk/gtk.h>
+#include <gtk/gtk.h>
+#include <gdk/gdkkeysyms.h>
+
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <unistd.h>
 #ifndef GLOBALS
 #define GLOBALS
 #include "myconst.h"
 #include "myext.h"
-//#include "myvars.h"
 #endif
-//#include "myvars.h"
-#include <string.h>
-//#include "RS.h" // Not needed at all, but to see if above code works
+
 #include "DE.h"
 
 //#include <boost/python/module.hpp>
@@ -100,7 +101,7 @@ void Initialize_Graphics(cairo_t *cr)
 
 
 //	cairo_set_line_width(cr, 10); // Line width equal to one pixel
-	cairo_set_line_width(cr, (239.1 * 1) / ((double) MaxY * 1));
+	cairo_set_line_width(cr, (90.1 * 1) / ((double) MaxY * 1)); // for image_surf use 239
 //	cairo_set_line_width(cr, (90.1 * 1) / ((double) MaxY * 1));
 
 ////	 Cairo uses a different coordinate system than graphics.h, so we reflect Cairo's through
@@ -251,34 +252,28 @@ void snapCoords(cairo_t *canvas, int x, int y)
 //		printf("After [2]: %d %d\n", x, y);
 }
 
-void cairo_line(cairo_t *cr, int x1, int y1, int x2, int y2)
+void cairo_line(cairo_t *cr, int x_1, int y_1, int x_2, int y_2)
 {
 //	snapCoords(canvas, &x1, &y1 );
 //
-//	double x1 = (double) x_1;
-//	double y1 = (double) y_1;
-//	double x2 = (double) x_2;
-//	double y2 = (double) y_2;
+	double x1 = (double) x_1;
+	double y1 = (double) y_1;
+	double x2 = (double) x_2;
+	double y2 = (double) y_2;
 
-	// This code generates straighter and sharper lines, but also drops parts of objects for some
-	// reason
-//	printf("Bef: %f %f\n", x1, y1); //	cairo_user_to_device(canvas, &x1, &y1);
-//	printf("After: %f %f\n", x1, y1);
+// This code generates straighter and sharper lines, but also drops parts of objects for 
+// some reason //	cairo_user_to_device(cr, &x1, &y1);
 //	x1 = round(x1) + 0.5;
 //	y1 = round(y1) + 0.5;
-//	printf("After [2]: %f %f\n", x1, y1);
-//	cairo_device_to_user(canvas, &x1, &y1);
-//	printf("After [3]: %f %f\n\n\n", x1, y1);
-//
-//	printf("Bef: %f %f\n", x2, y2); //	cairo_user_to_device(canvas, &x2, &y2);
-//	printf("After: %f %f\n", x2, y2);
+//	cairo_device_to_user(cr, &x1, &y1);
+// //	cairo_user_to_device(cr, &x2, &y2);
 //	x2 = round(x2) + 0.5;
 //	y2 = round(y2) + 0.5;
-//	printf("After [2]: %f %f\n", x2, y2);
-//	cairo_device_to_user(canvas, &x2, &y2);
-//	printf("After [3]: %f %f\n\n\n", x2, y2);
-	cairo_move_to(cr, x1, y1);
-	cairo_line_to(cr, x2, y2);
+//	cairo_device_to_user(cr, &x2, &y2);
+	cairo_move_to(cr, x1+0.5, y1+0.5);
+	cairo_line_to(cr, x2+0.5, y2+0.5);
+//	cairo_move_to(cr, x1, y1);
+//	cairo_line_to(cr, x2, y2);
 
 }
 
@@ -314,19 +309,23 @@ void clip_path_rect(cairo_t *cr)
 	// Clears the pixels on the previous path, i.e. sets them to black
 void clear_prev_path(cairo_t *cr, cairo_path_t *prevPath)
 {
+	cairo_save(cr);
 	cairo_set_source_rgb(cr, 0, 0, 0);
 //	cairo_new_path(cr); assume the context is empty
 	cairo_append_path(cr, prevPath);
 	clip_path_rect(cr);
 	cairo_stroke(cr);
-	cairo_reset_clip(cr);
+	cairo_restore(cr);
+//	cairo_reset_clip(cr);
 }
 
 void stroke_in_clip(cairo_t *cr)
 {
+	cairo_save(cr);
 	clip_path_rect(cr);
 	cairo_stroke(cr);
-	cairo_reset_clip(cr);
+//	cairo_reset_clip(cr);
+	cairo_restore(cr);
 }
 
 
@@ -349,7 +348,7 @@ void clean(cairo_t *cr)
 		clear_prev_path(cr, PrevFort);
 		Fort_Should_Clean = 0;
 	}
-	for(int i=1;i<MAX_NO_OF_MISSILES;i++) 
+	for(int i=0;i<MAX_NO_OF_MISSILES;i++) 
 	{
 		if (Missile_Should_Clean[i])
 		{
@@ -369,7 +368,7 @@ void clean(cairo_t *cr)
 
 void update_drawing(cairo_t *cr)
 {
-	if (Ship_Should_Update)
+	if (Ship_Should_Update) // Skip this (and other) ifs because they always should be visible?
 	{
 		Draw_Ship(cr, Ship_X_Pos,Ship_Y_Pos,Ship_Headings,SHIP_SIZE_FACTOR*MaxX);
 		stroke_in_clip(cr);
@@ -381,11 +380,11 @@ void update_drawing(cairo_t *cr)
 		stroke_in_clip(cr);
 		Fort_Should_Update = 0;
 	}
-	for(int i=1;i<MAX_NO_OF_MISSILES;i++)
+	for(int i=0;i<MAX_NO_OF_MISSILES;i++)
 	{
 		if (Missile_Should_Update[i])
 		{
-			Draw_Missile(cr, Missile_X, Missile_Y, Missile_Heading, MISSILE_SIZE_FACTOR*MaxX, i);
+			Draw_Missile(cr, Missile_X_Pos[i], Missile_Y_Pos[i], Missile_Headings[i], MISSILE_SIZE_FACTOR*MaxX, i);
 			stroke_in_clip(cr);
 			Missile_Should_Update[i] = 0;
 		}
@@ -522,7 +521,6 @@ void Draw_Frame(cairo_t *cr)
 //	rectangle(0,0,MaxX,MaxY); 		/* main frame of the viewport */
 	cairo_rectangle(cr,0,0,MaxX,MaxY); // Maybe drop this or something
  	cairo_stroke(cr);
-
 
 
 	/* set graphics eraser is done in main */
@@ -762,9 +760,13 @@ void set_initial_vals(cairo_t *cr)
 	Ship_Should_Update = 1;
 	Mine_Should_Update = 1;
 	Fort_Should_Update = 1;
-	memset(Missile_Should_Update, 1, MAX_NO_OF_MISSILES);
+	// Maybe this should not be here? 
+
+//	memset(Missile_Should_Update, 1, MAX_NO_OF_MISSILES);
 	srand(time(NULL));
 
+	memset(Missile_Should_Update, 0, MAX_NO_OF_MISSILES);
+	memset(Missile_Should_Clean, 0, MAX_NO_OF_MISSILES);
 	Ship_X_Pos = 096.000000;
 	Ship_Y_Pos = 50.000000;
 	Missile_X = 119.000000;
@@ -781,6 +783,8 @@ void start_drawing()
 	SF_canvas = cairo_create(surface);
 	Initialize_Graphics(SF_canvas);
 	set_initial_vals(SF_canvas);
+	// restore the line width
+	cairo_set_line_width(SF_canvas, (224.1 * 1) / ((double) MaxY * 1));
 	Draw_Frame(SF_canvas); // Draw the basis
 }
 
@@ -802,42 +806,57 @@ int move_update()
 
 void update_frame(cairo_t *cr)
 {
-	if (! (rand() % 5))
-	{
-		Ship_X_Pos = (Ship_X_Pos + move_update()) % MaxX;
-	}
-	if (rand() % 2)
-	{
-		Ship_Y_Pos = (Ship_Y_Pos + rand() % 2) % MaxY;
-	}
-	if (rand() % 2)
-	{
-		Ship_Headings = (Ship_Headings + move_update()) % 360;
-	}
-	Fort_Headings = (Fort_Headings + 1) % 360;
-	if (rand() % 2)
-	{
-		Mine_X_Pos = (Mine_X_Pos + move_update()) % MaxX;
-	}
-	if (rand() % 2)
-	{
 
-	}
-	Ship_X_Pos =  ((Ship_X_Pos + move_update()) % MaxX) + 1;
+//	if (rand() % 5)
+//	{
+//		Ship_Should_Clean = 0;	
+//		Ship_Should_Update = 0;
+//	}
+//	else
+//	{
+//		Ship_X_Pos = (Ship_X_Pos + move_update()) % MaxX;
+//		if (rand() % 2)
+//		{
+//			Ship_Y_Pos = (Ship_Y_Pos + rand() % 2) % MaxY;
+//		}
+//	}
+
+//	if (rand() % 2)
+//	{
+//		Ship_Headings = (Ship_Headings + move_update()) % 360;
+//	}
+//	int m = 0;
+//	if (rand() % 2)
+//	{
+//		
+//	}
+//	if (rand() % 2)
+//	{
+//		m = move_update();
+//		Mine_X_Pos = (Mine_X_Pos + m) % MaxX;
+//	}
+
+	
+//	Ship_X_Pos =  ((Ship_X_Pos + move_update()) % MaxX) + 1;
 //	Ship_Y_Pos = (Ship_Y_Pos + move_update()) % MaxY;
-//	Mine_Y_Pos = (Mine_Y_Pos + move_update()) % MaxY;
-//	Mine_X_Pos = (Mine_X_Pos + move_update()) % MaxX;
+	Fort_Headings = (Fort_Headings + 1) % 360;
+	Fort_Headings = 45;	
+	Mine_Y_Pos = (Mine_Y_Pos + move_update()) % MaxY;
+	Mine_X_Pos = (Mine_X_Pos + move_update()) % MaxX;
 	Missile_X = (Missile_X + move_update()) % MaxX;
 	if (Missile_Y == 0)
 	{
 		Missile_Y = MaxY;
 	}
 	Missile_Y = (Missile_Y - 1) % MaxY;
+	Missile_Y_Pos[0] = Missile_Y;
+	Missile_X_Pos[0] = Missile_X;
+
 	clean(cr);
 	Draw_Hexagone(cr, MaxX/2,MaxY/2,SMALL_HEXAGONE_SIZE_FACTOR*MaxX);
-	clip_path_rect(cr);
-	cairo_stroke(cr);
-	cairo_reset_clip(cr);
+	stroke_in_clip(cr);
+	
+//	cairo_reset_clip(cr);
 	update_drawing(cr);
 }
 
@@ -848,74 +867,136 @@ unsigned char* update_frame_SF()
 }
 
 
-//static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data)
-//{
-////	printf("Equal to surface %d \n", cairo_surface_get_type(cairo_get_target(cr)) == CAIRO_SURFACE_TYPE_QUARTZ);
-//	if(! Initialized_Graphics)
-//	{
-//	  set_initial_vals(cr);
-//
-//		Initialized_Graphics = 1; // at zero to redraw with initialization on every update
-//	}
-//	Initialize_Graphics(cr);
+static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data)
+{
+	
+//	Oddly enough, clipping seems to work different accros surfaces. Therefore we set every
+//	thing to always update here. 
+
+//	printf("Equal to surface %d \n", cairo_surface_get_type(cairo_get_target(cr)) == CAIRO_SURFACE_TYPE_QUARTZ);
+	if(Initialized_Graphics == 0)
+	{
+	  set_initial_vals(cr);
+		Initialized_Graphics = 2; // at zero to redraw with initialization on every update
+		
+	}
+	else if(Initialized_Graphics == 2)
+	{
+		Ship_Should_Update = 1; 
+		Initialized_Graphics = 1;
+	}
+	Initialize_Graphics(cr);
 //	cairo_rectangle(cr, -Xmargin, 0, WINDOW_WIDTH,WINDOW_HEIGHT); // Cheap fix
 //	cairo_set_source_rgb(cr, 0, 0, 0);
+	Ship_Should_Clean = 1;
+	Mine_Should_Clean = 1;
+	Fort_Should_Clean = 1;
+	Missile_Should_Clean[0] = 1;
+	Ship_Should_Update = 1;
+	Mine_Should_Update = 1;
+	Fort_Should_Update = 1;
+	Missile_Should_Update[0] = 1;
+	Draw_Frame(cr);
 //	cairo_fill(cr);
-//	Draw_Frame(cr);
-//	update_frame(cr);
-//	return FALSE; // Not sure why this should return false
-//}
-//
-//void animation_loop(GtkWidget *darea)
+	update_frame(cr);
+	return FALSE; // Not sure why this should return false
+}
+
+gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
+{
+  switch (event->keyval)
+  {
+    case GDK_KEY_Left:
+			Ship_Headings = (Ship_Headings - 5) % 360;
+      Ship_Should_Update = 1;
+			Ship_Should_Clean = 1;
+			break;
+    case GDK_KEY_Up:
+			Ship_X_Pos = (Ship_X_Pos + 5) % MaxX;
+      Ship_Should_Update = 1;
+			Ship_Should_Clean = 1;
+			break;
+    case GDK_KEY_Right:
+			Ship_Headings = (Ship_Headings + 5) % 360;
+      Ship_Should_Update = 1;
+			Ship_Should_Clean = 1;
+			break;
+		case GDK_KEY_space:
+			printf("spacey \n");
+			break;
+    default: // Not sure if this always reached
+      return FALSE;
+  }
+
+  return FALSE; 
+}
+
+void animation_loop(GtkWidget *darea)
+{
+  int i;
+	for(i = 0; i < 3420; i++)
+	{
+		gtk_widget_queue_draw(darea);
+		while(gtk_events_pending())
+		{
+    	gtk_main_iteration_do(TRUE);
+		}
+		usleep(1000*30); // 500 miliseconds, usleep() is in microseconds
+	}
+}
+
+void quit_sf()
+{
+	gtk_main_quit();
+//	Close_Graphics_SF();
+	exit(0);
+}
+
+
+
+int main(int argc, char *argv[])
+{
+	Initialized_Graphics = 0;
+
+// Basic GTK initialization
+ 	GtkWidget *window;
+  GtkWidget *darea;
+  gtk_init(&argc, &argv);
+  window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+  darea = gtk_drawing_area_new();
+  gtk_container_add(GTK_CONTAINER(window), darea);
+
+  g_signal_connect(G_OBJECT(darea), "draw", G_CALLBACK(on_draw_event), NULL);
+  g_signal_connect(window, "destroy", G_CALLBACK(exit), NULL);
+  g_signal_connect (G_OBJECT (window), "key_press_event", G_CALLBACK (on_key_press), NULL);
+
+  gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
+  gtk_window_set_default_size(GTK_WINDOW(window), WINDOW_WIDTH, WINDOW_HEIGHT);
+
+  gtk_window_set_title(GTK_WINDOW(window), "Space Fortress");
+//	gtk_print_context_get_cairo_context();
+
+  gtk_widget_show_all(window);
+	animation_loop(darea);
+
+  gtk_main();
+
+	stop_drawing(); // GTK handles this I guess
+
+  return 0;
+}
+
+
+
+//int main()
 //{
-//  int i;
-//	for(i = 0; i < 3420; i++)
-//	{
-//		gtk_widget_queue_draw(darea);
-//		while(gtk_events_pending())
-//		{
-//    	gtk_main_iteration_do(TRUE);
-//		}
-//		usleep(1000*30); // 500 miliseconds, usleep() is in microseconds
-//	}
+//	start_drawing();
+//	update_frame_SF();
+//	cairo_surface_write_to_png(surface, "test.png");
+//	stop_drawing();
+//	
 //}
 
-//void quit_sf()
-//{
-//	gtk_main_quit();
-////	Close_Graphics_SF();
-//	exit(0);
-//}
 
-//int main(int argc, char *argv[])
-//{
-//	Initialized_Graphics = 0;
-//
-//// Basic GTK initialization
-// 	GtkWidget *window;
-//  GtkWidget *darea;
-//
-//  gtk_init(&argc, &argv);
-//  window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-//
-//  darea = gtk_drawing_area_new();
-//  gtk_container_add(GTK_CONTAINER(window), darea);
-//
-//  g_signal_connect(G_OBJECT(darea), "draw", G_CALLBACK(on_draw_event), NULL);
-//  g_signal_connect(window, "destroy", G_CALLBACK(exit), NULL);
-//
-//  gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
-//  gtk_window_set_default_size(GTK_WINDOW(window), WINDOW_WIDTH, WINDOW_HEIGHT);
-//  gtk_window_set_title(GTK_WINDOW(window), "Space Fortress");
-////	gtk_print_context_get_cairo_context();
-//
-//  gtk_widget_show_all(window);
-//	animation_loop(darea);
-//
-//  gtk_main();
-//
-//	stop_drawing(); // GTK handles this I guess
-//
-//  return 0;
-//}
+
 #endif

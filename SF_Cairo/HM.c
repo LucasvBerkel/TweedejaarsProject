@@ -535,7 +535,7 @@ void Handle_Missile(cairo_t *cr)
  int i;
 
 		/* update all existing missiles */
- for(i=1;i<6;i++)
+ for(i=0;i<MAX_NO_OF_MISSILES;i++)
     if(Missile_Flag[i] != DEAD)
       switch(Missile_Flag[i])
       {
@@ -584,7 +584,7 @@ void Handle_Missile(cairo_t *cr)
 	  else           Points=Points-3;   /* our low-low interest rates.. */
 
       Missiles_Counter++;
-      for(i=1;i<6;i++)
+      for(i=0;i<MAX_NO_OF_MISSILES;i++)
 	 if(Missile_Flag[i]==DEAD) break; /* from for-loop */
       Missile_Flag[i]=ALIVE;
       Fire_Missile(cr,i);
