@@ -3,6 +3,14 @@ import cv2
 import numpy as np 
 import time
 
+#  A list of GTK hex key values as decimals
+#	GDK_KEY_F1 0xffbe 65470 
+#	GDK_KEY_F2 0xffbf 65471
+#	GDK_KEY_F3 0xffc0 65472
+#	GDK_KEY_Left 0xff51 65361
+#	GDK_KEY_Up 0xff52 65362
+#	GDK_KEY_space 0x020 32 
+
 # Maybe create a seperate SF update version?
 update = ctypes.CDLL('./sf_frame_lib.so').update_frame_SF
 init = ctypes.CDLL('./sf_frame_lib.so').start_drawing

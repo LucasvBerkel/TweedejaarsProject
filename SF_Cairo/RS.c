@@ -1,5 +1,5 @@
 // OS X compilation:
-/* gcc -Wall -g  myvars.c TCOL.c DE.c HM.c RS.c -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo -o RS -Wno-dangling-else -Wno-switch; */
+/* gcc -Wall -g  myvars.c TCOL.c DE.c HM.c RS.c -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo -o RS -Wno-dangling-else -Wno-switch; (also needs gtk now) */ 
 
 /* test graphics 21.2.90 18:00
             definitions */
@@ -21,6 +21,8 @@
 #include "HM.h"
 #include "TCOL.h"
 #include "RS.h"
+
+#include <gdk/gdkkeysyms.h>
 
 // I don't think we do anything with this menu stuff
 extern char Friend_Menu[3][1];
@@ -149,6 +151,27 @@ int keyboard (void)
 	return 0; // Make the compiler happy
 }
 
+// Something to do with double presses or something
+// t2 - t1 should give some value in milliseconds, if that is above some threshold some
+// flag is set. 
+void handle_F3()
+{
+	if((GDK_KEY_F3=F3)&&(Lastkey!=GDK_KEY_F3)&&(!(Timing_Flag))) { /* first F3 keypress */
+       t1=Time_Counter;
+       Timing_Flag=ON;
+       Check_Mine_Flag=ON; /* is used by Get_User_Input(cr) */
+   }
+
+   if((Key==GDK_KEY_F3)&&(Lastkey==GDK_KEY_F3)&&(Timing_Flag)) {   /* second F3 keypress */
+       t2=Time_Counter;
+       Timing_Flag=OFF;
+       Key=0;   /* to enable consecutive double_press */
+       /* where with next keypress Lastkey=0 */
+       Display_Interval_Flag=ON;  /* is used in main */
+   }
+
+}
+
 // Commented to prevent syntax error
 //void interrupt far Get_Key() {
 //    int tmp;
@@ -206,7 +229,7 @@ void Check_Bonus_Input(cairo_t *cr) {
 //        Bonus_Wasted_Flag=ON;
 //    } else if(Bonus_Display_Flag==SECOND_BONUS) {
 //        if(!Bonus_Wasted_Flag) {
-//            if(Key==F1) {
+//            if(Key==GDK_KEY_F1) {
 //                No_Of_Points_Bonus_Taken++;
 //                Points=Points+100;
 //                Update_Points(cr);
@@ -230,15 +253,17 @@ void Get_User_Input(cairo_t *cr)
     if (New_Input_Flag) /* new input occured */
     {
         New_Input_Flag=OFF; /* make sure no repetitions on same input */
-        if (Key==UP)    Accel_Input=1;        /*   UP    */
-        if (Key==LEFT)  Rotate_Input=-1;      /*   LEFT  */
-        if (Key==RIGHT) Rotate_Input=1;       /*   RIGHT */
-        if (Key==DOWN)  New_Missile_Flag=ON;  /*   DOWN  */
-        if (Key==F1)    Check_Bonus_Input(cr);        /*   P(oints) */
-        if (Key==F2)    Check_Bonus_Input(cr);        /*   M(issiles) */
-/*    if (Key==F3)    is handled by kbd interrupt handler */
-        if (Key==ENTER) Freeze_Flag=Freeze_Flag^1; /* toggle freeze flag */
-        if (Key==ESC)   End_Flag=ON;
+        if ( // This allowed by processor interupts, but happens automatically==UP)    Accel_Input=1;        /*   UP    */
+        if (Key==GDK_KEY_Left)  Rotate_Input=-1;      /*   LEFT  */
+        if (Key==GDK_KEY_Right) Rotate_Input=1;       /*   RIGHT */ 
+        if (Key==GDK_KEY_space)  New_Missile_Flag=ON;  /*   DOWN  */ // Used to be down
+        if (Key==GDK_KEY_F1)    Check_Bonus_Input(cr);        /*   P(oints) */
+        if (Key==GDK_KEY_F2)    Check_Bonus_Input(cr);        /*   M(issiles) */
+				// probably not done right
+    		if (Key==GDK_KEY_F3)   handle_F3() // was handled by kbd interrupt handler */ // hmm
+				// enter pauses the game 
+        if (Key==GDK_KEY_Return) Freeze_Flag=Freeze_Flag^1; /* toggle freeze flag */ 
+        if (Key==GDK_KEY_Escape)   End_Flag=ON;
     }
     if(Check_Mine_Flag) /* after first press of F3 */
         {
@@ -250,7 +275,7 @@ void Get_User_Input(cairo_t *cr)
 }
 
 
-char Keyboard1() /* handles escape key press only */
+char Keyboard1() /* handles escape key press only */ // wtf why
 {
 //    union u_type{int a; char b[3];} keystroke;
 //    char inkey=0;
@@ -672,10 +697,10 @@ int Run_SF(cairo_t *cr)
         Open_Graphics();
         Initialize_Graphics(cr); // Probably not needed (or depends on GTK/versus array render)
         Reset_Screen(cr);
-        
+        // Draw_Frame(cr here?)
         Loop_Counter=0;
         Set_Kbd_Rate(0x8); /* to slow repeat rate 15Hz */
-//        Capture_Kbd(Get_Key); /* redirect KBD interrupts to  Get_Key() */ // Uncomment
+//        Capture_Kbd(Get_Key); /* redirect KBD interrupts to Get_Key() */ // Uncomment
         Time_Counter=0;
 //        Capture_Tik(Get_Tik);
         Set_Timer();
@@ -686,14 +711,16 @@ int Run_SF(cairo_t *cr)
 						// and then draw all in need of an update
             loop_start_time=Time_Counter;
             Loop_Counter++;
+						 // This was done by processor interupts, but is allowed automatically by GTK
             Get_User_Input(cr);
-            while(Freeze_Flag) Get_User_Input(cr);
+						// Pauses the game (when the flag is set, continues this loop) 
+            while(Freeze_Flag) Get_User_Input(cr); 
             Move_Ship(cr);
             Handle_Missile(cr);
 //            if(Sound_Flag>1) Sound_Flag--;
 //            if(Sound_Flag==1) {Sound_Flag--; nosound();}
             Handle_Mine(cr);
-            Test_Collisions(cr);
+            Test_Collisions(cr); // Animations are done here
             Handle_Shell(cr);
             Handle_Fortress(cr);
             if(Display_Interval_Flag) {   /* of double press */

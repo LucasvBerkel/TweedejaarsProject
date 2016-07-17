@@ -585,14 +585,14 @@ void Handle_Missile(cairo_t *cr)
 
       Missiles_Counter++;
       for(i=0;i<MAX_NO_OF_MISSILES;i++)
-	 if(Missile_Flag[i]==DEAD) break; /* from for-loop */
-      Missile_Flag[i]=ALIVE;
-      Fire_Missile(cr,i);
-      if(Game_Type==SPACE_FORTRESS)
-			{
-	 	 		Missile_Stock--;
-	  		Update_Shots(cr);
-			}
+	 			if(Missile_Flag[i]==DEAD) break; /* from for-loop */
+      	Missile_Flag[i]=ALIVE;
+      	Fire_Missile(cr,i);
+      	if(Game_Type==SPACE_FORTRESS)
+				{
+	 	 			Missile_Stock--;
+	  			Update_Shots(cr);
+				}
    } while(OFF); /* to enable the break command */
 }
 

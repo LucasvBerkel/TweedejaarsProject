@@ -902,31 +902,61 @@ static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data
 	return FALSE; // Not sure why this should return false
 }
 
+// This is so that the python interface can set the key
+void set_key(int key_value)
+{
+	Lastkey = Key;
+	Key = key_value;
+//  A list of GTK hex key values as decimals
+//	GDK_KEY_F1 0xffbe 65470 
+//	GDK_KEY_F2 0xffbf 65471
+//	GDK_KEY_F3 0xffc0 65472
+//	GDK_KEY_Left 0xff51 65361
+//	GDK_KEY_Up 0xff52 65362
+//	GDK_KEY_space 0x020 32 
+}
+
 gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
 {
-  switch (event->keyval)
-  {
-    case GDK_KEY_Left:
-			Ship_Headings = (Ship_Headings - 5) % 360;
-      Ship_Should_Update = 1;
-			Ship_Should_Clean = 1;
-			break;
-    case GDK_KEY_Up:
-			Ship_X_Pos = (Ship_X_Pos + 5) % MaxX;
-      Ship_Should_Update = 1;
-			Ship_Should_Clean = 1;
-			break;
-    case GDK_KEY_Right:
-			Ship_Headings = (Ship_Headings + 5) % 360;
-      Ship_Should_Update = 1;
-			Ship_Should_Clean = 1;
-			break;
-		case GDK_KEY_space:
-			printf("spacey \n");
-			break;
-    default: // Not sure if this always reached
-      return FALSE;
-  }
+		Lastkey = Key;
+		Key = event->keyval;
+	
+		
+//  switch (event->keyval)
+//  {
+//    case GDK_KEY_Left:
+////			Ship_Headings = (Ship_Headings - 5) % 360;
+////      Ship_Should_Update = 1;
+////			Ship_Should_Clean = 1;
+//
+//			break;
+//    case GDK_KEY_Up:
+////			Ship_X_Pos = (Ship_X_Pos + 5) % MaxX;
+////      Ship_Should_Update = 1;
+////			Ship_Should_Clean = 1;
+//			break;
+//    case GDK_KEY_Right:
+////			Ship_Headings = (Ship_Headings + 5) % 360;
+////      Ship_Should_Update = 1;
+////			Ship_Should_Clean = 1;
+//			break;
+//		case GDK_KEY_space:
+//			
+//			break;
+//		case GDK_KEY_F3:
+//
+//			break;
+//		case GDK_KEY_F2:
+//
+//		case GDK_KEY_Return:
+//			
+//			break;
+//		case GDK_KEY_Escape:
+//
+//			break;
+//    default: // Not sure if this always reached
+//      return FALSE;
+//  }
 
   return FALSE; 
 }
@@ -953,7 +983,7 @@ void quit_sf()
 }
 
 
-
+//
 int main(int argc, char *argv[])
 {
 	Initialized_Graphics = 0;
