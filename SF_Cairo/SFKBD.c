@@ -11,20 +11,20 @@
 #include "myconst.h"
 #include "myext.h"  /* modify to myext.h */
 
-int readkey(void);
-int write_file(char filename[],int first_time,int sess);
-int read_file(char filename[],int displ,int sess);
-int check_id(void);
-void user_dialogue(void);
-int ask_training_session(void);
-void opening_screen(void);
-int ask_session(void);
-int ask_game(void);
-void displ_screen(int scr_no,char *scr_file);
-char *ask_session_nr(char filename[MAX_DIR_PATH],char string[10]);
-void final_display(void);
-void erase_files(char path1[]);
-void open_graphics(void);
+//int readkey(void);
+//int write_file(char filename[],int first_time,int sess);
+//int read_file(char filename[],int displ,int sess);
+//int check_id(void);
+//void user_dialogue(void);
+//int ask_training_session(void);
+//void opening_screen(void);
+//int ask_session(void);
+//int ask_game(void);
+//void displ_screen(int scr_no,char *scr_file);
+//char *ask_session_nr(char filename[MAX_DIR_PATH],char string[10]);
+//void final_display(void);
+//void erase_files(char path1[]);
+//void open_graphics(void);
 
 /**************************************************************************/
 /*                                                                        */
@@ -33,15 +33,16 @@ void open_graphics(void);
 /**************************************************************************/
 
 
-main() {
+int main() {
     Open_Graphics();
 //    Set_Bonus_Message();
 //    Set_Bonus_Chars();
 //    Set_Graphics_Eraser();
 //    Close_Graphics();
 
-//    randomize();
-//    delay(0);
+//    randomize(); // I think I added this
+//    delay(0); // Nice delay of 0 seconds
+		usleep(5);
 
     Run_SF();
 
@@ -55,7 +56,7 @@ main() {
 /*                                                                        */
 /**************************************************************************/
 
-void final_display(void) {
+void final_display() {
 //    clrscr(); // From conio.h, clears the MS-DOS screen
 //    displ_screen(4,"screen.dat");
 //    gotoxy(44,8);printf("%d",Score);

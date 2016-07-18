@@ -13,6 +13,7 @@
 //#include <dos.h>
 #include <time.h>
 #include <math.h>
+#include <unistd.h>
 
 //#include "myconst.h"
 //#include "myvars.h"
@@ -98,6 +99,7 @@ void Restore_Tik()
 
 void Set_Timer()
 {
+// 		http://www.osdever.net/bkerndev/Docs/pit.htm
 //    outportb(0x43,0x36);
 //    outportb(0x40,1193&0xFF); /* 100 Hz */
 //    outportb(0x40,1193>>8);
@@ -157,13 +159,13 @@ int keyboard (void)
 void handle_F3()
 {
 	if((GDK_KEY_F3=F3)&&(Lastkey!=GDK_KEY_F3)&&(!(Timing_Flag))) { /* first F3 keypress */
-       t1=Time_Counter;
+       t1=clock();
        Timing_Flag=ON;
        Check_Mine_Flag=ON; /* is used by Get_User_Input(cr) */
    }
 
    if((Key==GDK_KEY_F3)&&(Lastkey==GDK_KEY_F3)&&(Timing_Flag)) {   /* second F3 keypress */
-       t2=Time_Counter;
+       t2=clock();
        Timing_Flag=OFF;
        Key=0;   /* to enable consecutive double_press */
        /* where with next keypress Lastkey=0 */
@@ -405,7 +407,7 @@ void Find_Interval(cairo_t *cr)   /* display double-press interval */
 //    int x,y; // Unused
     int interval;
 
-    interval=Double_Press_Interval=t2-t1; /* in milliseconds */
+    interval=Double_Press_Interval=((t2-t1)/CLOCKS_PER_SEC)*1000; /* in milliseconds */
     if((interval<SF_DELAY*20)&&(interval>SF_DELAY)) /* only when interval makes sense */
     {
         if((interval>=Interval_Lower_Limit)&&(interval<=Interval_Upper_Limit)
@@ -679,8 +681,8 @@ void Handle_Bonus()
 
 int Run_SF(cairo_t *cr)
 {
-    unsigned elapsed_time;
-    unsigned long loop_start_time;
+    clock_t elapsed_time;
+    clock_t loop_start_time;
 
     // SCORE SAVE FILE
     FILE *f = fopen("SAVE\\SCORE.TXT", "w");
@@ -699,17 +701,19 @@ int Run_SF(cairo_t *cr)
         Reset_Screen(cr);
         // Draw_Frame(cr here?)
         Loop_Counter=0;
-        Set_Kbd_Rate(0x8); /* to slow repeat rate 15Hz */
+//        Set_Kbd_Rate(0x8); /* to slow repeat rate 15Hz */
 //        Capture_Kbd(Get_Key); /* redirect KBD interrupts to Get_Key() */ // Uncomment
-        Time_Counter=0;
+				// I think we don't need this initialization with clock()
+//        Time_Counter=0;
+				
 //        Capture_Tik(Get_Tik);
-        Set_Timer();
+//        Set_Timer();
 
         do {   /* real time loop of one game */
 						// Do all the drawing in one go here, first clear all (using prev_paths) in need of 
 						// an update, then optionally draw the hexagon (maybe only if it has been crossed)
 						// and then draw all in need of an update
-            loop_start_time=Time_Counter;
+            loop_start_time=clock();
             Loop_Counter++;
 						 // This was done by processor interupts, but is allowed automatically by GTK
             Get_User_Input(cr);
@@ -730,8 +734,11 @@ int Run_SF(cairo_t *cr)
             Accumulate_Data(cr);
             Handle_Bonus();
             if(!Effect_Flag) {
-                if((elapsed_time=Time_Counter-loop_start_time) < SF_DELAY)
-                    Mydelay(SF_DELAY-elapsed_time);  /* wait up to 50 milliseconds */
+								// This only says something like
+								// The game should always wait 50ms between frames, so sleep until the loop
+								// body takes 50ms
+                if((elapsed_time=((clock()-loop_start_time)/CLOCKS_PER_SEC)*1000) < SF_DELAY)
+                    usleep(SF_DELAY-elapsed_time);  /* wait up to 50 milliseconds */
             } else Effect_Flag=OFF;  /* no delay necessary */
 						clean(cr);
 						update_drawing(cr);
@@ -744,6 +751,9 @@ int Run_SF(cairo_t *cr)
             fclose(f);
 
         } while(!Restart_Flag&&!End_Flag&&(Loop_Counter < One_Game_Loops));
+				// This says quit the loop if the time defined by One_Game_Loops (default is 3 min)
+				// has passed (this can be measured with clock I guess?) Because the loop always takes
+				// exactly 50ms we can just increment loop counter until it reaches a threshold 
         /* ESC or three minutes */
 
         // RUNNING FILE
@@ -751,14 +761,14 @@ int Run_SF(cairo_t *cr)
         fprintf(f, "FALSE");
         fclose(f);
 
-        Restore_Tik();
-        Reset_Timer();
-        Restore_Kbd();
-        Set_Kbd_Rate(0x4); /* to repeat rate 20Hz */
+//        Restore_Tik();
+//        Reset_Timer();
+//        Restore_Kbd();
+//        Set_Kbd_Rate(0x4); /* to repeat rate 20Hz */
 
 //        nosound();   /* just in case */
 //        sound(400);
-//        delay(500);
+//        delay(500); // Not intersting cus only sound
 //        nosound();
         Game_Counter++;
         
@@ -913,15 +923,15 @@ void Save_Aiming_Game() {
 
 void Run_Aiming(cairo_t *cr)   /* 1- for training 0- for demo */
 {
-    unsigned elapsed_time;
-    unsigned long loop_start_time;
+    clock_t elapsed_time;
+    clock_t loop_start_time;
 
     Init_Aim_Session();
     Open_Graphics();
     Initialize_Graphics(cr);
     Set_Graphics_Eraser(cr);
     Game_Counter=0; /* no of games played */
-    Set_Kbd_Rate(0x8); /* to slow repeat rate .. */
+//    Set_Kbd_Rate(0x8); /* to slow repeat rate .. */
     do
     {
     Game_Counter++;
@@ -929,12 +939,12 @@ void Run_Aiming(cairo_t *cr)   /* 1- for training 0- for demo */
     Reset_Aim_Screen(cr);
     Loop_Counter=0;
 //    Capture_Kbd(Get_Key); /* redirect KBD interrupts to  Get_Key() */ // Uncomment
-    Time_Counter=0;
+//    Time_Counter=0;
 //    Capture_Tik(Get_Tik);
-    Set_Timer();
+//    Set_Timer();
     do
         {
-         loop_start_time=Time_Counter;
+         loop_start_time=clock();
          Loop_Counter++;
          Get_User_Input(cr);
             while(Freeze_Flag) Get_User_Input(cr);
@@ -946,17 +956,17 @@ void Run_Aiming(cairo_t *cr)   /* 1- for training 0- for demo */
          Test_Collisions(cr);
          if(!Effect_Flag)
              {
-     if ( (elapsed_time=Time_Counter-loop_start_time) < SF_DELAY)
-            Mydelay(SF_DELAY-elapsed_time);  /* wait up to 50 milliseconds */
+     if ( (elapsed_time=((clock()-loop_start_time)/CLOCKS_PER_SEC))*1000 < SF_DELAY)
+            	usleep(SF_DELAY-elapsed_time);  /* wait up to 50 milliseconds */
              }
          else Effect_Flag=OFF;  /* no delay necessary */
         } while((!End_Flag)&&(Loop_Counter < 2400));
     /* ESC or three minutes */
 
-    Restore_Tik();
-    Reset_Timer();
-    Restore_Kbd();
-    Set_Kbd_Rate(0x4); /* to repeat rate 20Hz */
+//    Restore_Tik();
+//    Reset_Timer();
+//    Restore_Kbd();
+//    Set_Kbd_Rate(0x4); /* to repeat rate 20Hz */
     if((!End_Flag)&&(Game_Counter<No_Of_Games))
                      { Announce_Game_End();
 //                         nosound();   /* just in case */

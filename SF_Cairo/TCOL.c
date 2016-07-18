@@ -102,7 +102,7 @@ void Gen_Explosion(cairo_t *cr, int X_Pos,int Y_Pos,int Radius)
 
 //		cairo_stroke(cr);
 		// -- DELAY HERE -- 
-//	Mydelay(250/i);/* 100/i*5 */ // I guess a delay only makes sense when drawing on a window
+		usleep(250/i);/* 100/i*5 */ // I guess a delay only makes sense when drawing on a window
 //	sound(200+15*i);
 //	setcolor(YELLOW);
 		// This most surely does not do anything
@@ -183,7 +183,7 @@ void Jitter_Ship(cairo_t *cr)
 				   SHIP_SIZE_FACTOR*MaxX);  /* draw ship */
 		stroke_in_clip(cr);
 
-//    Mydelay(i*5); // Uncomment!!!!!!
+    usleep(i*5);
 		clear_prev_path(cr, PrevShip);
     Draw_Ship(cr,Jitter_X_Pos,Jitter_Y_Pos,Jitter_Headings,
 				SHIP_SIZE_FACTOR*MaxX);  /* erase ship */
@@ -195,7 +195,7 @@ void Jitter_Ship(cairo_t *cr)
     Draw_Ship(cr,Jitter_X_Pos,Jitter_Y_Pos,Jitter_Headings,
 				SHIP_SIZE_FACTOR*MaxX);  /* draw ship */
 		stroke_in_clip(cr);
-//    Mydelay(i*5);
+    usleep(i*5);
 		clear_prev_path(cr, PrevShip);
     Draw_Ship(cr,Jitter_X_Pos,Jitter_Y_Pos,Jitter_Headings,
 				SHIP_SIZE_FACTOR*MaxX);  /* erase ship */

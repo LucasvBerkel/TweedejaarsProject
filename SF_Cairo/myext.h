@@ -3,7 +3,7 @@
 #include "myconst.h"
 #include "myenums.h"
 #include <cairo.h>
-
+#include <time.h>
 
 // Joystick stuff
 //struct jstk_pos{
@@ -65,9 +65,10 @@ extern int One_Game_Loops;
 extern int Resource_Display_Interval;
 extern char Restart_Flag;
 
-extern unsigned long t0;  /* time when FOE mine is born */
-extern unsigned long t1;  /* double press interval start */
-extern unsigned long t2;  /* double press interval end */
+// Used to be double longs
+extern clock_t t0;  /* time when FOE mine is born */
+extern clock_t t1;  /* double press interval start */
+extern clock_t t2;  /* double press interval end */
 
 		/* GAME PRAMATERS */
 extern int Ship_Rotate_Step;

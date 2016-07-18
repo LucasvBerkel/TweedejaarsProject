@@ -59,9 +59,9 @@ struct aim_sess_results{
 //typedef enum { LEFT_BUTTON,CENTER_BUTTON,RIGHT_BUTTON,NONE } mouse_button_type;
 //typedef enum { SPACE_FORTRESS, AIMING_TEST } game_type;
 
-unsigned long t0;  /* time when FOE mine is born */
-unsigned long t1;  /* double press interval start */
-unsigned long t2;  /* double press interval end */
+clock_t t0;  /* time when FOE mine is born */
+clock_t t1;  /* double press interval start */
+clock_t t2;  /* double press interval end */
 
 
 

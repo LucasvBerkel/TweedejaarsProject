@@ -208,7 +208,7 @@ void Handle_Speed_Score(cairo_t *cr)
   if(Mine_Type==FOE)
     if(Missile_Type==VS_FOE) /* successful double press */
       {
-	interval=t0-t2; /* time interval from missile */
+	interval=((t0-t2)/CLOCKS_PER_SEC)*1000; /* time interval from missile */
 			/* appearance to end of successful */
 			/* double press interval      */
 	if(interval<=1000) dts=40;
@@ -353,7 +353,8 @@ void Generate_Mine(cairo_t *cr)
   else
     {
       Mine_Type=FOE;
-      t0=Time_Counter; /* when "a mine is born .."? */ // Do we still have a Time_Counter
+			// I'm not sure if this line does anything
+      t0=clock(); /* when "a mine is born .."? */ 
     }
 
   if (Mine_Type==FRIEND) Mine_Indicator=Friend_Menu[randrange(0,3)][0];
@@ -533,7 +534,6 @@ void Fire_Missile(cairo_t *cr, int Index)
 void Handle_Missile(cairo_t *cr)
 {
  int i;
-
 		/* update all existing missiles */
  for(i=0;i<MAX_NO_OF_MISSILES;i++)
     if(Missile_Flag[i] != DEAD)
