@@ -1,5 +1,7 @@
-// Compilation (cross platform!):
-/* gcc -Wall -g  myvars.c TCOL.c DE.c HM.c RS.c -lm `pkg-config --cflags cairo` `pkg-config --libs cairo` `pkg-config --cflags gtk+-3.0` `pkg-config --libs gtk+-3.0`  -o RS -Wno-dangling-else -Wno-switch; */
+// OS X compilation:
+/* gcc -Wall -g  myvars.c TCOL.c DE.c HM.c RS.c -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo `pkg-config --cflags gtk+-3.0` `pkg-config --libs gtk+-3.0`  -o RS -Wno-dangling-else -Wno-switch; */
+// To run without GTK warnings: (actually running without any error logging to the terminal)
+// ./RS 2>/dev/null 
 
 /* test graphics 21.2.90 18:00
             definitions */
