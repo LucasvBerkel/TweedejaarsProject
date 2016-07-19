@@ -11,6 +11,7 @@
 
 
 void Open_Graphics(void);
+void Reset_Screen(cairo_t *cr);
 
 void Initialize_Graphics(cairo_t *cr);
 
@@ -39,7 +40,7 @@ void Draw_Shell(cairo_t *cr, int x, int y, int Headings, int size);
 
 int Find_Headings(int x1,int y1,int x2,int y2);
 
-void set_initial_vals(cairo_t *cr);
+//void set_initial_vals(cairo_t *cr);
 void start_drawing();
 
 void stop_drawing();

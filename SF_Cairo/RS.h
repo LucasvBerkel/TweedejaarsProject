@@ -7,24 +7,13 @@
 #endif
 
 #include <cairo.h>
-//void Mydelay(unsigned Time);
-//{
-//    unsigned long end;
-//
-//    end=Time_Counter+Time;
-//    while(Time_Counter<end);
-//
-//}
+#include <gtk/gtk.h>
 
-//void interrupt far Get_Tik()
-
-    /****** capture system clock tiks via indicated routine **********/
-
-//void Capture_Tik(void interrupt far (*func) () )
-//Restore_Tik();
-
-
-
+void SF_iteration(cairo_t *cr);
+void animation_loop(GtkWidget *darea);
+gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data);
+void set_initial_vals(cairo_t *cr);
+void handle_F3();
 
 void Set_Timer();
 
@@ -67,7 +56,7 @@ void Update_Shots(cairo_t *cr);
 void Clear_Interval();
 
 void Find_Interval();
-void Reset_Screen(cairo_t *cr);
+//void Reset_Screen(cairo_t *cr);
 
 void Init_Session();
 
@@ -76,7 +65,7 @@ void Init_Game();
 void Display_Bonus_Char(cairo_t *cr, char Bonus_Char);
 void Set_Bonus_Chars(cairo_t *cr);
 
-void Xor_Bonus_Char(int n);
+void Xor_Bonus_Char(cairo_t *cr, int n);
 void Set_Bonus_Message();
 void Write_Bonus_Message();
 

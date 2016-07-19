@@ -34,7 +34,7 @@
 
 
 int main() {
-    Open_Graphics();
+//    Open_Graphics();
 //    Set_Bonus_Message();
 //    Set_Bonus_Chars();
 //    Set_Graphics_Eraser();

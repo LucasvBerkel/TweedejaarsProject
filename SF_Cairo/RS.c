@@ -1,5 +1,5 @@
 // OS X compilation:
-/* gcc -Wall -g  myvars.c TCOL.c DE.c HM.c RS.c -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo -o RS -Wno-dangling-else -Wno-switch; (also needs gtk now) */ 
+/* gcc -Wall -g  myvars.c TCOL.c DE.c HM.c RS.c -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo `pkg-config --cflags gtk+-3.0` `pkg-config --libs gtk+-3.0`  -o RS -Wno-dangling-else -Wno-switch;
 
 /* test graphics 21.2.90 18:00
             definitions */
@@ -14,6 +14,7 @@
 #include <time.h>
 #include <math.h>
 #include <unistd.h>
+#include <string.h>
 
 //#include "myconst.h"
 //#include "myvars.h"
@@ -62,103 +63,12 @@ extern mine_type Mine_Type;
 //extern Reset_Mouse_Handler();
 //extern Initialize_Graphics();
 
-
-void Mydelay(unsigned Time)
-{
-    unsigned long end;
-
-    end=Time_Counter+Time;
-    while(Time_Counter<end);
-}
-
-// Commented to prevent syntax error (feel free to uncomment)
-//void interrupt far Get_Tik()
-//{
-//    Time_Counter++;
-//    oldtik(); /*  now perform the old BIOS handler to keep things clean */
-//}
-
-    /****** capture system clock tiks via indicated routine **********/
-// Commented to prevent syntax error
-//void Capture_Tik(void interrupt far (*func) () )
-//{
-//    /* save old interrupt */
-//    oldtik=getvect(8);
-//    /* install our new interrupt handler */
-//    disable();
-//    setvect(8,func);
-//    enable();
-//}
-
-void Restore_Tik()
-{
-//    disable();
-//    setvect(8,oldtik);   /* restore old interrupt handler */
-//    enable();
-}
-
-void Set_Timer()
-{
-// 		http://www.osdever.net/bkerndev/Docs/pit.htm
-//    outportb(0x43,0x36);
-//    outportb(0x40,1193&0xFF); /* 100 Hz */
-//    outportb(0x40,1193>>8);
-}
-
-void Reset_Timer()
-{
-//    outportb(0x43,0x36);  /* 36 talk to control register */
-//    outportb(0x40,0xFFFF);
-//    outportb(0x40,0xFFFF>>8);
-}
-
-void Set_Kbd_Rate(unsigned char Rate)
-{
-//    _AH=0x3;
-//    _AL=0x5;
-//    _BH=0;
-//    _BL=Rate;   /* repeat rate of 20 Hz */
-//    geninterrupt(0x16);
-}
-
-int keyboard (void)
-{
-//    union u_type{int a; char b[3];} keystroke;
-//    char inkey=0;
-//    char xtnd=0;
-//
-//    if(bioskey(1)==0) return(NO_INPUT);  /* key relieved, no input */
-//    keystroke.a=bioskey(0);   /* fetch ascii code */
-//    inkey=keystroke.b[0];     /* ..and load code into variable */
-//
-//    if(inkey==27) return(ESC); /* ESCcape terminates program */
-//    if(inkey==13) return(ENTER); /* ENTER pauses program */
-//    if(inkey==97) return(F1);
-//    if(inkey==115) return(F2);
-//    if(inkey==100) return(F3);
-//    if(inkey==32) return(DOWN);
-//    if(inkey==8) Restart_Flag=ON;
-//    if(inkey!=0) return(REGULAR_CRAP);   /* the rest is crap */
-//    
-//    /* which leaves inkey==0 */
-//    xtnd=keystroke.b[1];
-//        
-//        switch (xtnd)
-//         {
-//             case 72 /*UP*/    : return(UP);
-//             case 75 /*LEFT*/  : return(LEFT);
-//             case 77 /*RIGHT*/ : return(RIGHT);
-//             default           : return(EXTENDED_CRAP);/* all rest irrelevant */
-//    }
-	return 0; // Make the compiler happy
-}
-
 // Something to do with double presses or something
 // t2 - t1 should give some value in milliseconds, if that is above some threshold some
 // flag is set. 
 void handle_F3()
 {
-	if((GDK_KEY_F3=F3)&&(Lastkey!=GDK_KEY_F3)&&(!(Timing_Flag))) { /* first F3 keypress */
+	if((Key==GDK_KEY_F3)&&(Lastkey!=GDK_KEY_F3)&&(!(Timing_Flag))) { /* first F3 keypress */
        t1=clock();
        Timing_Flag=ON;
        Check_Mine_Flag=ON; /* is used by Get_User_Input(cr) */
@@ -172,57 +82,6 @@ void handle_F3()
        Display_Interval_Flag=ON;  /* is used in main */
    }
 
-}
-
-// Commented to prevent syntax error
-//void interrupt far Get_Key() {
-//    int tmp;
-//    oldfunc(); /* now perform the old BIOS handler to keep things clean */
-//
-//    tmp=keyboard();
-//    if(tmp) {        /* throw away zeros, they indicate key release! */
-//        New_Input_Flag=ON;
-//        Lastkey=Key;
-//        Key=tmp;
-//
-//        /***** now handle double press time interval measurement  ******/
-//
-//        if(Key==F3) {
-//            if((Key==F3)&&(Lastkey!=F3)&&(!(Timing_Flag))) { /* first F3 keypress */
-//                t1=Time_Counter;
-//                Timing_Flag=ON;
-//                Check_Mine_Flag=ON; /* is used by Get_User_Input(cr) */
-//            }
-//
-//            if((Key==F3)&&(Lastkey==F3)&&(Timing_Flag)) {   /* second F3 keypress */
-//                t2=Time_Counter;
-//                Timing_Flag=OFF;
-//                Key=0;   /* to enable consecutive double_press */
-//                /* where with next keypress Lastkey=0 */
-//                Display_Interval_Flag=ON;  /* is used in main */
-//            }
-//            New_Input_Flag=OFF;   /* input was handled here */
-//        } /* end double press */
-//    } /* end if(tmp) */
-//}
-
-// Commented to prevent syntax error
-/****** capture any keyboard input via indicated routine **********/
-//void Capture_Kbd(void interrupt far (*func) () )
-//{
-////    /* save old interrupt */
-////    oldfunc=getvect(9);
-////    /* install our new interrupt handler */
-////    disable();
-////    setvect(9,func);
-////    enable();
-//}
-
-void Restore_Kbd()
-{
-//    disable();
-//    setvect(9,oldfunc);   /* restore old interrupt handler */
-//    enable();
 }
 
 void Check_Bonus_Input(cairo_t *cr) {
@@ -255,14 +114,14 @@ void Get_User_Input(cairo_t *cr)
     if (New_Input_Flag) /* new input occured */
     {
         New_Input_Flag=OFF; /* make sure no repetitions on same input */
-        if ( // This allowed by processor interupts, but happens automatically==UP)    Accel_Input=1;        /*   UP    */
+        if (Key==GDK_KEY_Up) Accel_Input=1;        /*   UP    */
         if (Key==GDK_KEY_Left)  Rotate_Input=-1;      /*   LEFT  */
         if (Key==GDK_KEY_Right) Rotate_Input=1;       /*   RIGHT */ 
         if (Key==GDK_KEY_space)  New_Missile_Flag=ON;  /*   DOWN  */ // Used to be down
         if (Key==GDK_KEY_F1)    Check_Bonus_Input(cr);        /*   P(oints) */
         if (Key==GDK_KEY_F2)    Check_Bonus_Input(cr);        /*   M(issiles) */
 				// probably not done right
-    		if (Key==GDK_KEY_F3)   handle_F3() // was handled by kbd interrupt handler */ // hmm
+    		if (Key==GDK_KEY_F3)   handle_F3(); // was handled by kbd interrupt handler */ // hmm
 				// enter pauses the game 
         if (Key==GDK_KEY_Return) Freeze_Flag=Freeze_Flag^1; /* toggle freeze flag */ 
         if (Key==GDK_KEY_Escape)   End_Flag=ON;
@@ -318,73 +177,6 @@ void Set_Graphics_Eraser(cairo_t *cr)
 //	cairo_restore(cr);
 }
 
-//I think this shows the user their score when the game is finished
-void Show_Score(cairo_t *cr, int val, int x, int y) /* anywhere within data panel */
-{
-//    int svcolor;
-//    svcolor=getcolor();
-		char val_str[15];
-
-
-    cairo_set_source_rgb(cr, SF_YELLOW);
-    cairo_translate(cr, 0, Panel_Y_Start);
-    /* data panel in screen global coordinates */
-
-//    putimage(x,y,buffer1,COPY_PUT); /* erase garbage */
-		// MaxX/8 is equal to 'xdif', the width of each score rectangle
-		cairo_rectangle(cr,0,x,Panel_Y_Start,x+MaxX/8); // Not sure if this call is okay (Y_Panel?)
-		clip_path_rect(cr);
-		cairo_fill(cr);
-
-		sprintf(val_str, "%d", val);
-    cairo_text_at(cr, x,y,val_str);
-		cairo_reset_clip(cr);
-//    setviewport( Xmargin, 0, Xmargin+MaxX, MaxY, 1);   /* restore gaming area */
-		cairo_translate(cr, 0 , -Panel_Y_Start);
-
-//    setcolor(svcolor); /* restore previous color */
-}
-
-/* Every update_X function here had a "return(0)" zero statement on it's last line, without  
-specifying a return type. I removed all of these return statements and modified the function 
-return type to void to surpress warnings. */ 
-// Magical 8's?
-void Update_Points(cairo_t *cr)
-{
-    Show_Score(cr, Points,Points_X-8,Data_Line);
-}
-
-void Update_Control(cairo_t *cr)
-{
-    Show_Score(cr, Control,Control_X-8,Data_Line);
-}
-
-void Update_Velocity(cairo_t *cr)
-{
-    Show_Score(cr, Velocity,Velocity_X,Data_Line);
-}
-
-void Update_Vulner(cairo_t *cr)  /* for vulner only */
-{
-    Show_Score(cr, Vulner_Counter,Vulner_X,Data_Line);
-}
-
-/* IFF is missing here */
-
-void Update_Interval(cairo_t *cr)
-{
-    Show_Score(cr, Double_Press_Interval,Interval_X,Data_Line);
-}
-
-void Update_Speed(cairo_t *cr)
-{
-    Show_Score(cr, Speed,Speed_X-8,Data_Line);
-}
-
-void Update_Shots(cairo_t *cr)
-{
-    Show_Score(cr, Missile_Stock,Shots_X,Data_Line);
-}
 
 // What does this do?
 void Clear_Interval()   /* clear double-press interval */
@@ -418,58 +210,6 @@ void Find_Interval(cairo_t *cr)   /* display double-press interval */
     }
 }
 
-void Reset_Screen(cairo_t *cr)
-{
-    int i;
-        /*  reset variables */
-    Ship_X_Pos=0.25*MaxX; /* on a 640 x 480 screen VGA-HI */
-    Ship_Y_Pos=0.5*MaxY; /* same as above */
-    Ship_X_Speed=0.0;
-    Ship_Y_Speed=0.0;
-    Ship_Headings=0;
-    Mine_Flag=DEAD;
-    for(i=0;i<MAX_NO_OF_MISSILES;i++) Missile_Flag[i]=DEAD;
-    Missile_Type=VS_FRIEND;
-    Missile_Vs_Mine_Only=OFF;
-    Missiles_Counter=0;
-    Shell_Flag=DEAD;
-    Rotate_Input=0; /* joystick left/right */
-    Accel_Input=0; /* joystick forward */
-    End_Flag=OFF;
-    Fort_Headings=270;
-    Vulner_Counter=0;
-    Timing_Flag=OFF; /* if screen reset between consecutive presses */
-    Resource_Flag=OFF;
-    Resource_Off_Counter=0;
-    Bonus_Display_Flag=NOT_PRESENT;   /* in case bonus is pressed after */
-    Bonus_Granted=OFF;
-    Fort_Lock_Counter=0;
-
-    /* reset screen */
-    Draw_Frame(cr);
-//    if(AspectRatio==1.0)
-//    {
-//        Draw_Hexagone(cr, MaxX/2,MaxY/2,BIG_HEXAGONE_SIZE_FACTOR*MaxX);
-    Draw_Hexagone(cr, MaxX/2,MaxY/2,SMALL_HEXAGONE_SIZE_FACTOR*MaxX);
-//    }
-//    else
-//    {
-//        Draw_Hexagone(MaxX/2,MaxY/2,BIG_HEXAGONE_SIZE_FACTOR*MaxX/GraphSqrFact);
-//        Draw_Hexagone(MaxX/2,MaxY/2,SMALL_HEXAGONE_SIZE_FACTOR*MaxX/GraphSqrFact);
-//    }
-    Draw_Fort(cr, MaxX/2,MaxY/2,Fort_Headings,FORT_SIZE_FACTOR*MaxX);
-    Draw_Ship(cr, Ship_X_Pos,Ship_Y_Pos,Ship_Headings,SHIP_SIZE_FACTOR*MaxX);
-
-            /* reset panel */
-    Update_Points(cr);
-    Update_Vulner(cr);
-    Update_Interval(cr);
-    Update_Shots(cr);
-    Update_Control(cr);
-    Update_Velocity(cr);
-    Update_Speed(cr);
-
-}  /* end reset screen */
 
 void Init_Session() {
     One_Game_Loops=One_Game_Duration*60*20;
@@ -553,14 +293,17 @@ void Set_Bonus_Chars(cairo_t *cr)
 }
 
 // What does this even do in the game [3]
-void Xor_Bonus_Char(int n)   /* write and erase bonus character */
+void Xor_Bonus_Char(cairo_t *cr, int n)   /* write and erase bonus character */
 {
-//    int x,y;
+//	int x,y;
+//	
+//	/* get right location */
+//	x=MaxX/2 - 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
+//	y=MaxY/2 + 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
+//	cairo_set_source_rgb(
+//	cairo_rectangle(cr, x, y, TEXT_WIDTH, TEXT_HEIGHT);
+//	cairo_fill(cr);
 
-    /* get right location */
-//    x=MaxX/2 - 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
-//    y=MaxY/2 + 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
-//
 //    putimage(x,y,bc[n],XOR_PUT);
 
 }
@@ -609,200 +352,214 @@ int Generate_Non_Bonus_Char()
 
 void Generate_Resource_Character()
 {
-    int lastrn;
-    static bonus_character lastchar=NON_BONUS;
-
-    if((lastchar==NON_BONUS)&&
-         (No_Of_Bonus_Windows<MAX_BONUS_WINDOWS))
-
-             if(randrange(0,10)<7) /* display first bonus */
-     {
-         No_Of_Bonus_Windows++;
-         rn=Bonus_Indication_Index;
-         Xor_Bonus_Char(rn);
-         lastchar=Bonus_Display_Flag=FIRST_BONUS;
-         Bonus_Wasted_Flag=OFF;
-     }
-             else /* display non_bonus character */
-     {
-         lastrn=rn;
-         do { rn=Generate_Non_Bonus_Char(); }
-         while(rn==lastrn); /* new char is different from last one */
-         Xor_Bonus_Char(rn);
-         lastchar=Bonus_Display_Flag=NON_BONUS;
-     }
-    else
-    if(lastchar==FIRST_BONUS)
-        {
-            Xor_Bonus_Char(rn);
-            lastchar=Bonus_Display_Flag=SECOND_BONUS;
-        }
-    else
-    if(lastchar==SECOND_BONUS)
-        {
-             rn=Generate_Non_Bonus_Char();
-             Xor_Bonus_Char(rn);
-             lastchar=Bonus_Display_Flag=NON_BONUS;
-        }
+//    int lastrn;
+//    static bonus_character lastchar=NON_BONUS;
+//
+//    if((lastchar==NON_BONUS)&&
+//         (No_Of_Bonus_Windows<MAX_BONUS_WINDOWS))
+//
+//             if(randrange(0,10)<7) /* display first bonus */
+//     {
+//         No_Of_Bonus_Windows++;
+//         rn=Bonus_Indication_Index;
+//         Xor_Bonus_Char(rn);
+//         lastchar=Bonus_Display_Flag=FIRST_BONUS;
+//         Bonus_Wasted_Flag=OFF;
+//     }
+//             else /* display non_bonus character */
+//     {
+//         lastrn=rn;
+//         do { rn=Generate_Non_Bonus_Char(); }
+//         while(rn==lastrn); /* new char is different from last one */
+//         Xor_Bonus_Char(rn);
+//         lastchar=Bonus_Display_Flag=NON_BONUS;
+//     }
+//    else
+//    if(lastchar==FIRST_BONUS)
+//        {
+//            Xor_Bonus_Char(rn);
+//            lastchar=Bonus_Display_Flag=SECOND_BONUS;
+//        }
+//    else
+//    if(lastchar==SECOND_BONUS)
+//        {
+//             rn=Generate_Non_Bonus_Char();
+//             Xor_Bonus_Char(rn);
+//             lastchar=Bonus_Display_Flag=NON_BONUS;
+//        }
 }
 
 void Handle_Bonus()
 {
-
-    if(!Resource_Flag)   /* resource is off */
-        {
-            Resource_Off_Counter++;
-            if(Resource_Off_Counter>=No_Resource_Display_Interval)
-    {
-        Resource_Flag=ON;
-        Resource_On_Counter=0;
-        Generate_Resource_Character();
-    }
-     }
- else   /* Resource_Flag=ON; */
-     {
-         Resource_On_Counter++;
-         if(Resource_On_Counter>=Resource_Display_Interval)
-             {
-     Resource_Flag=OFF;
-     Resource_Off_Counter=0;
-     Bonus_Display_Flag=NOT_PRESENT; /* in case bonus is pressed after
-                            $ disappears */
-     if (Bonus_Granted)
-            {
-                Write_Bonus_Message();     /* erase bonus message */
-                Bonus_Granted=OFF;
-            }
-     else
-     Xor_Bonus_Char(rn);  /* Erase_Resource_Char */
-             }
-     }
+//
+//    if(!Resource_Flag)   /* resource is off */
+//        {
+//            Resource_Off_Counter++;
+//            if(Resource_Off_Counter>=No_Resource_Display_Interval)
+//    {
+//        Resource_Flag=ON;
+//        Resource_On_Counter=0;
+//        Generate_Resource_Character();
+//    }
+//     }
+// else   /* Resource_Flag=ON; */
+//     {
+//         Resource_On_Counter++;
+//         if(Resource_On_Counter>=Resource_Display_Interval)
+//             {
+//     Resource_Flag=OFF;
+//     Resource_Off_Counter=0;
+//     Bonus_Display_Flag=NOT_PRESENT; /* in case bonus is pressed after
+//                            $ disappears */
+//     if (Bonus_Granted)
+//            {
+//                Write_Bonus_Message();     /* erase bonus message */
+//                Bonus_Granted=OFF;
+//            }
+//     else
+//     Xor_Bonus_Char(rn);  /* Erase_Resource_Char */
+//             }
+//     }
 }
 
-int Run_SF(cairo_t *cr)
+// For the python interface
+int get_score()
 {
-    clock_t elapsed_time;
-    clock_t loop_start_time;
+	return Score;
+}
 
-    // SCORE SAVE FILE
-    FILE *f = fopen("SAVE\\SCORE.TXT", "w");
-    if (f == NULL) {
-        printf("A state file is not present.\n");
-        exit(1);
-    }
-    fclose(f);
 
-    Init_Session();
-    Game_Counter=0;
-    do {   /* loop on number of games here */
-        Init_Game();
-        Open_Graphics();
-        Initialize_Graphics(cr); // Probably not needed (or depends on GTK/versus array render)
-        Reset_Screen(cr);
-        // Draw_Frame(cr here?)
-        Loop_Counter=0;
+void SF_iteration(cairo_t *cr)
+{
+	long double elapsed_time;
+  clock_t loop_start_time;
+
 //        Set_Kbd_Rate(0x8); /* to slow repeat rate 15Hz */
 //        Capture_Kbd(Get_Key); /* redirect KBD interrupts to Get_Key() */ // Uncomment
-				// I think we don't need this initialization with clock()
+// I think we don't need this initialization with clock()
 //        Time_Counter=0;
-				
+
 //        Capture_Tik(Get_Tik);
 //        Set_Timer();
 
-        do {   /* real time loop of one game */
-						// Do all the drawing in one go here, first clear all (using prev_paths) in need of 
-						// an update, then optionally draw the hexagon (maybe only if it has been crossed)
-						// and then draw all in need of an update
-            loop_start_time=clock();
-            Loop_Counter++;
-						 // This was done by processor interupts, but is allowed automatically by GTK
-            Get_User_Input(cr);
-						// Pauses the game (when the flag is set, continues this loop) 
-            while(Freeze_Flag) Get_User_Input(cr); 
-            Move_Ship(cr);
-            Handle_Missile(cr);
-//            if(Sound_Flag>1) Sound_Flag--;
-//            if(Sound_Flag==1) {Sound_Flag--; nosound();}
-            Handle_Mine(cr);
-            Test_Collisions(cr); // Animations are done here
-            Handle_Shell(cr);
-            Handle_Fortress(cr);
-            if(Display_Interval_Flag) {   /* of double press */
-                if(Mine_Type==FOE) Find_Interval(cr);
-                Display_Interval_Flag=OFF;
-            }
-            Accumulate_Data(cr);
-            Handle_Bonus();
-            if(!Effect_Flag) {
-								// This only says something like
-								// The game should always wait 50ms between frames, so sleep until the loop
-								// body takes 50ms
-                if((elapsed_time=((clock()-loop_start_time)/CLOCKS_PER_SEC)*1000) < SF_DELAY)
-                    usleep(SF_DELAY-elapsed_time);  /* wait up to 50 milliseconds */
-            } else Effect_Flag=OFF;  /* no delay necessary */
-						clean(cr);
-						update_drawing(cr);
+// Do all the drawing in one go here, first clear all (using prev_paths) in need of 
+// an update, then optionally draw the hexagon (maybe only if it has been crossed)
+// and then draw all in need of an update
+	loop_start_time=clock();
+	Loop_Counter++;
+	// This was done by processor interupts, but is allowed automatically by GTK
+	Get_User_Input(cr);
+	// Pauses the game (when the flag is set, continues this loop) 
+	while(Freeze_Flag) Get_User_Input(cr); 
+	Move_Ship(cr);
+	Handle_Missile(cr);
+	//            if(Sound_Flag>1) Sound_Flag--;
+	//            if(Sound_Flag==1) {Sound_Flag--; nosound();}
+	Handle_Mine(cr);
+	Test_Collisions(cr); // Animations are done here
+	Handle_Shell(cr);
+	Handle_Fortress(cr);
+	if(Display_Interval_Flag) {   /* of double press */
+	    if(Mine_Type==FOE) Find_Interval(cr);
+	    Display_Interval_Flag=OFF;
+	}
+	Accumulate_Data(cr);
+	Handle_Bonus();
+	if(!Effect_Flag) {
+	// This only says something like
+	// The game should always wait 50ms between frames, so sleep until the loop
+	// body takes 50ms
+	// is this valid c?
+		elapsed_time=((clock()-loop_start_time)/(double)CLOCKS_PER_SEC)*1000.0;
+    if(elapsed_time < SF_DELAY)
+		{
+//				printf("Slaap kindje slaap %Lf \n", elapsed_time);
+        usleep(SF_DELAY-elapsed_time);  /* wait up to 50 milliseconds */
+		}
+	} else Effect_Flag=OFF;  /* no delay necessary */
+	Score=Points+Velocity+Control+Speed;
+}
 
-            Score=Points+Velocity+Control+Speed;
 
-            // SAVE SCORE
-            f = fopen("SAVE\\SCORE.TXT", "w");
-            fprintf(f, "%d", Score);
-            fclose(f);
-
-        } while(!Restart_Flag&&!End_Flag&&(Loop_Counter < One_Game_Loops));
-				// This says quit the loop if the time defined by One_Game_Loops (default is 3 min)
-				// has passed (this can be measured with clock I guess?) Because the loop always takes
-				// exactly 50ms we can just increment loop counter until it reaches a threshold 
-        /* ESC or three minutes */
-
-        // RUNNING FILE
-        f = fopen("SAVE\\SCORE.TXT", "w"); // Open this earlier for performace
-        fprintf(f, "FALSE");
-        fclose(f);
-
+// Misses some syntax
+//int Run_SF(cairo_t *cr)
+//{
+//    clock_t elapsed_time;
+//    clock_t loop_start_time;
+    // SCORE SAVE FILE
+		// TODO: instead of this file, make a python function that returns the score as an int
+		// Probably just some kind of wrapper function like get_score that you can call after
+		// update_frame() that just returns the Score global
+//    FILE *f = fopen("SAVE\\SCORE.TXT", "w");
+//    if (f == NULL) {
+//        printf("A state file is not present.\n");
+//        exit(1);
+//    }
+//    fclose(f); 
+//		Init_Game();
+//		Open_Graphics();
+//		Initialize_Graphics(cr);  Probably not needed (or depends on GTK/versus array render)
+//		Reset_Screen(cr); 
+//		 Draw_Frame(cr here?)
+//		Loop_Counter=0;
+//
+//    Init_Session();
+//    Game_Counter=0;
+//    do {   /* loop on number of games here */
+//        SF_iteration
+//        } while(!Restart_Flag&&!End_Flag&&(Loop_Counter < One_Game_Loops));
+//				 This says quit the loop if the time defined by One_Game_Loops (default is 3 min)
+//				 has passed (this can be measured with clock I guess?) Because the loop always takes
+//				 exactly 50ms we can just increment loop counter until it reaches a threshold 
+//        /* ESC or three minutes */
+//
+//         RUNNING FILE
+//        f = fopen("SAVE\\SCORE.TXT", "w"); // Open this earlier for performace
+//        fprintf(f, "FALSE");
+//        fclose(f);
+//
 //        Restore_Tik();
 //        Reset_Timer();
 //        Restore_Kbd();
 //        Set_Kbd_Rate(0x4); /* to repeat rate 20Hz */
-
+//
 //        nosound();   /* just in case */
 //        sound(400);
 //        delay(500); // Not intersting cus only sound
 //        nosound();
-        Game_Counter++;
-        
-        // final_display();
-        Close_Graphics(cr);
-				// Pretty sure we can skip this
-        printf("Episode %d score: %d\n", Game_Counter, Score);
-        if(!Restart_Flag && !End_Flag) {
-            while(1) {
-								char ex = 0;
+//        Game_Counter++;
+//        
+//         final_display();
+//        Close_Graphics(cr);
+//				 Pretty sure we can skip this
+//        printf("Episode %d score: %d\n", Game_Counter, Score);
+//        if(!Restart_Flag && !End_Flag) {
+//            while(1) {
+//								char ex = 0;
 //                char ex = getch(); // getch reads one keyboard input char from the user
-                if(ex==9) {
-                    break;
-                } else if(ex==27) {
-                    return(0);
-                }
-            }
-        }
-
-        
+//                if(ex==9) {
+//                    break;
+//                } else if(ex==27) {
+//                    return(0);
+//                }
+//            }
+//        }
+//
+//        
 //        clrscr();  // From graphics.h or something
-        /* end one game here */
-    } while(!Restart_Flag && !End_Flag);
-    //} while((Game_Counter< No_Of_Games)&&(!End_Flag));
-
+//        /* end one game here */
+//    } while(!Restart_Flag && !End_Flag);
+//    } while((Game_Counter< No_Of_Games)&&(!End_Flag));
+//
 //    nosound();   /* just in case */
 //    sound(400);
 //    delay(1000);
 //    nosound();
-    if(Restart_Flag) {
-        return(1);
-    }
-    return(0);
-}
+//    if(Restart_Flag) {
+//        return(1);
+//    }
+//    return(0);
+//}
 
 /*************************************************************************/
 
@@ -934,33 +691,35 @@ void Run_Aiming(cairo_t *cr)   /* 1- for training 0- for demo */
 //    Set_Kbd_Rate(0x8); /* to slow repeat rate .. */
     do
     {
-    Game_Counter++;
-    Mines=0; Speed=0; Score=0;
-    Reset_Aim_Screen(cr);
-    Loop_Counter=0;
+	    Game_Counter++;
+	    Mines=0; Speed=0; Score=0;
+	    Reset_Aim_Screen(cr);
+	    Loop_Counter=0;
 //    Capture_Kbd(Get_Key); /* redirect KBD interrupts to  Get_Key() */ // Uncomment
 //    Time_Counter=0;
 //    Capture_Tik(Get_Tik);
 //    Set_Timer();
-    do
-        {
-         loop_start_time=clock();
-         Loop_Counter++;
-         Get_User_Input(cr);
-            while(Freeze_Flag) Get_User_Input(cr);
-         Move_Ship(cr);  /* rotation only */
-         Handle_Missile(cr);
-//         if(Sound_Flag>1) Sound_Flag--;
-//         if(Sound_Flag==1) {Sound_Flag--; nosound();}
-         Handle_Aim_Mine(cr);
-         Test_Collisions(cr);
-         if(!Effect_Flag)
-             {
-     if ( (elapsed_time=((clock()-loop_start_time)/CLOCKS_PER_SEC))*1000 < SF_DELAY)
-            	usleep(SF_DELAY-elapsed_time);  /* wait up to 50 milliseconds */
-             }
-         else Effect_Flag=OFF;  /* no delay necessary */
-        } while((!End_Flag)&&(Loop_Counter < 2400));
+    	do
+			{
+				loop_start_time=clock();
+				Loop_Counter++;
+				Get_User_Input(cr);
+				   while(Freeze_Flag) Get_User_Input(cr);
+				Move_Ship(cr);  /* rotation only */
+				Handle_Missile(cr);
+				//         if(Sound_Flag>1) Sound_Flag--;
+				//         if(Sound_Flag==1) {Sound_Flag--; nosound();}
+				Handle_Aim_Mine(cr);
+				Test_Collisions(cr);
+				if(!Effect_Flag)
+				{
+					if ( (elapsed_time=((clock()-loop_start_time)/CLOCKS_PER_SEC))*1000 < SF_DELAY)
+					{		
+						usleep(SF_DELAY-elapsed_time);  /* wait up to 50 milliseconds */
+					}
+				}
+			else Effect_Flag=OFF;  /* no delay necessary */
+			} while((!End_Flag)&&(Loop_Counter < 2400));
     /* ESC or three minutes */
 
 //    Restore_Tik();
@@ -973,7 +732,7 @@ void Run_Aiming(cairo_t *cr)   /* 1- for training 0- for demo */
 //                         sound(600);
 //                         delay(1000);
 //                         nosound();
-                         while(keyboard()); /* clear keyboard */
+//                         while(keyboard()); /* clear keyboard */
 //                         getch();
                      }
 //    Set_Kbd_Rate(0x4); /* to slow repeat rate 15Hz */
@@ -988,10 +747,181 @@ void Run_Aiming(cairo_t *cr)   /* 1- for training 0- for demo */
     Close_Graphics(cr);
 }
 
+//void set_initial_vals(cairo_t *cr)
+//{
+//	memset(Missile_Should_Update, 0, MAX_NO_OF_MISSILES);
+//	memset(Missile_Should_Clean, 0, MAX_NO_OF_MISSILES);
+//	Reset_Screen(cr);
+//}
 
-int main()
+static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 {
-	printf("Yo man! \n");
+	
+	// Oddly enough, clipping seems to work different accros surfaces. Therefore it is 
+	// sometimes wise to set things to always update here. (a clip within a quartz 	
+	// surface erases everything outside of the clipping region)
+
+	if(Initialized_Graphics == 0)
+	{
+	  set_initial_vals(cr); // Also resets the screen to some good initial object drawing values
+		Initialized_Graphics = 1;
+	}
+	Initialize_Graphics(cr);  // Why is this needed again
+	// Main sf stuff
+	SF_iteration(cr);
+	// keep
+	Draw_Frame(cr);
+	clean(cr);
+	Fort_Should_Update = 1;
+	Draw_Hexagone(cr, MaxX/2,MaxY/2,SMALL_HEXAGONE_SIZE_FACTOR*MaxX);
+	stroke_in_clip(cr);
+	update_drawing(cr);
+	return FALSE; // Not sure why this should return false
+}
+
+// This is so that the python interface can set the key (maybe move to DE? (nah, runloop 
+// is also here))
+void set_key(int key_value)
+{
+	Lastkey = Key;
+	Key = key_value;
+//  A list of GTK hex key values as decimals
+//	GDK_KEY_F1 0xffbe 65470 
+//	GDK_KEY_F2 0xffbf 65471
+//	GDK_KEY_F3 0xffc0 65472
+//	GDK_KEY_Left 0xff51 65361
+//	GDK_KEY_Up 0xff52 65362
+//	GDK_KEY_space 0x020 32 
+}
+
+
+gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
+{
+		Lastkey = Key;
+		Key = event->keyval;
+		New_Input_Flag=ON;
+	
+//  switch (event->keyval)
+//  {
+//    case GDK_KEY_Left:
+////			Ship_Headings = (Ship_Headings - 5) % 360;
+////      Ship_Should_Update = 1;
+////			Ship_Should_Clean = 1;
+//
+//			break;
+//    case GDK_KEY_Up:
+////			Ship_X_Pos = (Ship_X_Pos + 5) % MaxX;
+////      Ship_Should_Update = 1;
+////			Ship_Should_Clean = 1;
+//			break;
+//    case GDK_KEY_Right:
+////			Ship_Headings = (Ship_Headings + 5) % 360;
+////      Ship_Should_Update = 1;
+////			Ship_Should_Clean = 1;
+//			break;
+//		case GDK_KEY_space:
+//			
+//			break;
+//		case GDK_KEY_F3:
+//
+//			break;
+//		case GDK_KEY_F2:
+//
+//		case GDK_KEY_Return:
+//			
+//			break;
+//		case GDK_KEY_Escape:
+//
+//			break;
+//    default: // Not sure if this always reached
+//      return FALSE;
+//  }
+
+  return FALSE; 
+}
+
+void animation_loop(GtkWidget *darea)
+{
+	// Initilization of SF here
+
+    // SCORE SAVE FILE
+		// TODO: instead of this file, make a python function that returns the score as an int
+		// Probably just some kind of wrapper function like get_score that you can call after
+		// update_frame() that just returns the Score global
+//    FILE *f = fopen("SAVE\\SCORE.TXT", "w");
+//    if (f == NULL) {
+//        printf("A state file is not present.\n");
+//        exit(1);
+//    }
+//    fclose(f); 
+		
+
+	Init_Session();
+	Game_Counter=0;
+
+	do 
+	{   /* loop on number of games here */
+		Init_Game();
+//		Reset_Screen(cr); // Moved to set initial vals
+		Loop_Counter=0;
+		do 
+		{
+			gtk_widget_queue_draw(darea);
+			while(gtk_events_pending())
+			{
+    		gtk_main_iteration_do(TRUE); // Redraw the frame
+			}
+		}
+		while(!Restart_Flag&&!End_Flag&&(Loop_Counter < One_Game_Loops));
+		Initialized_Graphics = 0;
+		Game_Counter++;
+		// Close_Graphics(cr); // Not sure if closing is appropiate (it's impossible to close 
+		// in this part of the program because we don't have acces to GTK cairo context) 
+	} 
+	while(!Restart_Flag && !End_Flag);
+
+//	for(i = 0; i < 3420; i++)
+//	{
+//		gtk_widget_queue_draw(darea);
+//		while(gtk_events_pending())
+//		{
+//    	gtk_main_iteration_do(TRUE);
+//		}
+//		usleep(1000*30); // 500 (?) miliseconds, usleep() is in microseconds
+//	}
+	// And the clean up here
+}
+
+int main(int argc, char *argv[])
+{
+	Initialized_Graphics = 0;
+
+// Basic GTK initialization
+ 	GtkWidget *window;
+  GtkWidget *darea;
+  gtk_init(&argc, &argv);
+  window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+  darea = gtk_drawing_area_new();
+  gtk_container_add(GTK_CONTAINER(window), darea);
+
+  g_signal_connect(G_OBJECT(darea), "draw", G_CALLBACK(on_draw_event), NULL);
+  g_signal_connect(window, "destroy", G_CALLBACK(exit), NULL);
+  g_signal_connect (G_OBJECT (window), "key_press_event", G_CALLBACK (on_key_press), NULL);
+
+  gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
+  gtk_window_set_default_size(GTK_WINDOW(window), WINDOW_WIDTH, WINDOW_HEIGHT);
+
+  gtk_window_set_title(GTK_WINDOW(window), "Space Fortress");
+//	gtk_print_context_get_cairo_context();
+
+  gtk_widget_show_all(window);
+	animation_loop(darea);
+
+//  gtk_main();
+
+//	stop_drawing(); // GTK handles this I guess
+
+  return 0;
 }
 
 

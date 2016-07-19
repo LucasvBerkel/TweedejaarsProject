@@ -22,8 +22,8 @@
 #ifdef __APPLE__
 	#include <cairo-quartz.h> // Is this available on linux? No!
 #endif
-#include <gtk/gtk.h>
-#include <gdk/gdkkeysyms.h>
+//#include <gtk/gtk.h>
+//#include <gdk/gdkkeysyms.h>
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -76,7 +76,7 @@ void Open_Graphics(void)
 //	/* =	-	=	-	=	-	=	-	=	-	=	-	=	-	=	-	=	-	=	-	 */
 }
 
-
+// Maybe make an Initialize_Graphics just for SF? 
 void Initialize_Graphics(cairo_t *cr)
 {
 	int Height,OldMaxX;
@@ -755,26 +755,144 @@ int Find_Headings(int x1,int y1,int x2,int y2)
 		/* quadrant=3 */ return(180+arcsinalfa*57.3+0.5);
 }
 
+//void set_initial_vals(cairo_t *cr)
+//{
+//	memset(Missile_Should_Update, 0, MAX_NO_OF_MISSILES);
+//	memset(Missile_Should_Clean, 0, MAX_NO_OF_MISSILES);
+//}
+
 void set_initial_vals(cairo_t *cr)
 {
-	Ship_Should_Update = 1;
-	Mine_Should_Update = 1;
-	Fort_Should_Update = 1;
-	// Maybe this should not be here? 
-
-//	memset(Missile_Should_Update, 1, MAX_NO_OF_MISSILES);
-	srand(time(NULL));
-
 	memset(Missile_Should_Update, 0, MAX_NO_OF_MISSILES);
 	memset(Missile_Should_Clean, 0, MAX_NO_OF_MISSILES);
-	Ship_X_Pos = 096.000000;
-	Ship_Y_Pos = 50.000000;
-	Missile_X = 119.000000;
-	Missile_Y = 30.000000;
-	Mine_X_Pos = 50;
-	Mine_Y_Pos = 50;
-	Ship_Headings = Fort_Headings;
+	Reset_Screen(cr);
 }
+
+void Show_Score(cairo_t *cr, int val, int x, int y) /* anywhere within data panel */
+{
+//    int svcolor;
+//    svcolor=getcolor();
+		char val_str[15];
+
+
+    cairo_set_source_rgb(cr, SF_YELLOW);
+    cairo_translate(cr, 0, Panel_Y_Start);
+    /* data panel in screen global coordinates */
+
+//    putimage(x,y,buffer1,COPY_PUT); /* erase garbage */
+		// MaxX/8 is equal to 'xdif', the width of each score rectangle
+		cairo_rectangle(cr,0,x,Panel_Y_Start,x+MaxX/8); // Not sure if this call is okay (Y_Panel?)
+		clip_path_rect(cr);
+		cairo_fill(cr);
+
+		sprintf(val_str, "%d", val);
+    cairo_text_at(cr, x,y,val_str);
+		cairo_reset_clip(cr);
+//    setviewport( Xmargin, 0, Xmargin+MaxX, MaxY, 1);   /* restore gaming area */
+		cairo_translate(cr, 0 , -Panel_Y_Start);
+
+//    setcolor(svcolor); /* restore previous color */
+}
+
+/* Every update_X function here had a "return(0)" zero statement on it's last line, without  
+specifying a return type. I removed all of these return statements and modified the function 
+return type to void to surpress warnings. */ 
+// Magical 8's?
+void Update_Points(cairo_t *cr)
+{
+    Show_Score(cr, Points,Points_X-8,Data_Line);
+}
+
+void Update_Control(cairo_t *cr)
+{
+    Show_Score(cr, Control,Control_X-8,Data_Line);
+}
+
+void Update_Velocity(cairo_t *cr)
+{
+    Show_Score(cr, Velocity,Velocity_X,Data_Line);
+}
+
+void Update_Vulner(cairo_t *cr)  /* for vulner only */
+{
+    Show_Score(cr, Vulner_Counter,Vulner_X,Data_Line);
+}
+
+/* IFF is missing here */
+
+void Update_Interval(cairo_t *cr)
+{
+    Show_Score(cr, Double_Press_Interval,Interval_X,Data_Line);
+}
+
+void Update_Speed(cairo_t *cr)
+{
+    Show_Score(cr, Speed,Speed_X-8,Data_Line);
+}
+
+void Update_Shots(cairo_t *cr)
+{
+    Show_Score(cr, Missile_Stock,Shots_X,Data_Line);
+}
+
+void Reset_Screen(cairo_t *cr)
+{
+    int i;
+        /*  reset variables */
+    Ship_X_Pos=0.25*MaxX; /* on a 640 x 480 screen VGA-HI */
+    Ship_Y_Pos=0.5*MaxY; /* same as above */
+    Ship_X_Speed=0.0;
+    Ship_Y_Speed=0.0;
+    Ship_Headings=0;
+    Mine_Flag=DEAD;
+    for(i=0;i<MAX_NO_OF_MISSILES;i++) Missile_Flag[i]=DEAD;
+    Missile_Type=VS_FRIEND;
+    Missile_Vs_Mine_Only=OFF;
+    Missiles_Counter=0;
+    Shell_Flag=DEAD;
+    Rotate_Input=0; /* joystick left/right */
+    Accel_Input=0; /* joystick forward */
+    End_Flag=OFF;
+    Fort_Headings=270;
+    Vulner_Counter=0;
+    Timing_Flag=OFF; /* if screen reset between consecutive presses */
+    Resource_Flag=OFF;
+    Resource_Off_Counter=0;
+    Bonus_Display_Flag=NOT_PRESENT;   /* in case bonus is pressed after */
+    Bonus_Granted=OFF;
+    Fort_Lock_Counter=0;
+
+    /* reset screen */
+//    Draw_Frame(cr);
+//    if(AspectRatio==1.0)
+//    {
+//        Draw_Hexagone(cr, MaxX/2,MaxY/2,BIG_HEXAGONE_SIZE_FACTOR*MaxX);
+//    Draw_Hexagone(cr, MaxX/2,MaxY/2,SMALL_HEXAGONE_SIZE_FACTOR*MaxX);
+//    }
+//    else
+//    {
+//        Draw_Hexagone(MaxX/2,MaxY/2,BIG_HEXAGONE_SIZE_FACTOR*MaxX/GraphSqrFact);
+//        Draw_Hexagone(MaxX/2,MaxY/2,SMALL_HEXAGONE_SIZE_FACTOR*MaxX/GraphSqrFact);
+//    }
+//    Draw_Fort(cr, MaxX/2,MaxY/2,Fort_Headings,FORT_SIZE_FACTOR*MaxX);
+		Fort_Should_Update = 1;
+		Fort_Should_Clean = 1;
+//    Draw_Ship(cr, Ship_X_Pos,Ship_Y_Pos,Ship_Headings,SHIP_SIZE_FACTOR*MaxX);
+		Ship_Should_Update = 1;
+		Ship_Should_Clean = 1;
+
+            /* reset panel */
+    Update_Points(cr);
+    Update_Vulner(cr);
+    Update_Interval(cr);
+    Update_Shots(cr);
+    Update_Control(cr);
+    Update_Velocity(cr);
+    Update_Speed(cr);
+
+}  /* end reset screen */
+
+
 
 void start_drawing()
 {
@@ -866,156 +984,38 @@ unsigned char* update_frame_SF()
 	return cairo_image_surface_get_data(surface);
 }
 
-
-static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data)
-{
-	
-//	Oddly enough, clipping seems to work different accros surfaces. Therefore we set every
-//	thing to always update here. 
-
-//	printf("Equal to surface %d \n", cairo_surface_get_type(cairo_get_target(cr)) == CAIRO_SURFACE_TYPE_QUARTZ);
-	if(Initialized_Graphics == 0)
-	{
-	  set_initial_vals(cr);
-		Initialized_Graphics = 2; // at zero to redraw with initialization on every update
-		
-	}
-	else if(Initialized_Graphics == 2)
-	{
-		Ship_Should_Update = 1; 
-		Initialized_Graphics = 1;
-	}
-	Initialize_Graphics(cr);
-//	cairo_rectangle(cr, -Xmargin, 0, WINDOW_WIDTH,WINDOW_HEIGHT); // Cheap fix
-//	cairo_set_source_rgb(cr, 0, 0, 0);
-	Ship_Should_Clean = 1;
-	Mine_Should_Clean = 1;
-	Fort_Should_Clean = 1;
-	Missile_Should_Clean[0] = 1;
-	Ship_Should_Update = 1;
-	Mine_Should_Update = 1;
-	Fort_Should_Update = 1;
-	Missile_Should_Update[0] = 1;
-	Draw_Frame(cr);
-//	cairo_fill(cr);
-	update_frame(cr);
-	return FALSE; // Not sure why this should return false
-}
-
-// This is so that the python interface can set the key
-void set_key(int key_value)
-{
-	Lastkey = Key;
-	Key = key_value;
-//  A list of GTK hex key values as decimals
-//	GDK_KEY_F1 0xffbe 65470 
-//	GDK_KEY_F2 0xffbf 65471
-//	GDK_KEY_F3 0xffc0 65472
-//	GDK_KEY_Left 0xff51 65361
-//	GDK_KEY_Up 0xff52 65362
-//	GDK_KEY_space 0x020 32 
-}
-
-gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
-{
-		Lastkey = Key;
-		Key = event->keyval;
-	
-		
-//  switch (event->keyval)
-//  {
-//    case GDK_KEY_Left:
-////			Ship_Headings = (Ship_Headings - 5) % 360;
-////      Ship_Should_Update = 1;
-////			Ship_Should_Clean = 1;
+//int main(int argc, char *argv[])
+//{
+//	Initialized_Graphics = 0;
 //
-//			break;
-//    case GDK_KEY_Up:
-////			Ship_X_Pos = (Ship_X_Pos + 5) % MaxX;
-////      Ship_Should_Update = 1;
-////			Ship_Should_Clean = 1;
-//			break;
-//    case GDK_KEY_Right:
-////			Ship_Headings = (Ship_Headings + 5) % 360;
-////      Ship_Should_Update = 1;
-////			Ship_Should_Clean = 1;
-//			break;
-//		case GDK_KEY_space:
-//			
-//			break;
-//		case GDK_KEY_F3:
+//// Basic GTK initialization
+// 	GtkWidget *window;
+//  GtkWidget *darea;
+//  gtk_init(&argc, &argv);
+//  window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+//  darea = gtk_drawing_area_new();
+//  gtk_container_add(GTK_CONTAINER(window), darea);
 //
-//			break;
-//		case GDK_KEY_F2:
+//  g_signal_connect(G_OBJECT(darea), "draw", G_CALLBACK(on_draw_event), NULL);
+//  g_signal_connect(window, "destroy", G_CALLBACK(exit), NULL);
+//  g_signal_connect (G_OBJECT (window), "key_press_event", G_CALLBACK (on_key_press), NULL);
 //
-//		case GDK_KEY_Return:
-//			
-//			break;
-//		case GDK_KEY_Escape:
+//  gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
+//  gtk_window_set_default_size(GTK_WINDOW(window), WINDOW_WIDTH, WINDOW_HEIGHT);
 //
-//			break;
-//    default: // Not sure if this always reached
-//      return FALSE;
-//  }
-
-  return FALSE; 
-}
-
-void animation_loop(GtkWidget *darea)
-{
-  int i;
-	for(i = 0; i < 3420; i++)
-	{
-		gtk_widget_queue_draw(darea);
-		while(gtk_events_pending())
-		{
-    	gtk_main_iteration_do(TRUE);
-		}
-		usleep(1000*30); // 500 miliseconds, usleep() is in microseconds
-	}
-}
-
-void quit_sf()
-{
-	gtk_main_quit();
-//	Close_Graphics_SF();
-	exit(0);
-}
-
-
+//  gtk_window_set_title(GTK_WINDOW(window), "Space Fortress");
+////	gtk_print_context_get_cairo_context();
 //
-int main(int argc, char *argv[])
-{
-	Initialized_Graphics = 0;
-
-// Basic GTK initialization
- 	GtkWidget *window;
-  GtkWidget *darea;
-  gtk_init(&argc, &argv);
-  window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-  darea = gtk_drawing_area_new();
-  gtk_container_add(GTK_CONTAINER(window), darea);
-
-  g_signal_connect(G_OBJECT(darea), "draw", G_CALLBACK(on_draw_event), NULL);
-  g_signal_connect(window, "destroy", G_CALLBACK(exit), NULL);
-  g_signal_connect (G_OBJECT (window), "key_press_event", G_CALLBACK (on_key_press), NULL);
-
-  gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
-  gtk_window_set_default_size(GTK_WINDOW(window), WINDOW_WIDTH, WINDOW_HEIGHT);
-
-  gtk_window_set_title(GTK_WINDOW(window), "Space Fortress");
-//	gtk_print_context_get_cairo_context();
-
-  gtk_widget_show_all(window);
-	animation_loop(darea);
-
-  gtk_main();
-
-	stop_drawing(); // GTK handles this I guess
-
-  return 0;
-}
-
+//  gtk_widget_show_all(window);
+//	animation_loop(darea);
+//
+//  gtk_main();
+//
+//	stop_drawing(); // GTK handles this I guess
+//
+//  return 0;
+//}
+//
 
 
 //int main()
