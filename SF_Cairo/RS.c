@@ -474,8 +474,8 @@ void SF_iteration(cairo_t *cr)
 	// is this valid c?
 		elapsed_time=((clock()-loop_start_time)/(double)CLOCKS_PER_SEC)*1000.0;
     if(elapsed_time < SF_DELAY)
-		{
-//				printf("Slaap kindje slaap %Lf \n", elapsed_time);
+		{			
+//				printf("Sleeping for %Lf \n", elapsed_time);
         usleep(SF_DELAY-elapsed_time);  /* wait up to 50 milliseconds */
 		}
 	} else Effect_Flag=OFF;  /* no delay necessary */
