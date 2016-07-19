@@ -101,7 +101,15 @@ void Initialize_Graphics(cairo_t *cr)
 
 
 //	cairo_set_line_width(cr, 10); // Line width equal to one pixel
-	cairo_set_line_width(cr, (90.1 * 1) / ((double) MaxY * 1)); // for image_surf use 239
+	if(cairo_surface_get_type(cairo_get_target(cr) == CAIRO_SURFACE_TYPE_XLIB)
+	{
+		// Supply a value VAL between 100.0 and 240.0 (as a double)
+		cairo_set_line_width(cr, (VAL * 1) / ((double) MaxY * 1));
+	}
+	else
+	{
+		cairo_set_line_width(cr, (90.1 * 1) / ((double) MaxY * 1)); // for image_surf use 239
+	}
 //	cairo_set_line_width(cr, (90.1 * 1) / ((double) MaxY * 1));
 
 ////	 Cairo uses a different coordinate system than graphics.h, so we reflect Cairo's through
