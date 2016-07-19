@@ -17,6 +17,7 @@
 #include <math.h>
 #include <unistd.h>
 #include <string.h>
+#include <stdlib.h>
 
 //#include "myconst.h"
 //#include "myvars.h"
@@ -762,6 +763,12 @@ static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data
 	// Oddly enough, clipping seems to work different accros surfaces. Therefore it is 
 	// sometimes wise to set things to always update here. (a clip within a quartz 	
 	// surface erases everything outside of the clipping region)
+	cairo_surface_type_t s_type = cairo_surface_get_type(cairo_get_target(cr));
+	printf("Is CAIRO_SURFACE_TYPE_XLIB %d \n", CAIRO_SURFACE_TYPE_XLIB==s_type);
+	printf("Is CAIRO_SURFACE_TYPE_XCB %d \n", CAIRO_SURFACE_TYPE_XCB==s_type);
+	printf("Is CAIRO_SURFACE_TYPE_GLITZ %d \n", CAIRO_SURFACE_TYPE_GLITZ==s_type);
+	printf("Is CAIRO_SURFACE_TYPE_GL %d \n", CAIRO_SURFACE_TYPE_GL==s_type);
+	printf("Is CAIRO_SURFACE_TYPE_QT %d \n", CAIRO_SURFACE_TYPE_QT==s_type);
 
 	if(Initialized_Graphics == 0)
 	{
