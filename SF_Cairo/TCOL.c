@@ -11,11 +11,17 @@
 #include <time.h>
 #include <math.h>
 #include <cairo.h>
+#include <unistd.h>
 
 #include "DE.h"
 #include "HM.h"
 #include "RS.h"
 #include "TCOL.h"
+
+// Linux does not have M_PI in math.h for some reason
+#ifndef M_PI
+    #define M_PI 3.14159265358979323846
+#endif
 
 //#include "myconst.h"
 //#include "myext.h"
