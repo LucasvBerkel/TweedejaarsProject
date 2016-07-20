@@ -26,6 +26,7 @@
 //#include <gdk/gdkkeysyms.h>
 
 #include <stdlib.h>
+#include <math.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
@@ -319,6 +320,29 @@ void clear_prev_path(cairo_t *cr, cairo_path_t *prevPath)
 	cairo_reset_clip(cr);
 }
 
+void cairo_bounding_box(cairo_t *cr)
+{
+	double x1;
+	double y1;
+	double x2;
+	double y2;
+
+	cairo_path_extents(cr, &x1, &y1, &x2, &y2);
+	//Draw the actual object, preserving it's shape information
+	cairo_stroke(cr);
+	cairo_path_t *ol_path = cairo_copy_path(cr);
+	cairo_new_path(cr);
+
+
+	cairo_set_source_rgb(cr, 1, 0, 0);
+	cairo_rectangle(cr, x1-1, y1-1, (x2-x1)+1, (y2-y1)+1);
+	cairo_stroke(cr);
+
+	cairo_append_path(cr,ol_path);
+
+}
+
+
 void stroke_in_clip(cairo_t *cr)
 {
 //	cairo_save(cr);
@@ -327,6 +351,15 @@ void stroke_in_clip(cairo_t *cr)
 	cairo_reset_clip(cr);
 //	cairo_restore(cr);
 }
+
+// Placed here to center the whole interface in one file
+// (which might eliminate the GTK support)
+// For the python interface
+int get_score()
+{
+	return Score;
+}
+
 
 
 // Cleans all the previous paths from the context for the objects in need of an update
@@ -371,13 +404,15 @@ void update_drawing(cairo_t *cr)
 	if (Ship_Should_Update) // Skip this (and other) ifs because they always should be visible?
 	{
 		Draw_Ship(cr, Ship_X_Pos,Ship_Y_Pos,Ship_Headings,SHIP_SIZE_FACTOR*MaxX);
-		stroke_in_clip(cr);
+//		stroke_in_clip(cr);
+		cairo_bounding_box(cr);
 		Ship_Should_Update = 0;
 	}
 	if (Fort_Should_Update)
 	{
 		Draw_Fort(cr, MaxX/2,MaxY/2,Fort_Headings,FORT_SIZE_FACTOR*MaxX);
-		stroke_in_clip(cr);
+		cairo_bounding_box(cr);
+//		stroke_in_clip(cr);
 		Fort_Should_Update = 0;
 	}
 	for(int i=0;i<MAX_NO_OF_MISSILES;i++)
@@ -387,12 +422,13 @@ void update_drawing(cairo_t *cr)
 			Draw_Missile(cr, Missile_X_Pos[i], Missile_Y_Pos[i], Missile_Headings[i], MISSILE_SIZE_FACTOR*MaxX, i);
 			stroke_in_clip(cr);
 			Missile_Should_Update[i] = 0;
-		}
+		}Update_Shots
 	}
 	if (Mine_Should_Update)
 	{
-		Draw_Mine(cr, Mine_X_Pos,Mine_X_Pos,MINE_SIZE_FACTOR*MaxX);
-		stroke_in_clip(cr);
+		Draw_Mine(cr, Mine_X_Pos,Mine_Y_Pos,MINE_SIZE_FACTOR*MaxX);
+		cairo_bounding_box(cr);
+//		stroke_in_clip(cr);
 		Mine_Should_Update = 0;
 	}
 	if(Shell_Should_Update)
@@ -438,7 +474,7 @@ void Draw_Frame(cairo_t *cr)
 	// The line function is used to draw a line from a point(x1,y1) to point(x2,y2)
 	// void line(int x1, int y1, int x2, int y2);
 
-//	line(0,2*Height,MaxX,2*Height);
+//	line(0,2*Height,MaxX,2*Height);/
 	// The line on top of the info panel
 	cairo_line(cr, 0, 2*Height, MaxX, 2*Height);
 	cairo_stroke(cr);
@@ -654,9 +690,9 @@ void Draw_Mine (cairo_t *cr, int x, int y, int size)	/* x,y is on screen center 
 	cairo_set_source_rgb(cr, SF_BLUE);
 
 	cairo_move_to(cr,x-size,y);
-	cairo_line_to(cr,x,y-1.18*size);	 /* 1.3/1.1=1.18 */
+	cairo_line_to(cr,x,y-1.18*  size);	 /* 1.3/1.1=1.18 */
 	cairo_line_to(cr,x+size,y);
-	cairo_line_to(cr,x,y+1.18*size);
+	cairo_line_to(cr,x,y+1.18* size);
 	cairo_line_to(cr,x-size,y);
 //	cairo_line(cr,x-size,y,x,y-1.18*size);
 //	cairo_line(cr,x,y-1.18*size,x+size,y);

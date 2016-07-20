@@ -247,7 +247,7 @@ void Test_Collisions(cairo_t *cr)
 	/******* mine vs. ship collision ***********/
 
   if(Mine_Flag==ALIVE)
-    if(Check_Collision(Ship_X_Pos,Ship_Y_Pos,Mine_X_Pos,Mine_Y_Pos, COLLISION_DIST-MINE_COLLISION_ADJUST) )
+    if(Check_Collision(Ship_X_Pos,Ship_Y_Pos,Mine_X_Pos,Mine_Y_Pos, COLLISION_DIST) )
       {
 	Ship_Killings_Counter++;
 	Ship_Damaged_By_Mines++;
@@ -355,6 +355,7 @@ void Test_Collisions(cairo_t *cr)
 	 if(Check_Collision(Missile_X_Pos[i],Missile_Y_Pos[i],
 			    MaxX/2,MaxY/2,COLLISION_DIST) )
 	 {
+		printf("Fortress was struck \n");
 	   Missile_Flag[i]=KILL;
 	   Handle_Missile_Flag=ON;
 	   if(Missile_Type==VS_FRIEND)

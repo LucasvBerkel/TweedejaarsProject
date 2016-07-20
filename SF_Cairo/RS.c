@@ -418,12 +418,6 @@ void Handle_Bonus()
 //     }
 }
 
-// For the python interface
-int get_score()
-{
-	return Score;
-}
-
 
 void SF_iteration(cairo_t *cr)
 {

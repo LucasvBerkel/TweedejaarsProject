@@ -296,11 +296,11 @@ void Show_Mine_Type(cairo_t *cr, char Minetype)
 
 //  svcolor=getcolor();
   if((Mine_Type==FRIEND && Missile_Type==VS_FRIEND) || (Mine_Type==FOE && Missile_Type==VS_FOE)) {
-    cairo_set_source_rgb(cr, 0, 1, 0);
+//    cairo_set_source_rgb(cr, 0, 1, 0);
   } else if(Missile_Type==WASTED) {
-    cairo_set_source_rgb(cr, 1, 0, 0);
+//    cairo_set_source_rgb(cr, 1, 0, 0);
   } else {
-			cairo_set_source_rgb(cr, 1.0, 102.0/255.0, 102.0/255.0); // Light red
+//			cairo_set_source_rgb(cr, 1.0, 102.0/255.0, 102.0/255.0); // Light red
 //    setcolor(LIGHTRED);
   }
 	// What does this viewport do in context?
@@ -319,11 +319,10 @@ void Show_Mine_Type(cairo_t *cr, char Minetype)
 
 void Reset_Mine_Headings()
 {
-   Mine_Headings=Find_Headings(Mine_X_Pos,Mine_Y_Pos,Ship_X_Pos,
-					     Ship_Y_Pos);
+   Mine_Headings=Find_Headings(Mine_X_Pos,Mine_Y_Pos,Ship_X_Pos, Ship_Y_Pos);
    Mine_Course_Count=MINE_COURSE_INTERVAL;
    Mine_X_Speed=Mine_Speed*Fsin(Mine_Headings);
-   Mine_Y_Speed=-Mine_Speed*Fcos(Mine_Headings);
+   Mine_Y_Speed=Mine_Speed*Fcos(Mine_Headings);
 }
 
 int randrange(int min, int max)
@@ -341,6 +340,7 @@ void Generate_Mine(cairo_t *cr)
 		Mine_X_Pos=randrange(0, MaxX);
 		Mine_Y_Pos=randrange(0, MaxY);
     a=sqrt(pow(Mine_X_Pos-Ship_X_Pos,2)+pow(Mine_Y_Pos-Ship_Y_Pos,2) );
+		printf("Generating mine at (%d, %d) \n", Mine_X_Pos, Mine_Y_Pos);
   } while(a < 0.5*MaxX );  /* repeat until distance exceeds min. */
 
   Reset_Mine_Headings();
@@ -369,8 +369,30 @@ void Move_Mine(cairo_t *cr)
 //    Draw_Mine(cr, Mine_X_Pos,Mine_Y_Pos,MINE_SIZE_FACTOR*MaxX); /* erase mine */
 		Mine_Should_Clean = 1;
 
+
+//		printf("Mine_X_Speed: %d \n", Mine_X_Speed);
+//		printf("Mine_Y_Speed: %d \n", Mine_Y_Speed);
     Mine_X_Pos=Mine_X_Pos+Mine_X_Speed;      /* update position */
     Mine_Y_Pos=Mine_Y_Pos+Mine_Y_Speed;
+
+		if(Mine_X_Pos < 0)
+		{
+			Mine_X_Pos = MaxX - Xmargin;
+		}
+		else if(Mine_X_Pos > MaxX)
+		{
+			Mine_X_Pos = Xmargin;
+		}
+		if(Mine_Y_Pos < 0)
+		{
+			Mine_Y_Pos = MaxY;
+		}
+		
+		else if(Mine_Y_Pos > MaxY)
+		{
+			Mine_Y_Pos = 0;
+		}
+
 
 //    Draw_Mine(cr, Mine_X_Pos,Mine_Y_Pos,MINE_SIZE_FACTOR*MaxX);  /* redraw mine */
 		Mine_Should_Update = 1;
