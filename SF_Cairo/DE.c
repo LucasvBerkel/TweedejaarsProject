@@ -1009,8 +1009,6 @@ void jitter_step1(cairo_t *cr, int step)
 
 	clear_prev_path(cr, PrevShip);
 	
-//  for (i=8;i>0;i--)
-
 	Jitter_Headings=Ship_Headings+2*step;
 	Jitter_X_Pos=Ship_X_Old_Pos+step*Fcos(Jitter_Headings);
 	Jitter_Y_Pos=Ship_Y_Old_Pos+step*Fsin(Jitter_Headings);
@@ -1028,7 +1026,6 @@ void jitter_step2(cairo_t *cr, int step)
  	Jitter_Headings=Ship_Headings-2*step;
   Jitter_X_Pos=Ship_X_Old_Pos+step*Fsin(Jitter_Headings);
   Jitter_Y_Pos=Ship_Y_Old_Pos+step*Fcos(Jitter_Headings);
-
 	Draw_Ship(cr,Jitter_X_Pos,Jitter_Y_Pos,Jitter_Headings, SHIP_SIZE_FACTOR*MaxX); 
 	stroke_in_clip(cr);
 }

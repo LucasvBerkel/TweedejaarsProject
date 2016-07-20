@@ -354,7 +354,7 @@ void Generate_Mine(cairo_t *cr)
     {
       Mine_Type=FOE;
 			// I'm not sure if this line does anything
-      t0=clock(); /* when "a mine is born .."? */ 
+      t0=clock(); /* when "a mine is born .."? */  // Why and how does it acces this?
     }
 
   if (Mine_Type==FRIEND) Mine_Indicator=Friend_Menu[randrange(0,3)][0];
@@ -391,6 +391,7 @@ void Handle_Mine(cairo_t *cr)
 //		  Draw_Mine(cr, Mine_X_Pos,Mine_Y_Pos,MINE_SIZE_FACTOR*MaxX);
 //			clear_prev_path(cr, PrevMine);
 				Mine_Should_Clean = 1;
+			printf("Mine is dead \n");
 							/* erase mine */
 		  Mine_Flag=DEAD;
 		  Mine_Dead_Counter=0;
@@ -405,6 +406,7 @@ void Handle_Mine(cairo_t *cr)
 		  if(Mine_Dead_Counter++ >= Mine_Wait_Loops)
 		    {
 		      Generate_Mine(cr);
+					printf("Spawned mine \n");
 		      Mine_Flag=ALIVE;
 		      Mine_Alive_Counter=0;
 		    }
@@ -413,6 +415,7 @@ void Handle_Mine(cairo_t *cr)
   case ALIVE  : {
 		  Move_Mine(cr);
 		  if(Mine_Alive_Counter++ >= Mine_Live_Loops)
+			printf("Killed mine because it was alive too long \n");
 		  Mine_Flag=KILL;
 		  if(Mine_Alive_Counter>MISSILE_FORT_TIME_LIMIT)
 		    Missile_Vs_Mine_Only=ON;
@@ -466,6 +469,7 @@ void Handle_Aim_Mine(cairo_t *cr)
 		  if(Mine_Dead_Counter++ >= Mine_Wait_Loops)
 		    {
 		      Generate_Aim_Mine(cr);
+					printf("Spawned mine \n");
 		      Mine_Flag=ALIVE;
 		      Mine_Alive_Counter=0;
 		    }
@@ -473,6 +477,7 @@ void Handle_Aim_Mine(cairo_t *cr)
 		}
   case ALIVE  : {
 		  if(Mine_Alive_Counter++ >= Mine_Live_Loops)
+			printf("Despawned mine because it lived too long \n");
 		  Mine_Flag=KILL;
 		}
 

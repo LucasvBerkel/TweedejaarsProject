@@ -61,12 +61,6 @@ struct aim_sess_results{
 	int score;
 };
 
-//typedef enum { ALIVE, DEAD, KILL } status;
-//typedef enum { FRIEND, FOE } mine_type;
-//typedef enum { VS_FRIEND, VS_FOE, WASTED } missile_type;
-//typedef enum { NOT_PRESENT, NON_BONUS, FIRST_BONUS, SECOND_BONUS } bonus_character;
-//typedef enum { LEFT_BUTTON,CENTER_BUTTON,RIGHT_BUTTON,NONE } mouse_button_type;
-//typedef enum { SPACE_FORTRESS, AIMING_TEST } game_type;
 
 clock_t t0;  /* time when FOE mine is born */
 clock_t t1;  /* double press interval start */

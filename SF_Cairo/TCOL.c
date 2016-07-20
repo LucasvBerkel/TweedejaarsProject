@@ -287,6 +287,7 @@ void Test_Collisions(cairo_t *cr)
 	 else
 	   {
 	     Points=Points-50;
+			printf("Killing mine because it bumped into the ship \n");
 	     Mine_Flag=KILL;
 	     Handle_Mine(cr); 		/* kill mine */
 	     if(Shell_Flag==ALIVE)
@@ -324,6 +325,7 @@ void Test_Collisions(cairo_t *cr)
 		 Handle_Shell(cr); // Uncomment when done
 		 if(Mine_Flag==ALIVE)    /* kill  mine  */
 		   {
+					printf("Killing mine because ship was hit by shell \n");
 		     Mine_Flag=KILL;
 		     Handle_Mine(cr); /* erase mine and reset counters */
 		   }
@@ -365,6 +367,7 @@ void Test_Collisions(cairo_t *cr)
 	       {
 		 goodshot=OFF; /* redundant */
 		 Gen_Snap_Effect();
+		printf("Killing mine because it was hit by the player \n");
 		 Mine_Flag=KILL;
 		 Handle_Mine(cr);
 	       }
