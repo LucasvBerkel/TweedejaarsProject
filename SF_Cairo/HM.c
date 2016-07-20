@@ -390,7 +390,7 @@ void Handle_Mine(cairo_t *cr)
 		  Handle_Speed_Score(cr);
 //		  Draw_Mine(cr, Mine_X_Pos,Mine_Y_Pos,MINE_SIZE_FACTOR*MaxX);
 //			clear_prev_path(cr, PrevMine);
-				Mine_Should_Clean = 1;
+			Mine_Should_Clean = 1;
 			printf("Mine is dead \n");
 							/* erase mine */
 		  Mine_Flag=DEAD;
@@ -415,71 +415,11 @@ void Handle_Mine(cairo_t *cr)
   case ALIVE  : {
 		  Move_Mine(cr);
 		  if(Mine_Alive_Counter++ >= Mine_Live_Loops)
-			printf("Killed mine because it was alive too long \n");
+			printf("Despawned mine because it lived too long \n");
 		  Mine_Flag=KILL;
 		  if(Mine_Alive_Counter>MISSILE_FORT_TIME_LIMIT)
 		    Missile_Vs_Mine_Only=ON;
 		 }
-
- } /* end switch */
-}
-
-
-void Generate_Aim_Mine(cairo_t *cr)
-{
-    float radius;
-    float mine_distance;
-    float mine_angle;
-
-    radius=MaxX/2.2;
-    mine_angle=randrange(0,16)*22.5;
-    mine_distance=radius/2+randrange(0,2)*radius/2;
-    if(mine_angle>338.0) 
-		{
-			mine_angle=0.0;
-    	Mine_X_Pos=MaxX/2 + mine_distance*Fsin(mine_angle);
-      Mine_Y_Pos=MaxY/2 - mine_distance*Fcos(mine_angle);
-		}
-    else 
-		{
-			Mine_Y_Pos=MaxY/2 - mine_distance*Fcos(mine_angle)/GraphSqrFact;
-		}
-		     /* Y/X square ratio */
-		Mine_Should_Update = 1;
-//    Draw_Mine(cr, Mine_X_Pos,Mine_Y_Pos,MINE_SIZE_FACTOR*MaxX);
-//	     /* draw mine */
-//		stroke_in_clip(cr);
-}
-
-void Handle_Aim_Mine(cairo_t *cr)
-{
- switch(Mine_Flag)
- {
-  case KILL  : {
-		  Handle_Speed_Score(cr);
-//		  Draw_Mine(cr, Mine_X_Pos,Mine_Y_Pos,MINE_SIZE_FACTOR*MaxX);
-//							/* erase mine */
-//			clear_prev_path(cr, PrevMine);
-			Mine_Should_Clean = 1;
-		  Mine_Flag=DEAD;
-		  Mine_Dead_Counter=0;
-		  break;
-		}
-  case DEAD   : {
-		  if(Mine_Dead_Counter++ >= Mine_Wait_Loops)
-		    {
-		      Generate_Aim_Mine(cr);
-					printf("Spawned mine \n");
-		      Mine_Flag=ALIVE;
-		      Mine_Alive_Counter=0;
-		    }
-		   break;
-		}
-  case ALIVE  : {
-		  if(Mine_Alive_Counter++ >= Mine_Live_Loops)
-			printf("Despawned mine because it lived too long \n");
-		  Mine_Flag=KILL;
-		}
 
  } /* end switch */
 }
