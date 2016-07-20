@@ -415,8 +415,10 @@ void Handle_Mine(cairo_t *cr)
   case ALIVE  : {
 		  Move_Mine(cr);
 		  if(Mine_Alive_Counter++ >= Mine_Live_Loops)
-			printf("Despawned mine because it lived too long \n");
-		  Mine_Flag=KILL;
+			{
+				printf("Despawned mine because it lived too long \n");
+		  	Mine_Flag=KILL;
+			}
 		  if(Mine_Alive_Counter>MISSILE_FORT_TIME_LIMIT)
 		    Missile_Vs_Mine_Only=ON;
 		 }

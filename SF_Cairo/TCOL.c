@@ -244,30 +244,6 @@ void Test_Collisions(cairo_t *cr)
   Handle_Missile_Flag=OFF;
   breakflag=OFF;
 
-  if(Game_Type==AIMING_TEST)
-    {
-      for(i=0;i<MAX_NO_OF_MISSILES;i++)   /* for all  possible missiles */
-       {                  /* check against mine only */
-	 if(Mine_Flag==ALIVE)
-	   if(Missile_Flag[i]==ALIVE)
-	     if(Check_Collision(Missile_X_Pos[i],Missile_Y_Pos[i],
-			    Mine_X_Pos,Mine_Y_Pos,COLLISION_DIST) )
-	       {
-		  Missile_Flag[i]=KILL;
-		  Handle_Missile_Flag=ON;
-		  Gen_Snap_Effect();
-		  Mine_Flag=KILL;
-		  Handle_Mine(cr);
-		  Mines=Mines+20;
-		  Update_Mines(cr);
-		  Score=Mines+Speed;
-		  Update_Score(cr);
-	      } /* end missile vs. mine for aiming test */
-       }
-
-    }
-    else  /* space_fortress  section */
-    {
 	/******* mine vs. ship collision ***********/
 
   if(Mine_Flag==ALIVE)
@@ -367,7 +343,7 @@ void Test_Collisions(cairo_t *cr)
 	       {
 		 goodshot=OFF; /* redundant */
 		 Gen_Snap_Effect();
-		printf("Killing mine because it was hit by the player \n");
+			printf("Killing mine because it was hit by the player \n");
 		 Mine_Flag=KILL;
 		 Handle_Mine(cr);
 	       }
@@ -426,7 +402,6 @@ void Test_Collisions(cairo_t *cr)
 			}
 	 } /* missile vs. fortress */
   } /* end for missile do-loop */
-  } /* end else space fortress case */
   if(Handle_Missile_Flag) Handle_Missile(cr); /* KILL them all */
 }
 
