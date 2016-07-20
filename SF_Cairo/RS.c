@@ -29,11 +29,19 @@
 
 #include <gdk/gdkkeysyms.h>
 
+// Linux does not have M_PI in math.h for some reason
+#ifndef M_PI
+    #define M_PI 3.14159265358979323846
+#endif
+
+
 // I don't think we do anything with this menu stuff
 extern char Friend_Menu[3][1];
 extern char Foe_Menu[3][1];
 extern char Mine_Indicator;
 extern mine_type Mine_Type;
+
+int jitter_switch = 1;
 
         /* Functions  */ // Done with the header
 //extern void Open_Graphics(void);
@@ -139,30 +147,15 @@ void Get_User_Input(cairo_t *cr)
 }
 
 
-char Keyboard1() /* handles escape key press only */ // wtf why
+void ms_sleep(unsigned long miliseconds)
 {
-//    union u_type{int a; char b[3];} keystroke;
-//    char inkey=0;
-//
-//    while(bioskey(1)==0);   /* key relieved, no input */
-//    keystroke.a=bioskey(0); /* fetch ascii code */
-//    inkey=keystroke.b[0];   /* ..and load code into variable */
-//    return(inkey);
-	return 0;  // Make the compiler happy
+	struct timespec tim, tim2;
+  tim.tv_sec = 0;
+  tim.tv_nsec = miliseconds * 1000000L;
+	nanosleep(&tim , &tim2);
+
 }
 
-//int gprintf( int *xloc, int *yloc, char *fmt, ... )
-//{
-//    va_list  argptr;      /* Argument list pointer  */
-//    char str[140];      /* Buffer to build sting into */
-//    int cnt;        /* Result of SPRINTF for return */
-//
-//    va_start( argptr, fmt );    /* Initialize va_ functions */
-//    cnt = vsprintf( str, fmt, argptr ); /* prints string to buffer  */
-//    outtextxy( *xloc, *yloc, str ); /* Send string in graphics mode */
-//    va_end( argptr );     /* Close va_ functions    */
-//    return( cnt );      /* Return the conversion count  */
-//}
 
 // Not sure what this does
 // I've assumed that this erases the text in the panel but idk why anymore
@@ -434,8 +427,10 @@ int get_score()
 
 void SF_iteration(cairo_t *cr)
 {
-	long double elapsed_time;
+	unsigned long elapsed_time;
   clock_t loop_start_time;
+	struct timespec tim, tim2;
+  tim.tv_sec = 0;
 
 //        Set_Kbd_Rate(0x8); /* to slow repeat rate 15Hz */
 //        Capture_Kbd(Get_Key); /* redirect KBD interrupts to Get_Key() */ // Uncomment
@@ -459,7 +454,7 @@ void SF_iteration(cairo_t *cr)
 	//            if(Sound_Flag>1) Sound_Flag--;
 	//            if(Sound_Flag==1) {Sound_Flag--; nosound();}
 	Handle_Mine(cr);
-	Test_Collisions(cr); // Animations are done here
+	Test_Collisions(cr);
 	Handle_Shell(cr);
 	Handle_Fortress(cr);
 	if(Display_Interval_Flag) {   /* of double press */
@@ -473,11 +468,13 @@ void SF_iteration(cairo_t *cr)
 	// The game should always wait 50ms between frames, so sleep until the loop
 	// body takes 50ms
 	// is this valid c?
-		elapsed_time=((clock()-loop_start_time)/(long double)CLOCKS_PER_SEC)*1000.0;
+		elapsed_time=((clock()-loop_start_time)/(double)CLOCKS_PER_SEC)*1000.0;
+	  tim.tv_nsec = (SF_DELAY-elapsed_time) * 1000000L;
     if(elapsed_time < SF_DELAY)
 		{
 //				printf("Sleeping for %Lf \n", SF_DELAY-elapsed_time);
-        usleep(SF_DELAY-elapsed_time);  /* wait up to 50 milliseconds */
+//        ms_sleep(SF_DELAY-elapsed_time);  /* wait up to 50 milliseconds */
+				nanosleep(&tim , &tim2);
 		}
 	} else Effect_Flag=OFF;  /* no delay necessary */
 	Score=Points+Velocity+Control+Speed;
@@ -681,6 +678,7 @@ void Save_Aiming_Game() {
 
 }
 
+// This function is broken
 void Run_Aiming(cairo_t *cr)   /* 1- for training 0- for demo */
 {
     clock_t elapsed_time;
@@ -713,12 +711,12 @@ void Run_Aiming(cairo_t *cr)   /* 1- for training 0- for demo */
 				//         if(Sound_Flag>1) Sound_Flag--;
 				//         if(Sound_Flag==1) {Sound_Flag--; nosound();}
 				Handle_Aim_Mine(cr);
-				Test_Collisions(cr);
+//				Test_Collisions(cr);
 				if(!Effect_Flag)
 				{
 					if ( (elapsed_time=((clock()-loop_start_time)/CLOCKS_PER_SEC))*1000 < SF_DELAY)
 					{		
-						usleep(SF_DELAY-elapsed_time);  /* wait up to 50 milliseconds */
+						ms_sleep(SF_DELAY-elapsed_time);  /* wait up to 50 milliseconds */
 					}
 				}
 			else Effect_Flag=OFF;  /* no delay necessary */
@@ -759,32 +757,111 @@ void Run_Aiming(cairo_t *cr)   /* 1- for training 0- for demo */
 
 static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 {
-	
+//	printf("Ship pos on draw: %d %d\n", Ship_X_Pos, Ship_Y_Pos);
+
 	// Oddly enough, clipping seems to work different accros surfaces. Therefore it is 
 	// sometimes wise to set things to always update here. (a clip within a quartz 	
 	// surface erases everything outside of the clipping region)
-	cairo_surface_type_t s_type = cairo_surface_get_type(cairo_get_target(cr));
-	printf("Is CAIRO_SURFACE_TYPE_XLIB %d \n", CAIRO_SURFACE_TYPE_XLIB==s_type);
-	printf("Is CAIRO_SURFACE_TYPE_XCB %d \n", CAIRO_SURFACE_TYPE_XCB==s_type);
-	printf("Is CAIRO_SURFACE_TYPE_GLITZ %d \n", CAIRO_SURFACE_TYPE_GLITZ==s_type);
-	printf("Is CAIRO_SURFACE_TYPE_GL %d \n", CAIRO_SURFACE_TYPE_GL==s_type);
-	printf("Is CAIRO_SURFACE_TYPE_QT %d \n", CAIRO_SURFACE_TYPE_QT==s_type);
+	Initialize_Graphics(cr);  // Why is this needed again
 
 	if(Initialized_Graphics == 0)
 	{
-	  set_initial_vals(cr); // Also resets the screen to some good initial object drawing values
+	  set_initial_vals(cr);
 		Initialized_Graphics = 1;
 	}
-	Initialize_Graphics(cr);  // Why is this needed again
 	// Main sf stuff
-	SF_iteration(cr);
-	// keep
-	Draw_Frame(cr);
-	clean(cr);
+
 	Fort_Should_Update = 1;
+	if(!Explosion_Flag && !Jitter_Flag)
+	{
+		SF_iteration(cr);
+		Ship_Should_Update = 1;
+		Draw_Frame(cr);
+	}
+	else 
+	{
+		Draw_Frame(cr);
+		// we don't want our object disappearing!
+		Mine_Should_Update = 1;
+		if(Explosion_Flag)
+		{
+			unsigned long exp_sleep;
+			// Handle drawing here, as otherwhise the ship will move to it's new location
+			Ship_Should_Update = 0;
+			Ship_Should_Clean = 0;
+			cairo_new_path(cr);
+			cairo_set_source_rgb(cr, SF_YELLOW);
+			cairo_append_path(cr, PrevShip);
+			cairo_stroke(cr);
+
+//			cairo_fill_preserve(cr);
+		
+			// This actually does nothing the first time around
+			// explosion_step2 is sort of the inner, yellow circle, one step behind step1
+			for(int i = 0; i < Explosion_Step+1; i++)
+			{
+				explosion_step2(cr, ExpX, ExpY, i);
+			}
+			explosion_step1(cr, ExpX, ExpY, Explosion_Step);
+			
+
+			exp_sleep = (250.0/ ((double) Explosion_Step)) + ANIMATION_DELAY_EXP;
+			ms_sleep(exp_sleep);
+			Explosion_Step++;
+			if((Explosion_Step * 10) >= ExpRadius)
+			{
+				Explosion_Step = 0;
+				Explosion_Flag = 0;
+				Ship_Should_Update = 1;
+				Ship_Should_Clean = 1;
+				Reset_Screen(cr);
+			}
+		}
+		else if(Jitter_Flag)
+		{
+			Ship_Should_Update = 0;
+			Ship_Should_Clean = 0;
+			Mine_Should_Update = 1;
+			Shell_Should_Update = 1;
+			for(int m = 0; m < MAX_NO_OF_MISSILES; m++)
+			{ 
+				if (Missile_Flag[m]==ALIVE)
+				{
+					Missile_Should_Update[m] = 1;
+				}
+			}
+			if(jitter_switch)
+			{
+				jitter_step1(cr, Jitter_Step);
+				jitter_switch = 0;
+			}
+			else
+			{
+				jitter_step2(cr, Jitter_Step);
+				Jitter_Step--;
+				jitter_switch = 1;
+			}
+		  ms_sleep((((unsigned long)Jitter_Step)*5L) + ANIMATION_DELAY_JITTER);
+
+			if(Jitter_Step < 1)
+			{
+				Jitter_Step = 8;
+				Jitter_Flag = 0;
+
+				// Restore Ship to it's previous position
+				clear_prev_path(cr, PrevShip);
+				Draw_Ship(cr,Ship_X_Pos,Ship_Y_Pos,Ship_Headings, SHIP_SIZE_FACTOR*MaxX);
+				stroke_in_clip(cr);
+			}
+		}
+
+	}
+	
+	clean(cr);
 	Draw_Hexagone(cr, MaxX/2,MaxY/2,SMALL_HEXAGONE_SIZE_FACTOR*MaxX);
 	stroke_in_clip(cr);
 	update_drawing(cr);
+
 	return FALSE; // Not sure why this should return false
 }
 
@@ -889,16 +966,7 @@ void animation_loop(GtkWidget *darea)
 	} 
 	while(!Restart_Flag && !End_Flag);
 
-//	for(i = 0; i < 3420; i++)
-//	{
-//		gtk_widget_queue_draw(darea);
-//		while(gtk_events_pending())
-//		{
-//    	gtk_main_iteration_do(TRUE);
-//		}
-//		usleep(1000*30); // 500 (?) miliseconds, usleep() is in microseconds
-//	}
-	// And the clean up here
+	// And the clean up here (close graphics) 
 }
 
 int main(int argc, char *argv[])

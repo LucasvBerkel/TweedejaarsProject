@@ -29,6 +29,15 @@ int Shell_Should_Clean;
 
 char Initialized_Graphics;
 
+int Explosion_Flag = 0;
+int Explosion_Step = 0;
+int ExpRadius;
+int ExpX;
+int ExpY;
+
+int Jitter_Flag = 0;
+int Jitter_Step = 8;
+
 /* Not that good maybe because for example multiple missile can exist */
 int Missile_X;
 int Missile_Y;

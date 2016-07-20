@@ -566,7 +566,7 @@ void Handle_Missile(cairo_t *cr)
 //			     Missile_Headings[i],MISSILE_SIZE_FACTOR*MaxX);
 					Missile_Should_Update[i] = 1;
 							  /* draw new */
-					stroke_in_clip(cr);
+//					stroke_in_clip(cr);
 
 			   }
 			 }

@@ -42,13 +42,20 @@ extern int Mine_Should_Update;
 extern int Fort_Should_Update;
 extern int Missile_Should_Update[MAX_NO_OF_MISSILES]; // Make this an array for all the missiles
 extern int Shell_Should_Update;
-
-
 extern int Ship_Should_Clean;
 extern int Mine_Should_Clean;
 extern int Shell_Should_Clean;
 extern int Fort_Should_Clean;
 extern int Missile_Should_Clean[MAX_NO_OF_MISSILES]; // Make this an array for all the missiles
+
+extern int Explosion_Flag;
+extern int Explosion_Step;
+extern int ExpRadius;
+extern int ExpX;
+extern int ExpY;
+
+extern int Jitter_Flag;
+extern int Jitter_Step;
 
 /* Not that good maybe because for example multiple missile can exist */
 extern int Missile_X;

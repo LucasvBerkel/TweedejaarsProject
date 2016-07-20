@@ -38,8 +38,10 @@
 #define FORT_LOCK_INTERVAL 20
 #define SHELL_SPEED 7
 #define MAX_NO_OF_MISSILES 6
-#define SF_DELAY 50
-
+//#define SF_DELAY 50.0
+#define SF_DELAY 37
+#define ANIMATION_DELAY_EXP 50  // In Milliseconds
+#define ANIMATION_DELAY_JITTER 10
 // All the color values have been altered to be RGB tuples
 
 #define SHIP_COLOR YELLOW
@@ -56,7 +58,7 @@
 #define TEXT_BACKGROUND BLUE
 #define TEXT_LINE_COLOR MAGENTA
 
-#define COLLISION_DIST 22
+#define COLLISION_DIST 12 // Used to be 22
 #define RESOURCE_DISPLAY_INTERVAL 120
 #define NO_RESOURCE_DISPLAY_INTERVAL 40
 #define MINE_SHIP_DISTANCE 200 /* in screen pixels */

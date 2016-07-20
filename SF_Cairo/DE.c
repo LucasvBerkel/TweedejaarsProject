@@ -101,10 +101,10 @@ void Initialize_Graphics(cairo_t *cr)
 
 
 //	cairo_set_line_width(cr, 10); // Line width equal to one pixel
-	if(cairo_surface_get_type(cairo_get_target(cr) == CAIRO_SURFACE_TYPE_XLIB)
+	if(cairo_surface_get_type(cairo_get_target(cr)) == CAIRO_SURFACE_TYPE_XLIB)
 	{
 		// Supply a value VAL between 100.0 and 240.0 (as a double)
-		cairo_set_line_width(cr, (VAL * 1) / ((double) MaxY * 1));
+		cairo_set_line_width(cr, (135.0 * 1) / ((double) MaxY * 1));
 	}
 	else
 	{
@@ -146,21 +146,13 @@ void Initialize_Graphics(cairo_t *cr)
 	cairo_set_font_options(cr, font_options);
 	cairo_select_font_face(cr,"Helvetica",CAIRO_FONT_SLANT_NORMAL,CAIRO_FONT_WEIGHT_BOLD);
 
-	cairo_path_t *empty_path = cairo_copy_path(cr);
-	PrevShip = empty_path;
+
 	// Sets all the values in the array to the empty path
 	// Gives a vague warning, probably because this only works for types with the size of an int
 	// (source: SO)
 //	memset(PrevMissile, empty_path, MAX_NO_OF_MISSILES);  
 //	PrevMissile = {empty_path};
 	// Attemps above don't work, so we initialize manually
-	for(int i = 0; i < MAX_NO_OF_MISSILES; i++)
-	{
-		PrevMissile[i] = empty_path;
-	}
-	
-	PrevFort = empty_path;
-	PrevMine = empty_path;
 
 	// clears the screen, probably the dos screen, and sets the current graphics write
 	// pointer to (0,0)
@@ -317,23 +309,23 @@ void clip_path_rect(cairo_t *cr)
 	// Clears the pixels on the previous path, i.e. sets them to black
 void clear_prev_path(cairo_t *cr, cairo_path_t *prevPath)
 {
-	cairo_save(cr);
+//	cairo_save(cr);
 	cairo_set_source_rgb(cr, 0, 0, 0);
-//	cairo_new_path(cr); assume the context is empty
+//	cairo_new_path(cr); // assume the context is empty
 	cairo_append_path(cr, prevPath);
 	clip_path_rect(cr);
 	cairo_stroke(cr);
-	cairo_restore(cr);
-//	cairo_reset_clip(cr);
+//	cairo_restore(cr);
+	cairo_reset_clip(cr);
 }
 
 void stroke_in_clip(cairo_t *cr)
 {
-	cairo_save(cr);
+//	cairo_save(cr);
 	clip_path_rect(cr);
 	cairo_stroke(cr);
-//	cairo_reset_clip(cr);
-	cairo_restore(cr);
+	cairo_reset_clip(cr);
+//	cairo_restore(cr);
 }
 
 
@@ -771,6 +763,16 @@ int Find_Headings(int x1,int y1,int x2,int y2)
 
 void set_initial_vals(cairo_t *cr)
 {
+	cairo_path_t *empty_path = cairo_copy_path(cr);
+	PrevShip = empty_path;
+	for(int i = 0; i < MAX_NO_OF_MISSILES; i++)
+	{
+		PrevMissile[i] = empty_path;
+	}
+	
+	PrevFort = empty_path;
+	PrevMine = empty_path;
+	PrevShell = empty_path; 
 	memset(Missile_Should_Update, 0, MAX_NO_OF_MISSILES);
 	memset(Missile_Should_Clean, 0, MAX_NO_OF_MISSILES);
 	Reset_Screen(cr);
@@ -847,8 +849,10 @@ void Reset_Screen(cairo_t *cr)
 {
     int i;
         /*  reset variables */
+//		printf("Maxxes: %d %d \n", MaxX, MaxY);
     Ship_X_Pos=0.25*MaxX; /* on a 640 x 480 screen VGA-HI */
     Ship_Y_Pos=0.5*MaxY; /* same as above */
+//		printf("Ship pos after reset: %d %d\n", Ship_X_Pos, Ship_Y_Pos);
     Ship_X_Speed=0.0;
     Ship_Y_Speed=0.0;
     Ship_Headings=0;
@@ -965,25 +969,25 @@ void update_frame(cairo_t *cr)
 	
 //	Ship_X_Pos =  ((Ship_X_Pos + move_update()) % MaxX) + 1;
 //	Ship_Y_Pos = (Ship_Y_Pos + move_update()) % MaxY;
-	Fort_Headings = (Fort_Headings + 1) % 360;
-	Fort_Headings = 45;	
-	Mine_Y_Pos = (Mine_Y_Pos + move_update()) % MaxY;
-	Mine_X_Pos = (Mine_X_Pos + move_update()) % MaxX;
-	Missile_X = (Missile_X + move_update()) % MaxX;
-	if (Missile_Y == 0)
-	{
-		Missile_Y = MaxY;
-	}
-	Missile_Y = (Missile_Y - 1) % MaxY;
-	Missile_Y_Pos[0] = Missile_Y;
-	Missile_X_Pos[0] = Missile_X;
-
-	clean(cr);
-	Draw_Hexagone(cr, MaxX/2,MaxY/2,SMALL_HEXAGONE_SIZE_FACTOR*MaxX);
-	stroke_in_clip(cr);
-	
-//	cairo_reset_clip(cr);
-	update_drawing(cr);
+//	Fort_Headings = (Fort_Headings + 1) % 360;
+//	Fort_Headings = 45;	
+//	Mine_Y_Pos = (Mine_Y_Pos + move_update()) % MaxY;
+//	Mine_X_Pos = (Mine_X_Pos + move_update()) % MaxX;
+//	Missile_X = (Missile_X + move_update()) % MaxX;
+//	if (Missile_Y == 0)
+//	{
+//		Missile_Y = MaxY;
+//	}
+//	Missile_Y = (Missile_Y - 1) % MaxY;
+//	Missile_Y_Pos[0] = Missile_Y;
+//	Missile_X_Pos[0] = Missile_X;
+//
+//	clean(cr);
+//	Draw_Hexagone(cr, MaxX/2,MaxY/2,SMALL_HEXAGONE_SIZE_FACTOR*MaxX);
+//	stroke_in_clip(cr);
+//	
+////	cairo_reset_clip(cr);
+//	update_drawing(cr);
 }
 
 unsigned char* update_frame_SF()
@@ -991,6 +995,85 @@ unsigned char* update_frame_SF()
 	update_frame(SF_canvas);
 	return cairo_image_surface_get_data(surface);
 }
+
+// Converts degrees to radians
+float deg2rad(int deg)
+{
+	return deg * (M_PI / 180.0);
+}
+
+void jitter_step1(cairo_t *cr, int step)
+{
+  int Jitter_Headings;
+  int Jitter_X_Pos,Jitter_Y_Pos;
+
+	clear_prev_path(cr, PrevShip);
+	
+//  for (i=8;i>0;i--)
+
+	Jitter_Headings=Ship_Headings+2*step;
+	Jitter_X_Pos=Ship_X_Old_Pos+step*Fcos(Jitter_Headings);
+	Jitter_Y_Pos=Ship_Y_Old_Pos+step*Fsin(Jitter_Headings);
+	
+	Draw_Ship(cr,Jitter_X_Pos,Jitter_Y_Pos,Jitter_Headings, SHIP_SIZE_FACTOR*MaxX); 
+	stroke_in_clip(cr);
+}
+
+void jitter_step2(cairo_t *cr, int step)
+{
+  int Jitter_Headings;
+  int Jitter_X_Pos,Jitter_Y_Pos;
+	clear_prev_path(cr, PrevShip);
+
+ 	Jitter_Headings=Ship_Headings-2*step;
+  Jitter_X_Pos=Ship_X_Old_Pos+step*Fsin(Jitter_Headings);
+  Jitter_Y_Pos=Ship_Y_Old_Pos+step*Fcos(Jitter_Headings);
+
+	Draw_Ship(cr,Jitter_X_Pos,Jitter_Y_Pos,Jitter_Headings, SHIP_SIZE_FACTOR*MaxX); 
+	stroke_in_clip(cr);
+}
+
+void explosion_step1(cairo_t *cr, int X_Pos,int Y_Pos, int step)
+{
+  int i = 5 * (step + 1);
+  int iarc;
+	
+//  for(i=10;i<Radius;i=i+10)
+ //       setcolor(LIGHTRED);
+	cairo_set_source_rgb(cr, 1.0, 102.0/255.0, 102.0/255.0);
+//       sound(200+10*i);
+	for(iarc=i/5;iarc<360+i/5;iarc=iarc+20)
+  {
+//		 	void arc(int x, int y, int stangle, int endangle, int radius);
+// 			arc function is used to draw an arc with center (x,y) and stangle specifies starting 
+//			angle, endangle specifies the end angle and last parameter specifies the radius of the arc
+//			void cairo_arc (cairo_t *cr, double xc, double yc, double radius, double angle1, double angle2);
+		cairo_new_sub_path(cr);
+		cairo_arc(cr, X_Pos,Y_Pos, i, deg2rad(iarc), deg2rad(iarc+2));
+	}
+	cairo_reset_clip(cr);
+	cairo_stroke(cr);
+}
+
+void explosion_step2(cairo_t *cr, int X_Pos,int Y_Pos, int step)
+{
+	int j = step * 5;
+  int iarc;
+
+	if (j>0)
+	{
+		cairo_set_source_rgb(cr,1,1,52/255);
+		for(iarc=j/5;iarc<360+j/5;iarc=iarc+20)
+		{
+			cairo_new_sub_path(cr);
+			cairo_arc(cr,X_Pos,Y_Pos,j,deg2rad(iarc),deg2rad(iarc+2));
+		}
+		cairo_reset_clip(cr);
+		cairo_stroke(cr);
+	}
+}
+
+
 
 //int main(int argc, char *argv[])
 //{

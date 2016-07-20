@@ -1,6 +1,6 @@
 #include <cairo.h>
+#include <gtk/gtk.h>
 
-float deg2rad(int deg);
 void Gen_Explosion(cairo_t *cr, int X_Pos,int Y_Pos,int Radius);
 
 void Gen_Snap_Effect();

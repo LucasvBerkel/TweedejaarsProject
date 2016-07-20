@@ -18,7 +18,7 @@ void handle_F3();
 void Set_Timer();
 
 void Reset_Timer();
-
+void ms_sleep(unsigned long miliseconds);
 //Set_Kbd_Rate(unsigned char Rate);
 
 //int keyboard (void);
