@@ -605,7 +605,14 @@ static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data
 	{
 		Draw_Frame(cr);
 		// we don't want our object disappearing!
-		Mine_Should_Update = 1;
+		if (Mine_Should_Update) // Only update when already on
+		{
+			Mine_Should_Update = 1; 
+		}
+		if (Shell_Should_Update)
+		{
+			Shell_Should_Update = 1;
+		}
 		if(Explosion_Flag)
 		{
 			unsigned long exp_sleep;
@@ -644,8 +651,7 @@ static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data
 		{
 			Ship_Should_Update = 0;
 			Ship_Should_Clean = 0;
-			Mine_Should_Update = 1;
-			Shell_Should_Update = 1;
+
 			for(int m = 0; m < MAX_NO_OF_MISSILES; m++)
 			{ 
 				if (Missile_Flag[m]==ALIVE)

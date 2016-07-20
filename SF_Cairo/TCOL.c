@@ -247,8 +247,7 @@ void Test_Collisions(cairo_t *cr)
 	/******* mine vs. ship collision ***********/
 
   if(Mine_Flag==ALIVE)
-    if(Check_Collision(Ship_X_Pos,Ship_Y_Pos,Mine_X_Pos,Mine_Y_Pos,
-					       COLLISION_DIST) )
+    if(Check_Collision(Ship_X_Pos,Ship_Y_Pos,Mine_X_Pos,Mine_Y_Pos, COLLISION_DIST-MINE_COLLISION_ADJUST) )
       {
 	Ship_Killings_Counter++;
 	Ship_Damaged_By_Mines++;
@@ -263,7 +262,7 @@ void Test_Collisions(cairo_t *cr)
 	 else
 	   {
 	     Points=Points-50;
-			printf("Killing mine because it bumped into the ship \n");
+			 printf("Killing mine because it bumped into the ship \n");
 	     Mine_Flag=KILL;
 	     Handle_Mine(cr); 		/* kill mine */
 	     if(Shell_Flag==ALIVE)
