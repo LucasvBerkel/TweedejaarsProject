@@ -210,8 +210,6 @@ void Find_Interval(cairo_t *cr)   /* display double-press interval */
 void Init_Session() {
     One_Game_Loops=One_Game_Duration*60*20;
     Game_Type=SPACE_FORTRESS;
-    Mine_Live_Loops=200;
-    Mine_Wait_Loops=80;
 }
 
 void Init_Game()

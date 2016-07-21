@@ -178,7 +178,7 @@ void Handle_Fortress(cairo_t *cr)
       Fort_Lock_Counter=0;
     }
 
-  nh=Find_Headings(MaxX/2,MaxY/2,Ship_X_Pos,Ship_Y_Pos);
+  nh=Find_Headings((double)(MaxX/2.0), (double) (MaxY/2.0), (double)Ship_X_Pos,(double) Ship_Y_Pos);
   if (abs(Fort_Headings-nh)>10)
   {
 //		clear_prev_path(cr, PrevShip);
@@ -316,10 +316,11 @@ void Show_Mine_Type(cairo_t *cr, char Minetype)
 
 void Reset_Mine_Headings()
 {
-   Mine_Headings=Find_Headings(Mine_X_Pos,Mine_Y_Pos,Ship_X_Pos, Ship_Y_Pos);
+   Mine_Headings=Find_Headings((double)Mine_X_Pos,(double)Mine_Y_Pos,(double)Ship_X_Pos, (double)Ship_Y_Pos);
    Mine_Course_Count=MINE_COURSE_INTERVAL;
    Mine_X_Speed=Mine_Speed*Fsin(Mine_Headings);
-   Mine_Y_Speed=Mine_Speed*Fcos(Mine_Headings);
+   Mine_Y_Speed=-Mine_Speed*Fcos(Mine_Headings);
+
 }
 
 int randrange(int min, int max)
@@ -367,7 +368,6 @@ void Move_Mine(cairo_t *cr)
 
 
 //		printf("Mine_X_Speed: %d \n", Mine_X_Speed);
-//		printf("Mine_Y_Speed: %d \n", Mine_Y_Speed);
     Mine_X_Pos=Mine_X_Pos+Mine_X_Speed;      /* update position */
     Mine_Y_Pos=Mine_Y_Pos+Mine_Y_Speed;
 
@@ -378,29 +378,33 @@ void Move_Mine(cairo_t *cr)
 //		stroke_in_clip(cr);
 
     if(--Mine_Course_Count<=0)  Reset_Mine_Headings();
-    if(   (Mine_X_Pos<0) || (Mine_X_Pos>MaxX)
-     || (Mine_Y_Pos<0) || (Mine_Y_Pos>MaxY) )
-      Reset_Mine_Headings();
+//    if(   (Mine_X_Pos<0) || (Mine_X_Pos>MaxX)
+//     || (Mine_Y_Pos<0) || (Mine_Y_Pos>MaxY) )
+//		{
+//      Reset_Mine_Headings();
+//		}
 
 		if(Mine_X_Pos < 0)
 		{
-			Mine_X_Pos = MaxX - Xmargin;
+			Reset_Mine_Headings();
+			Mine_X_Pos = MaxX;
 		}
 		else if(Mine_X_Pos > MaxX)
 		{
-			Mine_X_Pos = Xmargin;
+			Reset_Mine_Headings();
+			Mine_X_Pos = 0;
 		}
 		if(Mine_Y_Pos < 0)
 		{
+			Reset_Mine_Headings();
 			Mine_Y_Pos = MaxY;
 		}
 		
 		else if(Mine_Y_Pos > MaxY)
 		{
+			Reset_Mine_Headings();
 			Mine_Y_Pos = 0;
 		}
-
-
 }
 
 void Handle_Mine(cairo_t *cr)

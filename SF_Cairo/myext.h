@@ -266,8 +266,8 @@ extern int Fort_Lock_Counter;
 
 		/* FUNCTIONS */
 
-extern float Fcos(int Headings_Degs); /* compute cos of 0 - 359 degrees */
-extern float Fsin(int Headings_Degs); /* compute sin of 0 - 359 degrees */
+extern float Fcos(double Headings_Degs); /* compute cos of 0 - 359 degrees */
+extern float Fsin(double Headings_Degs); /* compute sin of 0 - 359 degrees */
 extern void Draw_Ship (cairo_t *cr, int x, int y, int Headings, int size);
 extern void Draw_Hexagone(cairo_t *cr, int X_Center,int Y_Center,int Hex_Size);
 extern void Draw_Frame(cairo_t *cr);
@@ -277,7 +277,7 @@ extern void Draw_Shell(cairo_t *cr, int x, int y, int Headings, int size);
 extern void Draw_Mine (cairo_t *cr, int x, int y, int size);  /* x,y is on screen center location
 					size is half diagonal           */
 
-extern float Find_Headings(int x1,int y1,int x2,int y2);
+extern float Find_Headings(double x1, double y1, double x2, double y2);
 extern void Clear_Interval();
 extern void Update_Shots();
 extern void Update_Speed();

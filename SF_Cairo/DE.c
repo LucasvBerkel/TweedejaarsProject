@@ -218,14 +218,14 @@ void Close_Graphics_SF()
 }
 
 
-float Fcos(int Headings_Degs) /* compute cos of 0 - 359 degrees */
+float Fcos(double Headings_Degs) /* compute cos of 0 - 359 degrees */
 {
 		float arc;
 		arc=Headings_Degs*ARC_CONV;
 		return(cos(arc));
 }
 
-float Fsin(int Headings_Degs) /* compute sin of 0 - 359 degrees */
+float Fsin(double Headings_Degs) /* compute sin of 0 - 359 degrees */
 {
 	float arc;
 	arc=Headings_Degs*ARC_CONV; /* convert degrees to radians */
@@ -734,13 +734,13 @@ void Draw_Shell(cairo_t *cr, int x, int y, int Headings, int size)
 //	setcolor(svcolor); /* restore previous color */
 }
 
-float Find_Headings(int x1,int y1,int x2,int y2)
+float Find_Headings(double x1, double y1, double x2, double y2)
 {
 //	int quadrant;	// Unused
 	double arcsinalfa;
 	double b;
 	double a;
-	arcsinalfa=abs(x1-x2);
+	arcsinalfa=fabs(x1-x2);
 	a=pow(x1-x2,2)+pow(y1-y2,2);
 	b=sqrt(a);
 	arcsinalfa=asin(arcsinalfa/b);

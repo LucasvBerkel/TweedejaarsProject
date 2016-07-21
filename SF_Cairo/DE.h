@@ -20,8 +20,8 @@ void Initialize_Graphics(cairo_t *cr);
 void Close_Graphics(cairo_t *cr);
 void Close_Graphics_SF();
 
-float Fcos(int Headings_Degs);
-float Fsin(int Headings_Degs);
+float Fcos(double Headings_Degs);
+float Fsin(double Headings_Degs);
 
 void snapCoords(cairo_t *canvas, int x, int y);
 void cairo_line(cairo_t *cr, int x1, int y1, int x2, int y2);
@@ -40,7 +40,7 @@ void Draw_Mine (cairo_t *cr, int x, int y, int size);
 void Draw_Missile (cairo_t *cr, int x, int y, int Headings, int size, int missile_idx);
 void Draw_Shell(cairo_t *cr, int x, int y, int Headings, int size);
 
-float Find_Headings(int x1,int y1,int x2,int y2);
+float Find_Headings(double x1, double y1, double x2, double y2);
 
 //void set_initial_vals(cairo_t *cr);
 void start_drawing();
