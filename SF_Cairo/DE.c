@@ -490,7 +490,7 @@ void Draw_Frame(cairo_t *cr)
 	x=x+dx; cairo_text_at(cr, x, y+1, "   CNTRL");
 	x=x+dx; cairo_text_at(cr, x, y+1, "    VLCTY");
 	x=x+dx; cairo_text_at(cr, x, y+1, "   VLNER");
-	x=x+dx; cairo_text_at(cr, x, y+1, "     IFF ");
+	x=x+dx; cairo_text_at(cr, x, y+1, "        IFF ");
 	x=x+dx; cairo_text_at(cr, x, y+1, "    INTRVL");
 	x=x+dx; cairo_text_at(cr, x, y+1, "    SPEED");
 	x=x+dx; cairo_text_at(cr, x, y+1, "   SHOTS");
