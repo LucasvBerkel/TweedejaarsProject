@@ -91,10 +91,10 @@ int Collision_Distance=COLLISION_DIST; /*********** in screen dots */
 mine_type Mine_Type;
 
 int Bonus_Indication_Index=0; /* first entry in the Vector   crap****/
-int Ship_X_Pos;
-int Ship_Y_Pos;
-int Ship_X_Old_Pos;
-int Ship_Y_Old_Pos;
+float Ship_X_Pos;
+float Ship_Y_Pos;
+float Ship_X_Old_Pos;
+float Ship_Y_Old_Pos;
 float Ship_X_Speed;
 float Ship_Y_Speed;
 int Ship_Headings;

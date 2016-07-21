@@ -75,11 +75,10 @@ void Update_Ship_Dynamics()
        if (Ship_Headings>359) Ship_Headings= Ship_Headings-359-1;
        Rotate_Input=0;        /* reset input */
      }
-  if(Game_Type==SPACE_FORTRESS)
-  {
   if (Accel_Input!=0)
      {
        Ship_X_Speed=Ship_X_Speed+0.65*Ship_Accel*Fsin(Ship_Headings);
+
        Ship_Y_Speed=Ship_Y_Speed-0.65*Ship_Accel*Fcos(Ship_Headings);
        Accel_Input=0; 	/* reset input */
 
@@ -98,9 +97,8 @@ void Update_Ship_Dynamics()
 		/* now update ship position */
 
     if ((Ship_X_Speed!=0.0)||(Ship_Y_Speed!=0.0))
-     {
+    {
 //       Ship_Display_Update=1; /* ship moves */ // Already set
-
        Ship_X_Pos=Ship_X_Pos+Ship_X_Speed;
        Ship_Y_Pos=Ship_Y_Pos+Ship_Y_Speed;
 			/* check if crossed screen boundary */
@@ -115,14 +113,13 @@ void Update_Ship_Dynamics()
 			/* check if bumped into the fortress */
        if(sqrt(pow(Ship_X_Pos-MaxX/2,2)+
 	       pow(Ship_Y_Pos-MaxY/2,2) ) < (COLLISION_DIST) )
-	 {
+			 {
 	   Ship_X_Speed=-Ship_X_Speed;		/* reverse direction */
 	   Ship_Y_Speed=-Ship_Y_Speed;
 	   Ship_X_Pos=Ship_X_Pos+Ship_X_Speed; /* move ship out of range */
 	   Ship_Y_Pos=Ship_Y_Pos+Ship_Y_Speed;
-	 }
-     } /* end ship is moving */
-  } /* end SPACE_FORTRESS */
+	 		}
+   	} /* end ship is moving */
 }
 
 void Update_Ship_Display(cairo_t *cr)

@@ -90,10 +90,10 @@ extern int Mine_Speed;
 extern int Missile_Limit_Flag;
 
 		/* VARIABLES */
-extern int Ship_X_Pos;
-extern int Ship_Y_Pos;
-extern int Ship_X_Old_Pos;
-extern int Ship_Y_Old_Pos;
+extern float Ship_X_Pos;
+extern float Ship_Y_Pos;
+extern float Ship_X_Old_Pos;
+extern float Ship_Y_Old_Pos;
 extern float Ship_X_Speed;
 extern float Ship_Y_Speed;
 extern int Ship_Headings;
