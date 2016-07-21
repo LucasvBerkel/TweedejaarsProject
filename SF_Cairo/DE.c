@@ -145,7 +145,7 @@ void Initialize_Graphics(cairo_t *cr)
 	cairo_get_font_options(cr, font_options);
 	cairo_font_options_set_antialias(font_options, CAIRO_ANTIALIAS_NONE);
 	cairo_set_font_options(cr, font_options);
-	cairo_select_font_face(cr,"Helvetica",CAIRO_FONT_SLANT_NORMAL,CAIRO_FONT_WEIGHT_BOLD);
+	cairo_select_font_face(cr,"Arial",CAIRO_FONT_SLANT_NORMAL,CAIRO_FONT_WEIGHT_BOLD);
 
 
 	// Sets all the values in the array to the empty path
@@ -193,26 +193,16 @@ void Initialize_Graphics(cairo_t *cr)
 	// left, top, right, bottom are the coordinates of main diagonal of rectangle in which we wish to restrict our drawing. Also note that the point (left, top) becomes the new origin.
 //	setviewport( Xmargin, 0, Xmargin+MaxX, MaxY, 1);
 
-	if(Game_Type==SPACE_FORTRESS)
-	{			 /* set data value locations for space fortress */
-		dx=MaxX/8;
-		Points_X=x=2*TEXT_WIDTH;
-		x=x+dx; Control_X=x;
-		x=x+dx; Velocity_X=x;
-		x=x+dx; Vulner_X=x;
-		x=x+dx; IFF_X=x;
-		x=x+dx; Interval_X=x;
-		x=x+dx; Speed_X=x;
-		x=x+dx; Shots_X=x;
-	}
-	else /* set data value locations for aiming test */
-	{
-		dx=MaxX/3;
-		Mines_X=x=MaxX/6-2*TEXT_WIDTH;
-		x=x+dx;	 Speed_X=x;
-		x=x+dx-TEXT_WIDTH; Score_X=x;
-	}
-/* set graphics eraser is done in main */
+
+	dx=MaxX/8;
+	Points_X=x=2*TEXT_WIDTH;
+	x=x+dx; Control_X=x;
+	x=x+dx; Velocity_X=x;
+	x=x+dx; Vulner_X=x;
+	x=x+dx; IFF_X=x;
+	x=x+dx; Interval_X=x;
+	x=x+dx; Speed_X=x;
+	x=x+dx; Shots_X=x;
 }
 
 void Close_Graphics(cairo_t *cr)
@@ -422,7 +412,7 @@ void update_drawing(cairo_t *cr)
 			Draw_Missile(cr, Missile_X_Pos[i], Missile_Y_Pos[i], Missile_Headings[i], MISSILE_SIZE_FACTOR*MaxX, i);
 			stroke_in_clip(cr);
 			Missile_Should_Update[i] = 0;
-		}Update_Shots
+		}
 	}
 	if (Mine_Should_Update)
 	{
@@ -476,18 +466,16 @@ void Draw_Frame(cairo_t *cr)
 
 //	line(0,2*Height,MaxX,2*Height);/
 	// The line on top of the info panel
-	cairo_line(cr, 0, 2*Height, MaxX, 2*Height);
+	cairo_line(cr, 0, 2*Height-1, MaxX, 2*Height-1);
 	cairo_stroke(cr);
 
-			/* write panel headers */
-	if(Game_Type==SPACE_FORTRESS)
-	{
-			x=2;
-			y=4;
-			dx=MaxX/8; /* step between two headers */
-			// Called somewhere else
-			Data_Line=2*Height+4;
-			// I guess gprintf(x_pixel, y_pixel, str);
+	/* write panel headers */
+	x=2;
+	y=4;
+	dx=MaxX/8; /* step between two headers */
+	// Called somewhere else
+	Data_Line=2*Height+4;
+	// I guess gprintf(x_pixel, y_pixel, str);
 
 //		gprintf ( &x, &y,"	PNTS");
 //		x=x+dx; gprintf ( &x, &y," CNTRL");
@@ -498,57 +486,32 @@ void Draw_Frame(cairo_t *cr)
 //		x=x+dx; gprintf ( &x, &y," SPEED");
 //		x=x+dx; gprintf ( &x, &y," SHOTS");
 
-			cairo_text_at(cr, x, y, "	PNTS");
-			x=x+dx; cairo_text_at(cr, x, y, " CNTRL");
-			x=x+dx; cairo_text_at(cr, x, y, " VLCTY");
-			x=x+dx; cairo_text_at(cr, x, y, " VLNER");
-			x=x+dx; cairo_text_at(cr, x, y, "	IFF ");
-			x=x+dx; cairo_text_at(cr, x, y, "INTRVL");
-			x=x+dx; cairo_text_at(cr, x, y, " SPEED");
-			x=x+dx; cairo_text_at(cr, x, y, " SHOTS");
+	cairo_text_at(cr, x, y+1, "    PNTS");
+	x=x+dx; cairo_text_at(cr, x, y+1, "   CNTRL");
+	x=x+dx; cairo_text_at(cr, x, y+1, "    VLCTY");
+	x=x+dx; cairo_text_at(cr, x, y+1, "   VLNER");
+	x=x+dx; cairo_text_at(cr, x, y+1, "     IFF ");
+	x=x+dx; cairo_text_at(cr, x, y+1, "    INTRVL");
+	x=x+dx; cairo_text_at(cr, x, y+1, "    SPEED");
+	x=x+dx; cairo_text_at(cr, x, y+1, "   SHOTS");
 
-			/* draw vertical lines between columns */
+	/* draw vertical lines between columns */
 
-	//		line(x,0,x,MaxY_Panel);
-	//		x=x-dx; line(x,0,x,MaxY_Panel);
-	//		x=x-dx; line(x,0,x,MaxY_Panel);
-	//		x=x-dx; line(x,0,x,MaxY_Panel);
-	//		x=x-dx; line(x,0,x,MaxY_Panel);
-	//		x=x-dx; line(x,0,x,MaxY_Panel);
-	//		x=x-dx; line(x,0,x,MaxY_Panel);
-			cairo_line(cr,x,0,x,MaxY_Panel);
-			x=x-dx; cairo_line(cr,x,0,x,MaxY_Panel);
-			x=x-dx; cairo_line(cr,x,0,x,MaxY_Panel);
-			x=x-dx; cairo_line(cr,x,0,x,MaxY_Panel);
-			x=x-dx; cairo_line(cr,x,0,x,MaxY_Panel);
-			x=x-dx; cairo_line(cr,x,0,x,MaxY_Panel);
-			x=x-dx; cairo_line(cr,x,0,x,MaxY_Panel);
-			cairo_stroke(cr);
-	 }
-	 else /* frame for aiming test */
-	 {
-		x=MaxX/6-32;
-		y=4;
-		dx=MaxX/3;		 /* step between two headers */
-		Data_Line=2*Height+4;
-	//		gprintf ( &x, &y,"	MINES");
-	//	 x=x+dx; gprintf ( &x, &y," SPEED");
-	//	 x=x+dx; gprintf ( &x, &y," SCORE");
-
-			/* draw vertical lines between columns */
-	//	 x=dx;	 line(x,0,x,MaxY_Panel);
-	//	 x=x+dx; line(x,0,x,MaxY_Panel);
-
-		cairo_text_at(cr, x, y, "	MINES");
-		x=x+dx; cairo_text_at(cr, x, y, " SPEED");
-		x=x+dx; cairo_text_at(cr, x, y, " SCORE");
-
-			/* draw vertical lines between columns */
-		x=dx; cairo_line(cr,x,0,x,MaxY_Panel);
-		x=x+dx; cairo_line(cr,x,0,x,MaxY_Panel);
-		cairo_stroke(cr);
-
-	 }
+//		line(x,0,x,MaxY_Panel);
+//		x=x-dx; line(x,0,x,MaxY_Panel);
+//		x=x-dx; line(x,0,x,MaxY_Panel);
+//		x=x-dx; line(x,0,x,MaxY_Panel);
+//		x=x-dx; line(x,0,x,MaxY_Panel);
+//		x=x-dx; line(x,0,x,MaxY_Panel);
+//		x=x-dx; line(x,0,x,MaxY_Panel);
+	cairo_line(cr,x,0,x,MaxY_Panel);
+	x=x-dx; cairo_line(cr,x,0,x,MaxY_Panel);
+	x=x-dx; cairo_line(cr,x,0,x,MaxY_Panel);
+	x=x-dx; cairo_line(cr,x,0,x,MaxY_Panel);
+	x=x-dx; cairo_line(cr,x,0,x,MaxY_Panel);
+	x=x-dx; cairo_line(cr,x,0,x,MaxY_Panel);
+	x=x-dx; cairo_line(cr,x,0,x,MaxY_Panel);
+	cairo_stroke(cr);
 
 	// setviewport( Xmargin, 0, Xmargin+MaxX, MaxY, 1); /* in screen global coordinates */
 	// translate back from the previous viewport call
@@ -827,13 +790,14 @@ void Show_Score(cairo_t *cr, int val, int x, int y) /* anywhere within data pane
 
 //    putimage(x,y,buffer1,COPY_PUT); /* erase garbage */
 		// MaxX/8 is equal to 'xdif', the width of each score rectangle
-		cairo_rectangle(cr,0,x,Panel_Y_Start,x+MaxX/8); // Not sure if this call is okay (Y_Panel?)
-		clip_path_rect(cr);
-		cairo_fill(cr);
+//		cairo_rectangle(cr,0,x,Panel_Y_Start,x+MaxX/8); // Not sure if this call is okay (Y_Panel?)
+//		clip_path_rect(cr);
+//		cairo_fill(cr);
 
 		sprintf(val_str, "%d", val);
-    cairo_text_at(cr, x,y,val_str);
-		cairo_reset_clip(cr);
+//		cairo_set_font_size(cr, 40);
+    cairo_text_at(cr, x,y, val_str);
+//		cairo_reset_clip(cr);
 //    setviewport( Xmargin, 0, Xmargin+MaxX, MaxY, 1);   /* restore gaming area */
 		cairo_translate(cr, 0 , -Panel_Y_Start);
 

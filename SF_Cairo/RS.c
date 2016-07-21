@@ -202,7 +202,7 @@ void Find_Interval(cairo_t *cr)   /* display double-press interval */
              &&(Mine_Flag==ALIVE)&&(Mine_Type==FOE))
     Missile_Type=VS_FOE;   /* rearm missile */
         Show_Mine_Type(cr, Mine_Indicator);
-        Update_Interval(cr);
+//        Update_Interval(cr);
     }
 }
 
@@ -561,16 +561,6 @@ void SF_iteration(cairo_t *cr)
 
 /**************************************************************************/
 
-void Update_Mines(cairo_t *cr)
-{
-    Show_Score(cr, Mines,Mines_X,Data_Line);
-}
-
-void Update_Score(cairo_t *cr)
-{
-    Show_Score(cr, Score,Score_X,Data_Line);
-}
-
 
 static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 {
@@ -679,6 +669,14 @@ static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data
 		}
 
 	}
+
+	Update_Points(cr);
+	Update_Control(cr);
+	Update_Velocity(cr);
+	Update_Vulner(cr);
+	Update_Interval(cr);
+	Update_Speed(cr);
+	Update_Shots(cr);
 	
 	clean(cr);
 	Draw_Hexagone(cr, MaxX/2,MaxY/2,SMALL_HEXAGONE_SIZE_FACTOR*MaxX);

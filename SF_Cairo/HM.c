@@ -262,11 +262,11 @@ void Handle_Speed_Score(cairo_t *cr)
    if(Mine_Alive_Counter<=200) dts=-100;
 
   Speed=Speed+dts;
-  Update_Speed(cr);
+//  Update_Speed(cr);
   if(Game_Type==AIMING_TEST)
     {
       Score=Mines+Speed;
-      Update_Score(cr);
+//      Update_Score(cr);
     }
 }
 
@@ -340,7 +340,6 @@ void Generate_Mine(cairo_t *cr)
 		Mine_X_Pos=randrange(0, MaxX);
 		Mine_Y_Pos=randrange(0, MaxY);
     a=sqrt(pow(Mine_X_Pos-Ship_X_Pos,2)+pow(Mine_Y_Pos-Ship_Y_Pos,2) );
-		printf("Generating mine at (%d, %d) \n", Mine_X_Pos, Mine_Y_Pos);
   } while(a < 0.5*MaxX );  /* repeat until distance exceeds min. */
 
   Reset_Mine_Headings();
@@ -560,7 +559,7 @@ void Handle_Missile(cairo_t *cr)
       	if(Game_Type==SPACE_FORTRESS)
 				{
 	 	 			Missile_Stock--;
-	  			Update_Shots(cr);
+//	  			Update_Shots(cr);
 				}
    } while(OFF); /* to enable the break command */
 }

@@ -322,6 +322,7 @@ void Test_Collisions(cairo_t *cr)
 			    Mine_X_Pos,Mine_Y_Pos,COLLISION_DIST) )
 
 	   {
+			printf("Struck mine \n");
 	     Missile_Flag[i]=KILL;
 	     Handle_Missile_Flag=ON;
 	     goodshot=OFF;
@@ -330,7 +331,7 @@ void Test_Collisions(cairo_t *cr)
 		 goodshot=ON;
 		 Points=Points+20;
 		 Vulner_Counter++;
-		 Update_Vulner(cr);
+//		 Update_Vulner(cr);
 	       }
 	     else
 	     if((Missile_Type==VS_FOE)&&(Mine_Type==FOE))
@@ -388,14 +389,14 @@ void Test_Collisions(cairo_t *cr)
 				if(Loop_Counter-Last_Missile_Hit>=6)
 				{
 				  Vulner_Counter++;
-					Update_Vulner(cr);
+//					Update_Vulner(cr);
 				  Points=Points+4;
 				  Last_Missile_Hit=Loop_Counter;
 				}
 				else /* double strike before it's OK */
 				{
 				  Vulner_Counter=0; /* for speeeding, ha ha ha .... */
-					Update_Vulner(cr);
+//					Update_Vulner(cr);
 				  Last_Missile_Hit=Loop_Counter;
 //				  Zero_Vulner_Sound();
 				}
@@ -419,7 +420,7 @@ void Accumulate_Data(cairo_t *cr)
 		if(shipvel<SHIP_GOOD_VELOCITY)
 		{
  			Velocity=Velocity+7;
-			Update_Velocity(cr); // --- UNCOMMENT --- // 
+//			Update_Velocity(cr); // --- UNCOMMENT --- // 
 		}
 
 	/* update Control */
@@ -443,8 +444,8 @@ void Accumulate_Data(cairo_t *cr)
 	 Control=Control-35;
 	 Wrap_Around_Flag=OFF;
        }
-     Update_Control(cr);
-     Update_Points(cr);
+//     Update_Control(cr);
+//     Update_Points(cr);
 
    } /* if data-update-counter */
 }
