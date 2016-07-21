@@ -815,8 +815,6 @@ int main(int argc, char *argv[])
   gtk_widget_show_all(window);
 	animation_loop(darea);
 
-//  gtk_main();
-
 //	stop_drawing(); // GTK handles this I guess
 
   return 0;
