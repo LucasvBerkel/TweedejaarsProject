@@ -99,7 +99,7 @@ void Update_Ship_Dynamics()
 
     if ((Ship_X_Speed!=0.0)||(Ship_Y_Speed!=0.0))
      {
-       Ship_Display_Update=1; /* ship moves */
+//       Ship_Display_Update=1; /* ship moves */ // Already set
 
        Ship_X_Pos=Ship_X_Pos+Ship_X_Speed;
        Ship_Y_Pos=Ship_Y_Pos+Ship_Y_Speed;

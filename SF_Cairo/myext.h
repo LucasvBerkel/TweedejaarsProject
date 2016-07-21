@@ -81,7 +81,7 @@ extern clock_t t2;  /* double press interval end */
 extern int Ship_Rotate_Step;
 extern int Ship_Used;
 extern int Ship_Max_Speed;
-extern int Ship_Accel;
+extern double Ship_Accel;
 extern int Ship_Angular_Step;
 extern int Missile_Speed;
 extern int Mine_Wait_Loops;
@@ -277,7 +277,7 @@ extern void Draw_Shell(cairo_t *cr, int x, int y, int Headings, int size);
 extern void Draw_Mine (cairo_t *cr, int x, int y, int size);  /* x,y is on screen center location
 					size is half diagonal           */
 
-extern int Find_Headings(int x1,int y1,int x2,int y2);
+extern float Find_Headings(int x1,int y1,int x2,int y2);
 extern void Clear_Interval();
 extern void Update_Shots();
 extern void Update_Speed();
