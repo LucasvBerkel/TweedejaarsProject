@@ -374,6 +374,17 @@ void Move_Mine(cairo_t *cr)
     Mine_X_Pos=Mine_X_Pos+Mine_X_Speed;      /* update position */
     Mine_Y_Pos=Mine_Y_Pos+Mine_Y_Speed;
 
+
+
+//    Draw_Mine(cr, Mine_X_Pos,Mine_Y_Pos,MINE_SIZE_FACTOR*MaxX);  /* redraw mine */
+		Mine_Should_Update = 1;
+//		stroke_in_clip(cr);
+
+    if(--Mine_Course_Count<=0)  Reset_Mine_Headings();
+    if(   (Mine_X_Pos<0) || (Mine_X_Pos>MaxX)
+     || (Mine_Y_Pos<0) || (Mine_Y_Pos>MaxY) )
+      Reset_Mine_Headings();
+
 		if(Mine_X_Pos < 0)
 		{
 			Mine_X_Pos = MaxX - Xmargin;
@@ -393,14 +404,6 @@ void Move_Mine(cairo_t *cr)
 		}
 
 
-//    Draw_Mine(cr, Mine_X_Pos,Mine_Y_Pos,MINE_SIZE_FACTOR*MaxX);  /* redraw mine */
-		Mine_Should_Update = 1;
-//		stroke_in_clip(cr);
-
-    if(--Mine_Course_Count<=0)  Reset_Mine_Headings();
-    if(   (Mine_X_Pos<0) || (Mine_X_Pos>MaxX)
-     || (Mine_Y_Pos<0) || (Mine_Y_Pos>MaxY) )
-      Reset_Mine_Headings();
 }
 
 void Handle_Mine(cairo_t *cr)

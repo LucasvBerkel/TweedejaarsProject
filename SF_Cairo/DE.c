@@ -394,15 +394,15 @@ void update_drawing(cairo_t *cr)
 	if (Ship_Should_Update) // Skip this (and other) ifs because they always should be visible?
 	{
 		Draw_Ship(cr, Ship_X_Pos,Ship_Y_Pos,Ship_Headings,SHIP_SIZE_FACTOR*MaxX);
-//		stroke_in_clip(cr);
-		cairo_bounding_box(cr);
+		stroke_in_clip(cr);
+//		cairo_bounding_box(cr);
 		Ship_Should_Update = 0;
 	}
 	if (Fort_Should_Update)
 	{
 		Draw_Fort(cr, MaxX/2,MaxY/2,Fort_Headings,FORT_SIZE_FACTOR*MaxX);
-		cairo_bounding_box(cr);
-//		stroke_in_clip(cr);
+//		cairo_bounding_box(cr);
+		stroke_in_clip(cr);
 		Fort_Should_Update = 0;
 	}
 	for(int i=0;i<MAX_NO_OF_MISSILES;i++)
@@ -417,8 +417,8 @@ void update_drawing(cairo_t *cr)
 	if (Mine_Should_Update)
 	{
 		Draw_Mine(cr, Mine_X_Pos,Mine_Y_Pos,MINE_SIZE_FACTOR*MaxX);
-		cairo_bounding_box(cr);
-//		stroke_in_clip(cr);
+//		cairo_bounding_box(cr);
+		stroke_in_clip(cr);
 		Mine_Should_Update = 0;
 	}
 	if(Shell_Should_Update)
