@@ -734,7 +734,7 @@ void Draw_Shell(cairo_t *cr, int x, int y, int Headings, int size)
 //	setcolor(svcolor); /* restore previous color */
 }
 
-int Find_Headings(int x1,int y1,int x2,int y2)
+float Find_Headings(int x1,int y1,int x2,int y2)
 {
 //	int quadrant;	// Unused
 	double arcsinalfa;
@@ -747,11 +747,11 @@ int Find_Headings(int x1,int y1,int x2,int y2)
 	if (x1<x2)
 		if (y1>y2) /* quadrant=1 */ return(arcsinalfa*57.3+0.5);
 	else
-		/* quadrant=2 */ return(180-arcsinalfa*57.3+0.5);
+		/* quadrant=2 */ return(180.0-arcsinalfa*57.3+0.5);
 	 else
-	 if (y1>y2) /* quadrant=4 */ return(360-arcsinalfa*57.3+0.5);
+	 if (y1>y2) /* quadrant=4 */ return(360.0-arcsinalfa*57.3+0.5);
 	else
-		/* quadrant=3 */ return(180+arcsinalfa*57.3+0.5);
+		/* quadrant=3 */ return(180.0+arcsinalfa*57.3+0.5);
 }
 
 //void set_initial_vals(cairo_t *cr)
