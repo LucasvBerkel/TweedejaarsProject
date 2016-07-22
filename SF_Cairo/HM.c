@@ -8,6 +8,8 @@
 //#include <dos.h>
 #include <time.h>
 #include <math.h>
+#include <string.h>
+
 //#include <cairo.h>
 
 //#include "myconst.h"
@@ -24,12 +26,12 @@ int Mine_Alive_Counter=0;
 int Mine_Dead_Counter=0;
 int Missile_Delay_Counter=0;
 
-char Char_Set[10][1]={"Y","M","P","B","Q","K","C","W","R","Z"};
+const char *Char_Set[]={"Y","M","P","B","Q","K","C","W","R","Z"};
 char Tmp_Char_Set[10][1];
 
-char Foe_Menu[3][1];
-char Friend_Menu[3][1];
-char Mine_Indicator;
+const char *Foe_Menu[3];
+const char *Friend_Menu[3];
+char *Mine_Indicator;
 
 
 //int Get_Random_Index(int vec[])
@@ -45,19 +47,51 @@ char Mine_Indicator;
 //}
 
 // Not needed ? 
-//void Select_Mine_Menus()
-//{
-//  int vec[10];
+void Select_Mine_Menus()
+{
+	int ri, i;
+	for(i=0; i < 3; i++) // Populate each array with 3 random characters
+	{	
+		ri=randrange(0, 9);
+		Foe_Menu[i] = Char_Set[ri];
+		ri=randrange(0, 9);
+		Friend_Menu[i] = Char_Set[ri];
+
+	}
+	printf("Foe menu item: %s ", Foe_Menu[0]);	
+}
+//
+//// allocate space for 5 pointers to strings
+//	char **Friend_Menu = (char**)malloc(5*sizeof(char*));
+//
+////	Friend_Menu = (char**)malloc(3*sizeof(char*));
+//	Foe_Menu = (char**)malloc(3*sizeof(char*));
+//   int i = 0;
+//   //allocate space for each string
+//   // here allocate 50 bytes, which is more than enough for the strings
+//   for(i = 0; i < 3; i++){
+//       printf("%d\n", i);
+//       strings[i] = (char*)malloc(50*sizeof(char));
+//   }
+////  int vec[10];
 //  int i,ri;
 //
-//  for(i=0;i<10;i++) vec[i]=0;
-//  for (i=0;i<3;i++)
-//      {
-//	ri=Get_Random_Index(vec);
-//	Friend_Menu[i][0]= Char_Set[ri][0];
-//	ri=Get_Random_Index(vec);
-//	Foe_Menu[i][0]= Char_Set[ri][0];
-//      }
+//	for (i=0;i<3;i++)
+//  {
+//		ri=randrange(0, 9);
+//	  sprintf(Friend_Menu[i], Char_Set[ri]);
+//		ri=randrange(0, 9);
+//	  sprintf(Foe_Menu[i], Char_Set[ri]);
+//  }
+//
+//	for(i = 0; i < 5; i++)
+//	{
+//		free(Friend_Menu[i]);
+//		free(Foe_Menu[i]);
+//  }
+//    //finally release the first string
+//  free(Friend_Menu);
+//	free(Foe_Menu);
 //}
 
 void Update_Ship_Dynamics()
@@ -267,51 +301,33 @@ void Handle_Speed_Score(cairo_t *cr)
     }
 }
 
-// It seems that this function might draw over the place where a dead mine has been found to
-// erase it. 
+// 
+// This function is supposed to erease the last show mine identification type 
 void Clear_Mine_Type(cairo_t *cr)
 {
-  int x,y;
-
+//  int x,y;
+	Mine_Type_Should_Update = 0;
+	Mine_Type_Should_Clean = 1;
 //  setviewport( Xmargin, Panel_Y_Start, Xmargin+MaxX, Panel_Y_End, 1);
-	cairo_translate(cr, 0, Panel_Y_Start);
-  x=IFF_X; y=Data_Line;
-	cairo_set_source_rgb(cr, 0, 0, 0);
-	cairo_rectangle(cr, x, y, TEXT_WIDTH, TEXT_HEIGHT); // 
-	cairo_clip_preserve(cr);
-	cairo_fill(cr);
-	cairo_reset_clip(cr);
-	cairo_translate(cr, 0, -Panel_Y_Start);
+//	cairo_translate(cr, 0, Panel_Y_Start);
+//  x=IFF_X; y=Data_Line;
+//	cairo_set_source_rgb(cr, 0, 0, 0);
+//	cairo_rectangle(cr, x, y, TEXT_WIDTH, TEXT_HEIGHT); // 
+//	cairo_clip_preserve(cr);
+//	cairo_fill(cr);
+//	cairo_reset_clip(cr);
+//	cairo_translate(cr, 0, -Panel_Y_Start);
 //  putimage(x,y,buffer1,COPY_PUT); /* erase garbage */ // Function to draw over  the mine?
 //  setviewport( Xmargin, 0, Xmargin+MaxX, MaxY, 1);
 }
 
-void Show_Mine_Type(cairo_t *cr, char Minetype)
+void Show_Mine_Type(cairo_t *cr, char *Minetype)
 {
 //  int svcolor;
-  int x,y;
-
-//  svcolor=getcolor();
-  if((Mine_Type==FRIEND && Missile_Type==VS_FRIEND) || (Mine_Type==FOE && Missile_Type==VS_FOE)) {
-//    cairo_set_source_rgb(cr, 0, 1, 0);
-  } else if(Missile_Type==WASTED) {
-//    cairo_set_source_rgb(cr, 1, 0, 0);
-  } else {
-//			cairo_set_source_rgb(cr, 1.0, 102.0/255.0, 102.0/255.0); // Light red
-//    setcolor(LIGHTRED);
-  }
-	// What does this viewport do in context?
-	cairo_translate(cr, 0, Panel_Y_Start);
-//  setviewport( Xmargin, Panel_Y_Start, Xmargin+MaxX, Panel_Y_End, 1); // ?
-  x=IFF_X; y=Data_Line;
-//  putimage(x,y,buffer1,COPY_PUT); /* erase garbage */
-	char Minetype_str[15];
-	sprintf(Minetype_str, "%c", Minetype);
-	cairo_text_at(cr, x, y, Minetype_str); // Originally was "%c" Minetype
-//  gprintf(&x,&y,"%c",Minetype);
-	cairo_translate(cr, 0, -Panel_Y_Start);
-//  setviewport( Xmargin, 0, Xmargin+MaxX, MaxY, 1);
-//  setcolor(svcolor); /* restore previous color */
+//  int x,y;
+	Mine_Type_Should_Update = 1;
+	printf("Setting type char equal to: %s \n", Minetype);
+	Mine_Char = Minetype;
 }
 
 void Reset_Mine_Headings()
@@ -353,9 +369,16 @@ void Generate_Mine(cairo_t *cr)
       t0=clock(); /* when "a mine is born .."? */  // Why and how does it acces this?
     }
 
-  if (Mine_Type==FRIEND) Mine_Indicator=Friend_Menu[randrange(0,2)][0];
-  else                   Mine_Indicator=Foe_Menu[randrange(0,2)][0];
-  Show_Mine_Type(cr, Mine_Indicator);
+  if (Mine_Type==FRIEND) 
+	{
+		Mine_Indicator = Friend_Menu[randrange(0,2)];
+	}
+  else
+	{
+		Mine_Indicator = Foe_Menu[randrange(0,2)];
+	}
+	printf("Got Mine_Indicator: %s \n", Mine_Indicator);
+	Show_Mine_Type(cr, Mine_Indicator);
 }
 
 void Move_Mine(cairo_t *cr)

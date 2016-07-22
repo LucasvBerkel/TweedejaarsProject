@@ -24,6 +24,7 @@
 //	int score;
 //};
 
+extern char *Mine_Char;
 
 extern cairo_t *SF_canvas;
 extern cairo_surface_t *surface;
@@ -43,6 +44,9 @@ extern int Mine_Should_Update;
 extern int Fort_Should_Update;
 extern int Missile_Should_Update[MAX_NO_OF_MISSILES]; // Make this an array for all the missiles
 extern int Shell_Should_Update;
+extern int Mine_Type_Should_Update;
+
+extern int Mine_Type_Should_Clean;
 extern int Ship_Should_Clean;
 extern int Bonus_Char_Should_Clean;
 extern int Mine_Should_Clean;

@@ -37,6 +37,7 @@
 #endif
 
 #include "DE.h"
+#include "HM.h"
 
 //#include <boost/python/module.hpp>
 //#include <boost/python/def.hpp>
@@ -352,6 +353,37 @@ void cairo_clip_text(cairo_t *cr, int x1, int y1, int w,  int h)
 	cairo_clip(cr);
 }
 
+void Draw_Mine_Type(cairo_t *cr, int erease)
+{
+	int x,y;
+//  svcolor=getcolor();
+  if((Mine_Type==FRIEND && Missile_Type==VS_FRIEND) || (Mine_Type==FOE && Missile_Type==VS_FOE)) {
+    cairo_set_source_rgb(cr, 0, 1, 0);
+  } else if(Missile_Type==WASTED) {
+    cairo_set_source_rgb(cr, 1, 0, 0);
+	} else if(erease == 1) {
+		cairo_set_source_rgb(cr, 0, 0, 0);
+	}
+  else {
+			cairo_set_source_rgb(cr, 1.0, 102.0/255.0, 102.0/255.0); // Light red
+//    setcolor(LIGHTRED);
+  }
+
+	// What does this viewport do in context?
+	cairo_translate(cr, 0, Panel_Y_Start);
+//  setviewport( Xmargin, Panel_Y_Start, Xmargin+MaxX, Panel_Y_End, 1); // ?
+  x=IFF_X; y=Data_Line;
+//  putimage(x,y,buffer1,COPY_PUT); /* erase garbage */
+//	char Minetype_str[4];
+//	sprintf(Minetype_str, "%c", Mine_Char);
+//	printf("Drawing mine type with char %s and original char \n", Mine_Char);
+	cairo_text_at(cr, x, y, Mine_Char); // Originally was "%c" Minetype
+//  gprintf(&x,&y,"%c",Minetype);
+	cairo_translate(cr, 0, -Panel_Y_Start);
+//  setviewport( Xmargin, 0, Xmargin+MaxX, MaxY, 1);
+//  setcolor(svcolor); /* restore previous color */
+}
+
 // 'erease' indicates wheter or not this is an eareasing operation
 // 
 void Draw_Bonus_Char(cairo_t *cr, int erease)
@@ -416,6 +448,11 @@ void clean(cairo_t *cr)
 		Bonus_Char_Should_Clean = 0;
 //		Bonus_Char_Should_Update = 0;
 	}
+	if(Mine_Type_Should_Clean)
+	{
+		Draw_Mine_Type(cr, 1);
+		Mine_Type_Should_Clean = 0;
+	}
 
 //	cairo_restore(cr);
 	cairo_new_path(cr);
@@ -466,6 +503,10 @@ void update_drawing(cairo_t *cr)
 		cairo_reset_clip(cr);
 		// Blah blah? write bonus char 
 		// nothing here tho
+	}
+	if(Mine_Type_Should_Update)
+	{
+		Draw_Mine_Type(cr, 0);
 	}
 }
 
@@ -802,6 +843,7 @@ float Find_Headings(double x1, double y1, double x2, double y2)
 
 void set_initial_vals(cairo_t *cr)
 {
+	Select_Mine_Menus();
 	cairo_path_t *empty_path = cairo_copy_path(cr);
 	PrevShip = empty_path;
 	for(int i = 0; i < MAX_NO_OF_MISSILES; i++)

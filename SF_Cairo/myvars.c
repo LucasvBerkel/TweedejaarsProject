@@ -21,6 +21,7 @@ int Fort_Should_Update;
 int Missile_Should_Update[MAX_NO_OF_MISSILES] = {0};
 int Shell_Should_Update;
 int Bonus_Char_Should_Update = 0;
+int Mine_Type_Should_Update = 0;
 
 int Bonus_Char_Should_Clean = 0;
 int Ship_Should_Clean;
@@ -28,6 +29,7 @@ int Mine_Should_Clean;
 int Fort_Should_Clean;
 int Missile_Should_Clean[MAX_NO_OF_MISSILES] = {0};
 int Shell_Should_Clean;
+int Mine_Type_Should_Clean = 0;
 
 char Initialized_Graphics;
 
@@ -68,7 +70,7 @@ clock_t t0;  /* time when FOE mine is born */
 clock_t t1;  /* double press interval start */
 clock_t t2;  /* double press interval end */
 
-
+char *Mine_Char;
 
 		/* PRAMATERS */
 int One_Game_Duration=3; 	/****** in minutes 1-6 allowed */

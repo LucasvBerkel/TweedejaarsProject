@@ -20,7 +20,7 @@ int randrange(int min, int max);
 void Handle_Speed_Score();
 void Clear_Mine_Type(cairo_t *cr);
 
-void Show_Mine_Type(cairo_t *cr, char Minetype);
+void Show_Mine_Type(cairo_t *cr, char *Minetype);
 void Reset_Mine_Headings();
 
 void Generate_Mine(cairo_t *cr);

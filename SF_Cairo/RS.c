@@ -38,7 +38,7 @@
 // I don't think we do anything with this menu stuff
 extern char Friend_Menu[3][1];
 extern char Foe_Menu[3][1];
-extern char Mine_Indicator;
+extern char *Mine_Indicator;
 extern mine_type Mine_Type;
 
 int jitter_switch = 1;
@@ -201,7 +201,7 @@ void Find_Interval(cairo_t *cr)   /* display double-press interval */
         if((interval>=Interval_Lower_Limit)&&(interval<=Interval_Upper_Limit)
              &&(Mine_Flag==ALIVE)&&(Mine_Type==FOE))
     Missile_Type=VS_FOE;   /* rearm missile */
-        Show_Mine_Type(cr, Mine_Indicator);
+        Show_Mine_Type(cr, Mine_Char);
 //        Update_Interval(cr);
     }
 }
@@ -414,11 +414,11 @@ void Handle_Bonus()
   }
 	else   /* Resource_Flag=ON; */
 	{
-//		Bonus_Char_Should_Update = 0;
-		Bonus_Char_Should_Clean = 1;
 		Resource_On_Counter++;
 		if(Resource_On_Counter>=Resource_Display_Interval)
 		{
+			Bonus_Char_Should_Update = 0;
+			Bonus_Char_Should_Clean = 1;
 			Resource_Flag=OFF;
 			Resource_Off_Counter=0;
 			Bonus_Display_Flag=NOT_PRESENT; /* in case bonus is pressed after  */
