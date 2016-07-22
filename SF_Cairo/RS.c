@@ -266,6 +266,7 @@ void Display_Bonus_Char(cairo_t *cr, char Bonus_Char)
 //    setcolor(svcolor); /* restore previous color */
 }
 
+// Sort of draws all the bonus characters to a location of the screen so to save them? 
 void Set_Bonus_Chars(cairo_t *cr)
 {
 //    int size,i,j;
@@ -277,7 +278,7 @@ void Set_Bonus_Chars(cairo_t *cr)
 //    x=MaxX/2 - 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
 //    y=MaxY/2 + 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
 //
-// for (i=0;i<10;i++)
+// for (i=0;i<10;i++) // Save all the images with a 16x16 size
 //         {
 //        bc[i]=malloc(size);
 //        Display_Bonus_Char(cr, Bonus_Char_Vector[i][0]);
@@ -286,7 +287,9 @@ void Set_Bonus_Chars(cairo_t *cr)
 //         }
 }
 
-// What does this even do in the game [3]
+// Erease the currently displayed image set by getimage with an XOR operation (i.e. erase 
+// everything that previous image drawing operation has drawed)
+// The cairo interpretation of this function sucks
 void Xor_Bonus_Char(cairo_t *cr, int n)   /* write and erase bonus character */
 {
 //	int x,y;
@@ -303,27 +306,28 @@ void Xor_Bonus_Char(cairo_t *cr, int n)   /* write and erase bonus character */
 }
 
 // What does this even do in the game [2]
-void Set_Bonus_Message()
-{
-//    int size;
-//    int svcolor;
-//    int x,y;
-//
-//    svcolor=getcolor();
-//    setcolor(TEXT_COLOR);
-//    x=MaxX/2 - 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
-//    y=MaxY/2 + 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
-//    gprintf(&x,&y,"Bonus");
-//    setcolor(svcolor); /* restore previous color */
-//
-//    size=imagesize(0,0,40,9);        /*length of 5 characters*/
-//    buffer2=malloc(size);
-//    getimage(x,y,x+40,y+9,buffer2);
-//    putimage(x,y,buffer2,XOR_PUT);
-//    setcolor(svcolor);
-}
+// Tells the player about the bonuses before the game starts
+//void Set_Bonus_Message()
+//{
+////    int size;
+////    int svcolor;
+////    int x,y;
+////
+////    svcolor=getcolor();
+////    setcolor(TEXT_COLOR);
+////    x=MaxX/2 - 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
+////    y=MaxY/2 + 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
+////    gprintf(&x,&y,"Bonus");
+////    setcolor(svcolor); /* restore previous color */
+////
+////    size=imagesize(0,0,40,9);        /*length of 5 characters*/
+////    buffer2=malloc(size);
+////    getimage(x,y,x+40,y+9,buffer2);
+////    putimage(x,y,buffer2,XOR_PUT);
+////    setcolor(svcolor);
+//}
 
-// What does this even do in the game
+// Write bonus messsage to the graphics bitmap memory
 void Write_Bonus_Message()
 {
 // int x,y;
@@ -339,81 +343,88 @@ int Generate_Non_Bonus_Char()
 //     int rn;
 //
 //     do { rn=randrange(0,10); }
-//     while(rn==Bonus_Indication_Index);
+//     while(rn==Bonus_Indication_Index); // I think the only reason for this being here 
+			// is the the original random function always returned a number between 0 and n,
+			// while other random fucntions can return a number in between m and n. 
 //     return(rn);
 	return 0; // Make the compiler happy
 }
 
+
 void Generate_Resource_Character()
 {
 //    int lastrn;
-//    static bonus_character lastchar=NON_BONUS;
+//    static bonus_character lastchar=NON_BONUS; // This is a struct
 //
-//    if((lastchar==NON_BONUS)&&
-//         (No_Of_Bonus_Windows<MAX_BONUS_WINDOWS))
-//
-//             if(randrange(0,10)<7) /* display first bonus */
-//     {
-//         No_Of_Bonus_Windows++;
-//         rn=Bonus_Indication_Index;
-//         Xor_Bonus_Char(rn);
-//         lastchar=Bonus_Display_Flag=FIRST_BONUS;
-//         Bonus_Wasted_Flag=OFF;
-//     }
-//             else /* display non_bonus character */
-//     {
-//         lastrn=rn;
-//         do { rn=Generate_Non_Bonus_Char(); }
-//         while(rn==lastrn); /* new char is different from last one */
-//         Xor_Bonus_Char(rn);
-//         lastchar=Bonus_Display_Flag=NON_BONUS;
-//     }
+//    if((lastchar==NON_BONUS) && (No_Of_Bonus_Windows<MAX_BONUS_WINDOWS))
+//		{
+//   		if(randrange(0,10)<7) /* display first bonus */
+//     	{
+//				No_Of_Bonus_Windows++;
+//				// An index for an array with bonus characters (like '$) of chartype 
+//				rn=Bonus_Indication_Index; 
+//				Xor_Bonus_Char(rn); // Put the character/image currently passed to graphics
+//				lastchar=Bonus_Display_Flag=FIRST_BONUS;
+//				Bonus_Wasted_Flag=OFF;
+//			}
+//			else /* display non_bonus character */
+//     	{
+//				lastrn=rn;
+//				do { rn=Generate_Non_Bonus_Char(); }
+//				while(rn==lastrn); /* new char is different from last one */
+//				Xor_Bonus_Char(rn); // put the image to game
+//				lastchar=Bonus_Display_Flag=NON_BONUS;
+//			}
 //    else
-//    if(lastchar==FIRST_BONUS)
+//		{
+//    	if(lastchar==FIRST_BONUS)
+//      {
+//				Xor_Bonus_Char(rn);
+//				lastchar=Bonus_Display_Flag=SECOND_BONUS;
+//			}
+//    	else
+//			{
+//    		if(lastchar==SECOND_BONUS)
 //        {
-//            Xor_Bonus_Char(rn);
-//            lastchar=Bonus_Display_Flag=SECOND_BONUS;
-//        }
-//    else
-//    if(lastchar==SECOND_BONUS)
-//        {
-//             rn=Generate_Non_Bonus_Char();
-//             Xor_Bonus_Char(rn);
-//             lastchar=Bonus_Display_Flag=NON_BONUS;
-//        }
+//	        rn=Generate_Non_Bonus_Char();
+//	        Xor_Bonus_Char(rn);// put the image to gam
+//	        lastchar=Bonus_Display_Flag=NON_BONUS;
+//				}
+//			}
+//		}
+//	}
 }
 
 void Handle_Bonus()
 {
-//
-//    if(!Resource_Flag)   /* resource is off */
-//        {
-//            Resource_Off_Counter++;
-//            if(Resource_Off_Counter>=No_Resource_Display_Interval)
+//	if(!Resource_Flag)   /* resource is off */ // What is a resource
+//  {
+//		Resource_Off_Counter++;
+//		// After a counter reaches a threshold, display a resource
+//    if(Resource_Off_Counter>=No_Resource_Display_Interval)
 //    {
-//        Resource_Flag=ON;
-//        Resource_On_Counter=0;
-//        Generate_Resource_Character();
+//	    Resource_Flag=ON;
+//	    Resource_On_Counter=0;
+//	    Generate_Resource_Character();
 //    }
-//     }
-// else   /* Resource_Flag=ON; */
-//     {
-//         Resource_On_Counter++;
-//         if(Resource_On_Counter>=Resource_Display_Interval)
-//             {
-//     Resource_Flag=OFF;
-//     Resource_Off_Counter=0;
-//     Bonus_Display_Flag=NOT_PRESENT; /* in case bonus is pressed after
-//                            $ disappears */
-//     if (Bonus_Granted)
-//            {
-//                Write_Bonus_Message();     /* erase bonus message */
-//                Bonus_Granted=OFF;
-//            }
-//     else
-//     Xor_Bonus_Char(rn);  /* Erase_Resource_Char */
-//             }
-//     }
+//  }
+//	else   /* Resource_Flag=ON; */
+//	{
+//		Resource_On_Counter++;
+//		if(Resource_On_Counter>=Resource_Display_Interval)
+//		{
+//			Resource_Flag=OFF;
+//			Resource_Off_Counter=0;
+//			Bonus_Display_Flag=NOT_PRESENT; /* in case bonus is pressed after  */
+//			if (Bonus_Granted) // If the player did the interval right
+//			{
+//				Write_Bonus_Message();     /* erase bonus message */ // previous message?
+//				Bonus_Granted=OFF;
+//			}
+//			else
+//			Xor_Bonus_Char(rn);  /* Erase_Resource_Char */
+//		}
+//	}
 }
 
 
@@ -667,7 +678,6 @@ static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data
 		}
 
 	}
-
 	Update_Points(cr);
 	Update_Control(cr);
 	Update_Velocity(cr);
@@ -675,6 +685,7 @@ static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data
 	Update_Interval(cr);
 	Update_Speed(cr);
 	Update_Shots(cr);
+
 	
 	clean(cr);
 	Draw_Hexagone(cr, MaxX/2,MaxY/2,SMALL_HEXAGONE_SIZE_FACTOR*MaxX);

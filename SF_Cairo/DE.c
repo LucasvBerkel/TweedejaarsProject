@@ -297,16 +297,22 @@ void clip_path_rect(cairo_t *cr)
 	cairo_append_path(cr,ol_path);
 }
 
-	// Clears the pixels on the previous path, i.e. sets them to black
+
+void stroke_in_clip(cairo_t *cr)
+{
+	clip_path_rect(cr);
+	cairo_stroke(cr);
+	cairo_reset_clip(cr);
+}
+
+// Clears the pixels on the previous path, i.e. sets them to black
 void clear_prev_path(cairo_t *cr, cairo_path_t *prevPath)
 {
-//	cairo_save(cr);
 	cairo_set_source_rgb(cr, 0, 0, 0);
 //	cairo_new_path(cr); // assume the context is empty
 	cairo_append_path(cr, prevPath);
 	clip_path_rect(cr);
 	cairo_stroke(cr);
-//	cairo_restore(cr);
 	cairo_reset_clip(cr);
 }
 
@@ -318,28 +324,15 @@ void cairo_bounding_box(cairo_t *cr)
 	double y2;
 
 	cairo_path_extents(cr, &x1, &y1, &x2, &y2);
-	//Draw the actual object, preserving it's shape information
-	cairo_stroke(cr);
+	cairo_stroke(cr); // Draw the actual object, preserving it's shape information
 	cairo_path_t *ol_path = cairo_copy_path(cr);
 	cairo_new_path(cr);
-
 
 	cairo_set_source_rgb(cr, 1, 0, 0);
 	cairo_rectangle(cr, x1-1, y1-1, (x2-x1)+1, (y2-y1)+1);
 	cairo_stroke(cr);
 
 	cairo_append_path(cr,ol_path);
-
-}
-
-
-void stroke_in_clip(cairo_t *cr)
-{
-//	cairo_save(cr);
-	clip_path_rect(cr);
-	cairo_stroke(cr);
-	cairo_reset_clip(cr);
-//	cairo_restore(cr);
 }
 
 // Placed here to center the whole interface in one file
@@ -768,6 +761,9 @@ void set_initial_vals(cairo_t *cr)
 	{
 		PrevMissile[i] = empty_path;
 	}
+
+//	Set_Bonus_Chars();	// Probably not needed because we don't need to save them in memory
+	// first or whatver
 	
 	PrevFort = empty_path;
 	PrevMine = empty_path;
@@ -783,9 +779,9 @@ void Show_Score(cairo_t *cr, int val, int x, int y) /* anywhere within data pane
 //    svcolor=getcolor();
 		char val_str[15];
 
+    cairo_translate(cr, 0, Panel_Y_Start);
 
     cairo_set_source_rgb(cr, SF_YELLOW);
-    cairo_translate(cr, 0, Panel_Y_Start);
     /* data panel in screen global coordinates */
 
 //    putimage(x,y,buffer1,COPY_PUT); /* erase garbage */
@@ -803,6 +799,13 @@ void Show_Score(cairo_t *cr, int val, int x, int y) /* anywhere within data pane
 
 //    setcolor(svcolor); /* restore previous color */
 }
+// W and H are the dimensions of the clipping rectangle
+void cairo_clip_text(cairo_t *cr, int x1, int y1, int w,  int h)
+{
+	cairo_rectangle(cr, x1, y1, w, h); // Not optimal
+//	cairo_stroke_preserve(cr);
+	cairo_clip(cr);
+}
 
 /* Every update_X function here had a "return(0)" zero statement on it's last line, without  
 specifying a return type. I removed all of these return statements and modified the function 
@@ -810,39 +813,55 @@ return type to void to surpress warnings. */
 // Magical 8's?
 void Update_Points(cairo_t *cr)
 {
-    Show_Score(cr, Points,Points_X-8,Data_Line);
+	// Data line is equal to Data_Line=2*Height+4;, with the panel ystart translated
+	// It is the middle line of the data panel, so that would be the clip rect height
+	cairo_clip_text(cr, Points_X-11, Panel_Y_Start+Data_Line-4, 20, Data_Line/2-1);
+	Show_Score(cr, Points,Points_X-8,Data_Line);
+	cairo_reset_clip(cr);
 }
 
 void Update_Control(cairo_t *cr)
 {
-    Show_Score(cr, Control,Control_X-8,Data_Line);
+	cairo_clip_text(cr, Control_X-11, Panel_Y_Start+Data_Line-4, 15, Data_Line/2-1);
+	Show_Score(cr, Control,Control_X-8,Data_Line);
+	cairo_reset_clip(cr);
 }
 
 void Update_Velocity(cairo_t *cr)
 {
-    Show_Score(cr, Velocity,Velocity_X,Data_Line);
+	cairo_clip_text(cr, Velocity_X-6, Panel_Y_Start+Data_Line-4, 15, Data_Line/2-1);
+	Show_Score(cr, Velocity,Velocity_X,Data_Line);
+	cairo_reset_clip(cr);
 }
 
 void Update_Vulner(cairo_t *cr)  /* for vulner only */
 {
-    Show_Score(cr, Vulner_Counter,Vulner_X,Data_Line);
+	cairo_clip_text(cr, Vulner_X-5, Panel_Y_Start+Data_Line-4, 15, Data_Line/2-1);
+	Show_Score(cr, Vulner_Counter,Vulner_X,Data_Line);
+	cairo_reset_clip(cr);
 }
 
 /* IFF is missing here */
 
 void Update_Interval(cairo_t *cr)
 {
-    Show_Score(cr, Double_Press_Interval,Interval_X,Data_Line);
+	cairo_clip_text(cr, Interval_X-6, Panel_Y_Start+Data_Line-4, 15, Data_Line/2-1);
+	Show_Score(cr, Double_Press_Interval,Interval_X,Data_Line);
+	cairo_reset_clip(cr);
 }
 
 void Update_Speed(cairo_t *cr)
 {
-    Show_Score(cr, Speed,Speed_X-8,Data_Line);
+	cairo_clip_text(cr, Speed_X-11, Panel_Y_Start+Data_Line-4, 16, Data_Line/2-1);
+	Show_Score(cr, Speed,Speed_X-8,Data_Line);
+	cairo_reset_clip(cr);
 }
 
 void Update_Shots(cairo_t *cr)
 {
-    Show_Score(cr, Missile_Stock,Shots_X,Data_Line);
+	cairo_clip_text(cr, Shots_X-5, Panel_Y_Start+Data_Line-4, 15, Data_Line/2-1);
+	Show_Score(cr, Missile_Stock,Shots_X,Data_Line);
+	cairo_reset_clip(cr);
 }
 
 void Reset_Screen(cairo_t *cr)
