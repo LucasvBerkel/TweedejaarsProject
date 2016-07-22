@@ -78,8 +78,8 @@ int No_Resource_Display_Interval=NO_RESOURCE_DISPLAY_INTERVAL;
 int Interval_Upper_Limit=SF_DELAY*20;
 int Interval_Lower_Limit=SF_DELAY*5;
 int Ship_Angular_Step=10;   /* Display increment in degrees */
-int Ship_Max_Speed=3;        /* dots per loop */ // was 5
-double Ship_Accel=0.7;            /* dots/(loop*loop) */ // was 1 // was was 0.6
+float Ship_Max_Speed=2.5;        /* dots per loop */ // was 5
+double Ship_Accel=0.5;            /* dots/(loop*loop) */ // was 1 // was was 0.6
 int Mine_Speed=2;	   /* in screen dots per loop */ // was 4
 int Mine_Wait_Loops=80;
 int Mine_Live_Loops=200;     /* new parameter */
@@ -99,8 +99,8 @@ float Ship_X_Old_Pos;
 float Ship_Y_Old_Pos;
 float Ship_X_Speed;
 float Ship_Y_Speed;
-int Ship_Headings;
-int Ship_Old_Headings;
+float Ship_Headings;
+float Ship_Old_Headings;
 int Rotate_Input=0;
 int Accel_Input=0;
 int Ship_Display_Update=0;

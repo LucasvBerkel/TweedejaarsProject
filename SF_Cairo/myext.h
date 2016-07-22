@@ -82,7 +82,7 @@ extern clock_t t2;  /* double press interval end */
 		/* GAME PRAMATERS */
 extern int Ship_Rotate_Step;
 extern int Ship_Used;
-extern int Ship_Max_Speed;
+extern float Ship_Max_Speed;
 extern double Ship_Accel;
 extern int Ship_Angular_Step;
 extern int Missile_Speed;
@@ -98,8 +98,8 @@ extern float Ship_X_Old_Pos;
 extern float Ship_Y_Old_Pos;
 extern float Ship_X_Speed;
 extern float Ship_Y_Speed;
-extern int Ship_Headings;
-extern int Ship_Old_Headings;
+extern float Ship_Headings;
+extern float Ship_Old_Headings;
 extern int Rotate_Input;
 extern int Accel_Input;
 extern int Ship_Display_Update;

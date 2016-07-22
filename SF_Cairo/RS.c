@@ -357,7 +357,7 @@ void Generate_Resource_Character()
 
     if((lastchar==NON_BONUS) && (No_Of_Bonus_Windows<MAX_BONUS_WINDOWS))
 		{
-   		if(randrange(0,10)<7) /* display first bonus */
+   		if(randrange(0,9)<7) /* display first bonus */
      	{
 				No_Of_Bonus_Windows++;
 				// An index for an array with bonus characters (like '$) of chartype 
@@ -580,7 +580,7 @@ static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data
 	{
 		unsigned long elapsed_time;
 	  clock_t loop_start_time;
-		struct timespec tim, tim2;
+		struct timespec tim;
 	  tim.tv_sec = 0;
 		loop_start_time=clock();
 
@@ -604,13 +604,13 @@ static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data
 		Draw_Hexagone(cr, MaxX/2,MaxY/2,SMALL_HEXAGONE_SIZE_FACTOR*MaxX);
 		stroke_in_clip(cr);
 		update_drawing(cr);
-		elapsed_time=((clock()-loop_start_time)/(double)CLOCKS_PER_SEC)*1000.0;
+		elapsed_time=((double)(clock()-loop_start_time)/(double)CLOCKS_PER_SEC)*1000.0;
 	  tim.tv_nsec = (SF_DELAY-elapsed_time) * 1000000L;
     if(elapsed_time < SF_DELAY)
 		{
 //				printf("Sleeping for %Lf \n", SF_DELAY-elapsed_time);
 //        ms_sleep(SF_DELAY-elapsed_time);  /* wait up to 50 milliseconds */
-				nanosleep(&tim , &tim2);
+				nanosleep(&tim , NULL);
 		}
 	}
 	else  // Animating

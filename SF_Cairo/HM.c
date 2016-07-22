@@ -345,7 +345,7 @@ void Generate_Mine(cairo_t *cr)
 	Mine_Should_Update = 1;
 
 
-  if(randrange(0,2)) Mine_Type=FRIEND; // was random(2)
+  if(randrange(0,1)) Mine_Type=FRIEND; // was random(2)
   else
     {
       Mine_Type=FOE;
@@ -353,8 +353,8 @@ void Generate_Mine(cairo_t *cr)
       t0=clock(); /* when "a mine is born .."? */  // Why and how does it acces this?
     }
 
-  if (Mine_Type==FRIEND) Mine_Indicator=Friend_Menu[randrange(0,3)][0];
-  else                   Mine_Indicator=Foe_Menu[randrange(0,3)][0];
+  if (Mine_Type==FRIEND) Mine_Indicator=Friend_Menu[randrange(0,2)][0];
+  else                   Mine_Indicator=Foe_Menu[randrange(0,2)][0];
   Show_Mine_Type(cr, Mine_Indicator);
 }
 
