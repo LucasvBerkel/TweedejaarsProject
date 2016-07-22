@@ -83,9 +83,9 @@ double Ship_Accel=0.5;            /* dots/(loop*loop) */ // was 1 // was was 0.6
 int Mine_Speed=2;	   /* in screen dots per loop */ // was 4
 int Mine_Wait_Loops=80;
 int Mine_Live_Loops=200;     /* new parameter */
-int Missile_Speed=30;		/* new parameter */
+int Missile_Speed=15;		/* new parameter */
 int Missile_Limit_Flag=OFF; /******** missile borrowing is allowed */
-int Shell_Speed=SHELL_SPEED; /* in dots/loop */
+double Shell_Speed=SHELL_SPEED; /* in dots/loop */
 int Fort_Lock_Interval=FORT_LOCK_INTERVAL; /* in loops */
 int Collision_Distance=COLLISION_DIST; /*********** in screen dots */
 

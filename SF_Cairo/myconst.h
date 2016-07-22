@@ -37,7 +37,7 @@
 #define ARC_CONV 0.0174527       /* degrees to radians */
 #define MINE_COURSE_INTERVAL 10 // Was 10
 #define FORT_LOCK_INTERVAL 20
-#define SHELL_SPEED 7
+#define SHELL_SPEED 3.45 // was 7
 #define MAX_NO_OF_MISSILES 6
 //#define SF_DELAY 50.0
 #define SF_DELAY 42	// was 47
