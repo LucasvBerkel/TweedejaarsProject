@@ -320,7 +320,6 @@ void Reset_Mine_Headings()
    Mine_Course_Count=MINE_COURSE_INTERVAL;
    Mine_X_Speed=Mine_Speed*Fsin(Mine_Headings);
    Mine_Y_Speed=-Mine_Speed*Fcos(Mine_Headings);
-
 }
 
 int randrange(int min, int max)

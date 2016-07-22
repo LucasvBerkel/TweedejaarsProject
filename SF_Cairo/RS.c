@@ -430,10 +430,7 @@ void Handle_Bonus()
 
 void SF_iteration(cairo_t *cr)
 {
-	unsigned long elapsed_time;
-  clock_t loop_start_time;
-	struct timespec tim, tim2;
-  tim.tv_sec = 0;
+
 
 //        Set_Kbd_Rate(0x8); /* to slow repeat rate 15Hz */
 //        Capture_Kbd(Get_Key); /* redirect KBD interrupts to Get_Key() */ // Uncomment
@@ -446,7 +443,6 @@ void SF_iteration(cairo_t *cr)
 // Do all the drawing in one go here, first clear all (using prev_paths) in need of 
 // an update, then optionally draw the hexagon (maybe only if it has been crossed)
 // and then draw all in need of an update
-	loop_start_time=clock();
 	Loop_Counter++;
 	// This was done by processor interupts, but is allowed automatically by GTK
 	Get_User_Input(cr);
@@ -466,20 +462,13 @@ void SF_iteration(cairo_t *cr)
 	}
 	Accumulate_Data(cr);
 	Handle_Bonus();
-	if(!Effect_Flag) {
+	if(Effect_Flag) {
 	// This only says something like
 	// The game should always wait 50ms between frames, so sleep until the loop
 	// body takes 50ms
 	// is this valid c?
-		elapsed_time=((clock()-loop_start_time)/(double)CLOCKS_PER_SEC)*1000.0;
-	  tim.tv_nsec = (SF_DELAY-elapsed_time) * 1000000L;
-    if(elapsed_time < SF_DELAY)
-		{
-//				printf("Sleeping for %Lf \n", SF_DELAY-elapsed_time);
-//        ms_sleep(SF_DELAY-elapsed_time);  /* wait up to 50 milliseconds */
-				nanosleep(&tim , &tim2);
-		}
-	} else Effect_Flag=OFF;  /* no delay necessary */
+		Effect_Flag=OFF;  /* no delay necessary */
+	}
 	Score=Points+Velocity+Control+Speed;
 }
 
@@ -590,11 +579,38 @@ static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data
 	Fort_Should_Update = 1;
 	if(!Explosion_Flag && !Jitter_Flag)
 	{
+		unsigned long elapsed_time;
+	  clock_t loop_start_time;
+		struct timespec tim, tim2;
+	  tim.tv_sec = 0;
+		loop_start_time=clock();
+
 		SF_iteration(cr);
 		Ship_Should_Update = 1;
 		Draw_Frame(cr);
+
+		Update_Points(cr);
+		Update_Control(cr);
+		Update_Velocity(cr);
+		Update_Vulner(cr);
+		Update_Interval(cr);
+		Update_Speed(cr);
+		Update_Shots(cr);
+		clean(cr);
+		Draw_Hexagone(cr, MaxX/2,MaxY/2,SMALL_HEXAGONE_SIZE_FACTOR*MaxX);
+		stroke_in_clip(cr);
+		update_drawing(cr);
+
+		elapsed_time=((clock()-loop_start_time)/(double)CLOCKS_PER_SEC)*1000.0;
+	  tim.tv_nsec = (SF_DELAY-elapsed_time) * 1000000L;
+    if(elapsed_time < SF_DELAY)
+		{
+//				printf("Sleeping for %Lf \n", SF_DELAY-elapsed_time);
+//        ms_sleep(SF_DELAY-elapsed_time);  /* wait up to 50 milliseconds */
+				nanosleep(&tim , &tim2);
+		}
 	}
-	else 
+	else  // Animating
 	{
 		Draw_Frame(cr);
 		// we don't want our object disappearing!
@@ -676,21 +692,22 @@ static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data
 				stroke_in_clip(cr);
 			}
 		}
-
+		Update_Points(cr);
+		Update_Control(cr);
+		Update_Velocity(cr);
+		Update_Vulner(cr);
+		Update_Interval(cr);
+		Update_Speed(cr);
+		Update_Shots(cr);
+		clean(cr);
+		Draw_Hexagone(cr, MaxX/2,MaxY/2,SMALL_HEXAGONE_SIZE_FACTOR*MaxX);
+		stroke_in_clip(cr);
+		update_drawing(cr);
 	}
-	Update_Points(cr);
-	Update_Control(cr);
-	Update_Velocity(cr);
-	Update_Vulner(cr);
-	Update_Interval(cr);
-	Update_Speed(cr);
-	Update_Shots(cr);
+
 
 	
-	clean(cr);
-	Draw_Hexagone(cr, MaxX/2,MaxY/2,SMALL_HEXAGONE_SIZE_FACTOR*MaxX);
-	stroke_in_clip(cr);
-	update_drawing(cr);
+
 
 	return FALSE; // Not sure why this should return false
 }
