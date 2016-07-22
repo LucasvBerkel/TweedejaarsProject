@@ -377,33 +377,33 @@ void Move_Mine(cairo_t *cr)
 //		stroke_in_clip(cr);
 
     if(--Mine_Course_Count<=0)  Reset_Mine_Headings();
-//    if(   (Mine_X_Pos<0) || (Mine_X_Pos>MaxX)
-//     || (Mine_Y_Pos<0) || (Mine_Y_Pos>MaxY) )
-//		{
-//      Reset_Mine_Headings();
-//		}
+    if(   (Mine_X_Pos<0) || (Mine_X_Pos>MaxX)
+     || (Mine_Y_Pos<0) || (Mine_Y_Pos>MaxY) )
+		{
+      Reset_Mine_Headings();
+		}
 
-		if(Mine_X_Pos < 0)
-		{
-			Reset_Mine_Headings();
-			Mine_X_Pos = MaxX;
-		}
-		else if(Mine_X_Pos > MaxX)
-		{
-			Reset_Mine_Headings();
-			Mine_X_Pos = 0;
-		}
-		if(Mine_Y_Pos < 0)
-		{
-			Reset_Mine_Headings();
-			Mine_Y_Pos = MaxY;
-		}
-		
-		else if(Mine_Y_Pos > MaxY)
-		{
-			Reset_Mine_Headings();
-			Mine_Y_Pos = 0;
-		}
+//		if(Mine_X_Pos < 0)
+//		{
+//			Reset_Mine_Headings();
+//			Mine_X_Pos = MaxX;
+//		}
+//		else if(Mine_X_Pos > MaxX)
+//		{
+//			Reset_Mine_Headings();
+//			Mine_X_Pos = 0;
+//		}
+//		if(Mine_Y_Pos < 0)
+//		{
+//			Reset_Mine_Headings();
+//			Mine_Y_Pos = MaxY;
+//		}
+//		
+//		else if(Mine_Y_Pos > MaxY)
+//		{
+//			Reset_Mine_Headings();
+//			Mine_Y_Pos = 0;
+//		}
 }
 
 void Handle_Mine(cairo_t *cr)

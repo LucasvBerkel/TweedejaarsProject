@@ -340,91 +340,94 @@ void Write_Bonus_Message()
 
 int Generate_Non_Bonus_Char()
 {
-//     int rn;
-//
-//     do { rn=randrange(0,10); }
-//     while(rn==Bonus_Indication_Index); // I think the only reason for this being here 
-			// is the the original random function always returned a number between 0 and n,
-			// while other random fucntions can return a number in between m and n. 
-//     return(rn);
-	return 0; // Make the compiler happy
+   int rn;
+
+   do { rn=randrange(0,10); }
+   while(rn==Bonus_Indication_Index); // I think the only reason for this being here 
+//	 is the the original random function always returned a number between 0 and n,
+//	 while other random fucntions can return a number in between m and n. 
+   return(rn);
 }
 
 
 void Generate_Resource_Character()
 {
-//    int lastrn;
-//    static bonus_character lastchar=NON_BONUS; // This is a struct
-//
-//    if((lastchar==NON_BONUS) && (No_Of_Bonus_Windows<MAX_BONUS_WINDOWS))
-//		{
-//   		if(randrange(0,10)<7) /* display first bonus */
-//     	{
-//				No_Of_Bonus_Windows++;
-//				// An index for an array with bonus characters (like '$) of chartype 
-//				rn=Bonus_Indication_Index; 
+    int lastrn;
+    static bonus_character lastchar=NON_BONUS; // This is a struct
+
+    if((lastchar==NON_BONUS) && (No_Of_Bonus_Windows<MAX_BONUS_WINDOWS))
+		{
+   		if(randrange(0,10)<7) /* display first bonus */
+     	{
+				No_Of_Bonus_Windows++;
+				// An index for an array with bonus characters (like '$) of chartype 
+				rn=Bonus_Indication_Index; 
 //				Xor_Bonus_Char(rn); // Put the character/image currently passed to graphics
-//				lastchar=Bonus_Display_Flag=FIRST_BONUS;
-//				Bonus_Wasted_Flag=OFF;
-//			}
-//			else /* display non_bonus character */
-//     	{
-//				lastrn=rn;
-//				do { rn=Generate_Non_Bonus_Char(); }
-//				while(rn==lastrn); /* new char is different from last one */
+				lastchar=Bonus_Display_Flag=FIRST_BONUS;
+				Bonus_Char_Should_Update = 1;
+				Bonus_Wasted_Flag=OFF;
+			}
+			else /* display non_bonus character */
+     	{
+				lastrn=rn;
+				do { rn=Generate_Non_Bonus_Char(); }
+				while(rn==lastrn); /* new char is different from last one */
 //				Xor_Bonus_Char(rn); // put the image to game
-//				lastchar=Bonus_Display_Flag=NON_BONUS;
-//			}
-//    else
-//		{
-//    	if(lastchar==FIRST_BONUS)
-//      {
+				Bonus_Char_Should_Update = 1;
+				lastchar=Bonus_Display_Flag=NON_BONUS;
+			}
+		}
+    else
+		{
+    	if(lastchar==FIRST_BONUS)
+      {
 //				Xor_Bonus_Char(rn);
-//				lastchar=Bonus_Display_Flag=SECOND_BONUS;
-//			}
-//    	else
-//			{
-//    		if(lastchar==SECOND_BONUS)
-//        {
-//	        rn=Generate_Non_Bonus_Char();
+					Bonus_Char_Should_Update = 1;
+					lastchar=Bonus_Display_Flag=SECOND_BONUS;
+			}
+    	else
+			{
+    		if(lastchar==SECOND_BONUS)
+        {
+	        rn=Generate_Non_Bonus_Char();
 //	        Xor_Bonus_Char(rn);// put the image to gam
-//	        lastchar=Bonus_Display_Flag=NON_BONUS;
-//				}
-//			}
-//		}
-//	}
+					Bonus_Char_Should_Update = 1;
+	        lastchar=Bonus_Display_Flag=NON_BONUS;
+				}
+			}
+		}
 }
+
 
 void Handle_Bonus()
 {
-//	if(!Resource_Flag)   /* resource is off */ // What is a resource
-//  {
-//		Resource_Off_Counter++;
-//		// After a counter reaches a threshold, display a resource
-//    if(Resource_Off_Counter>=No_Resource_Display_Interval)
-//    {
-//	    Resource_Flag=ON;
-//	    Resource_On_Counter=0;
-//	    Generate_Resource_Character();
-//    }
-//  }
-//	else   /* Resource_Flag=ON; */
-//	{
-//		Resource_On_Counter++;
-//		if(Resource_On_Counter>=Resource_Display_Interval)
-//		{
-//			Resource_Flag=OFF;
-//			Resource_Off_Counter=0;
-//			Bonus_Display_Flag=NOT_PRESENT; /* in case bonus is pressed after  */
-//			if (Bonus_Granted) // If the player did the interval right
-//			{
+	if(!Resource_Flag)   /* resource is off */ // What is a resource
+  {
+		Resource_Off_Counter++;
+		// After a counter reaches a threshold, display a resource
+    if(Resource_Off_Counter>=No_Resource_Display_Interval)
+    {
+	    Resource_Flag=ON;
+	    Resource_On_Counter=0;
+	    Generate_Resource_Character();
+    }
+  }
+	else   /* Resource_Flag=ON; */
+	{
+		Bonus_Char_Should_Clean = 1;
+		Resource_On_Counter++;
+		if(Resource_On_Counter>=Resource_Display_Interval)
+		{
+			Resource_Flag=OFF;
+			Resource_Off_Counter=0;
+			Bonus_Display_Flag=NOT_PRESENT; /* in case bonus is pressed after  */
+			if (Bonus_Granted) // If the player did the interval right
+			{
 //				Write_Bonus_Message();     /* erase bonus message */ // previous message?
-//				Bonus_Granted=OFF;
-//			}
-//			else
-//			Xor_Bonus_Char(rn);  /* Erase_Resource_Char */
-//		}
-//	}
+				Bonus_Granted=OFF;
+			}
+		}
+	}
 }
 
 

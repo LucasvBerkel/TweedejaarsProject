@@ -11,6 +11,7 @@
 	and must be present in the current directory!
 */
 
+#define POINTS_FONT_SIZE 5.5
 
 #define UP 72
 #define DOWN 80

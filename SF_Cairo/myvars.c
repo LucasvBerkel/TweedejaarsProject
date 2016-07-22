@@ -20,7 +20,9 @@ int Mine_Should_Update;
 int Fort_Should_Update;
 int Missile_Should_Update[MAX_NO_OF_MISSILES] = {0};
 int Shell_Should_Update;
+int Bonus_Char_Should_Update = 0;
 
+int Bonus_Char_Should_Clean = 0;
 int Ship_Should_Clean;
 int Mine_Should_Clean;
 int Fort_Should_Clean;
@@ -147,7 +149,7 @@ int Display_Interval_Flag=OFF;
 int Check_Mine_Flag=OFF;
 int Missile_Stock=100;
 int Resource_Flag=OFF;
-char Bonus_Char_Vector[10][1]={"$","[","?","%","&","!","#","@",">","/"};
+const char *Bonus_Char_Vector[]={"$","[","?","%","&","!","#","@",">","/"};
 bonus_character Bonus_Display_Flag=NOT_PRESENT;
 int Bonus_Wasted_Flag=OFF;
 int sax,sbx,scx,sdx; /* storage to save _AX,_BX,_CX,_DX */

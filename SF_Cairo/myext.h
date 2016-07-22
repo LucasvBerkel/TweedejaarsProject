@@ -38,11 +38,13 @@ extern cairo_path_t *PrevMine;
 extern cairo_path_t *PrevShell;
 
 extern int Ship_Should_Update;
+extern int Bonus_Char_Should_Update;
 extern int Mine_Should_Update;
 extern int Fort_Should_Update;
 extern int Missile_Should_Update[MAX_NO_OF_MISSILES]; // Make this an array for all the missiles
 extern int Shell_Should_Update;
 extern int Ship_Should_Clean;
+extern int Bonus_Char_Should_Clean;
 extern int Mine_Should_Clean;
 extern int Shell_Should_Clean;
 extern int Fort_Should_Clean;
@@ -159,7 +161,7 @@ extern int Display_Interval_Flag;
 extern int Check_Mine_Flag;
 extern int Missile_Stock;
 extern int Resource_Flag;
-extern char Bonus_Char_Vector[10][1];
+extern const char *Bonus_Char_Vector[];
 extern bonus_character Bonus_Display_Flag;
 extern int Bonus_Wasted_Flag;
 extern int sax,sbx,scx,sdx; /* storage to save _AX,_BX,_CX,_DX */

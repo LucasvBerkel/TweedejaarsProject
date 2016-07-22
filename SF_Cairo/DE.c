@@ -126,7 +126,7 @@ void Initialize_Graphics(cairo_t *cr)
 //	cairo_set_matrix(cr, &x_reflection_matrix);
 
 	// Mirror font back
-	cairo_set_font_size(cr, 5.5); // 15.4 maximizes visibility while minimizing size
+	cairo_set_font_size(cr, POINTS_FONT_SIZE); // 15.4 maximizes visibility while minimizing size
 //	cairo_set_font_size(cr, 5.9);
 //	cairo_get_font_matrix(cr, &font_reflection_matrix);
 //	font_reflection_matrix.yy = font_reflection_matrix.yy * -1;
@@ -344,6 +344,38 @@ int get_score()
 }
 
 
+// W and H are the dimensions of the clipping rectangle
+void cairo_clip_text(cairo_t *cr, int x1, int y1, int w,  int h)
+{
+	cairo_rectangle(cr, x1, y1, w, h); // Not optimal
+//	cairo_stroke_preserve(cr);
+	cairo_clip(cr);
+}
+
+// 'erease' indicates wheter or not this is an eareasing operation
+// 
+void Draw_Bonus_Char(cairo_t *cr, int erease)
+{
+	int x,y;
+	
+	/* get right location */
+	x=MaxX/2 - 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
+	y=MaxY/2 + 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
+	// It was a 16 by 16 bitmap in the original apperently
+	cairo_clip_text(cr, x, y, 16, 16);
+	cairo_set_font_size(cr, 11);
+	if(erease)
+	{
+		cairo_set_source_rgb(cr, 0, 0, 0);
+	}
+	else
+	{
+		cairo_set_source_rgb(cr, SF_YELLOW);
+	}
+	cairo_text_at(cr, x-0, y+16,  Bonus_Char_Vector[rn]);
+	cairo_set_font_size(cr, POINTS_FONT_SIZE);
+}
+
 
 // Cleans all the previous paths from the context for the objects in need of an update
 void clean(cairo_t *cr)
@@ -377,6 +409,14 @@ void clean(cairo_t *cr)
 		clear_prev_path(cr, PrevShell);
 		Shell_Should_Clean = 0;
 	}
+	if(Bonus_Char_Should_Clean) // Set to always update (i.e. change nothing)
+	{
+		// write black bonus char  over previous one
+		Draw_Bonus_Char(cr, 1);
+		cairo_reset_clip(cr);
+		Bonus_Char_Should_Clean = 0;
+	}
+
 //	cairo_restore(cr);
 	cairo_new_path(cr);
 
@@ -419,6 +459,13 @@ void update_drawing(cairo_t *cr)
 		Draw_Shell(cr, Shell_X_Pos,Shell_Y_Pos,Shell_Headings,SHELL_SIZE_FACTOR*MaxX);
 		stroke_in_clip(cr);
 		Shell_Should_Update = 0;
+	}
+	if(Bonus_Char_Should_Update) // Set to always update (i.e. change nothing)
+	{
+		Draw_Bonus_Char(cr, 0);
+		cairo_reset_clip(cr);
+		// Blah blah? write bonus char 
+		// nothing here tho
 	}
 }
 
@@ -798,13 +845,6 @@ void Show_Score(cairo_t *cr, int val, int x, int y) /* anywhere within data pane
 		cairo_translate(cr, 0 , -Panel_Y_Start);
 
 //    setcolor(svcolor); /* restore previous color */
-}
-// W and H are the dimensions of the clipping rectangle
-void cairo_clip_text(cairo_t *cr, int x1, int y1, int w,  int h)
-{
-	cairo_rectangle(cr, x1, y1, w, h); // Not optimal
-//	cairo_stroke_preserve(cr);
-	cairo_clip(cr);
 }
 
 /* Every update_X function here had a "return(0)" zero statement on it's last line, without  
