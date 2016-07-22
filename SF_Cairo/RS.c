@@ -342,7 +342,7 @@ int Generate_Non_Bonus_Char()
 {
    int rn;
 
-   do { rn=randrange(0,10); }
+   do { rn=randrange(0,9); } // Used to be 10, appereantly random(n) generates in (0, n-1)
    while(rn==Bonus_Indication_Index); // I think the only reason for this being here 
 //	 is the the original random function always returned a number between 0 and n,
 //	 while other random fucntions can return a number in between m and n. 
@@ -414,6 +414,7 @@ void Handle_Bonus()
   }
 	else   /* Resource_Flag=ON; */
 	{
+//		Bonus_Char_Should_Update = 0;
 		Bonus_Char_Should_Clean = 1;
 		Resource_On_Counter++;
 		if(Resource_On_Counter>=Resource_Display_Interval)
@@ -556,11 +557,6 @@ void SF_iteration(cairo_t *cr)
 //    return(0);
 //}
 
-/*************************************************************************/
-
-        /* Run_Aiming Module  4.4.90 */
-
-/**************************************************************************/
 
 
 static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data)
@@ -588,9 +584,13 @@ static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data
 	  tim.tv_sec = 0;
 		loop_start_time=clock();
 
+//		printf("In sf iter \n ");
 		SF_iteration(cr);
+//		printf("After \n");
 		Ship_Should_Update = 1;
+
 		Draw_Frame(cr);
+
 
 		Update_Points(cr);
 		Update_Control(cr);
@@ -599,11 +599,11 @@ static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data
 		Update_Interval(cr);
 		Update_Speed(cr);
 		Update_Shots(cr);
+
 		clean(cr);
 		Draw_Hexagone(cr, MaxX/2,MaxY/2,SMALL_HEXAGONE_SIZE_FACTOR*MaxX);
 		stroke_in_clip(cr);
 		update_drawing(cr);
-
 		elapsed_time=((clock()-loop_start_time)/(double)CLOCKS_PER_SEC)*1000.0;
 	  tim.tv_nsec = (SF_DELAY-elapsed_time) * 1000000L;
     if(elapsed_time < SF_DELAY)

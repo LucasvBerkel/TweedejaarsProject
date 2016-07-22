@@ -362,7 +362,7 @@ void Draw_Bonus_Char(cairo_t *cr, int erease)
 	x=MaxX/2 - 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
 	y=MaxY/2 + 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
 	// It was a 16 by 16 bitmap in the original apperently
-	cairo_clip_text(cr, x, y, 16, 16);
+	cairo_clip_text(cr, x-1, y+6, 14, 14);
 	cairo_set_font_size(cr, 11);
 	if(erease)
 	{
@@ -372,10 +372,9 @@ void Draw_Bonus_Char(cairo_t *cr, int erease)
 	{
 		cairo_set_source_rgb(cr, SF_YELLOW);
 	}
-	cairo_text_at(cr, x-0, y+16,  Bonus_Char_Vector[rn]);
+	cairo_text_at(cr, x-0, y+16, Bonus_Char_Vector[rn]);
 	cairo_set_font_size(cr, POINTS_FONT_SIZE);
 }
-
 
 // Cleans all the previous paths from the context for the objects in need of an update
 void clean(cairo_t *cr)
@@ -415,6 +414,7 @@ void clean(cairo_t *cr)
 		Draw_Bonus_Char(cr, 1);
 		cairo_reset_clip(cr);
 		Bonus_Char_Should_Clean = 0;
+//		Bonus_Char_Should_Update = 0;
 	}
 
 //	cairo_restore(cr);
