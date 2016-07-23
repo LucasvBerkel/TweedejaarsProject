@@ -133,12 +133,12 @@ void Get_User_Input(cairo_t *cr)
         if (Key==GDK_KEY_1)    Check_Bonus_Input(cr);        /*   P(oints) */
         if (Key==GDK_KEY_2)    Check_Bonus_Input(cr);        /*   M(issiles) */
 				// probably not done right
-    		if (Key==GDK_KEY_3)   handle_I(); // was handled by kbd interrupt handler */ // hmm
+    		if (Key==GDK_KEY_3)   handle_3(); // was handled by kbd interrupt handler */ // hmm
 				// enter pauses the game 
-        if (Key==GDK_KEY_Return) Freeze_Flag=Freeze_Flag^1; /* toggle freeze flag */ 
-        if (Key==GDK_KEY_Escape)   End_Flag=ON;
+//        if (Key==GDK_KEY_Return) Freeze_Flag=Freeze_Flag^1; /* toggle freeze flag */ 
+//        if (Key==GDK_KEY_Escape)   End_Flag=ON;
     }
-    if(Check_Mine_Flag) /* after first press of I */
+    if(Check_Mine_Flag) /* after first press of 1 */
         {
             Check_Mine_Flag=OFF;
             if((Mine_Flag==ALIVE) && (Mine_Type==FRIEND))
@@ -195,15 +195,17 @@ void Find_Interval(cairo_t *cr)   /* display double-press interval */
 //    int svcolor;
 //    int x,y; // Unused
     int interval;
-
-    interval=Double_Press_Interval=((t2-t1)/CLOCKS_PER_SEC)*1000; /* in milliseconds */
+    interval=Double_Press_Interval=((double)(t2-t1)/CLOCKS_PER_SEC)*1000.0; /* in milliseconds */
     if((interval<SF_DELAY*20)&&(interval>SF_DELAY)) /* only when interval makes sense */
-    {
+    {		
         if((interval>=Interval_Lower_Limit)&&(interval<=Interval_Upper_Limit)
              &&(Mine_Flag==ALIVE)&&(Mine_Type==FOE))
-    Missile_Type=VS_FOE;   /* rearm missile */
-        Show_Mine_Type(cr, Mine_Char);
+				{
+					printf("Got interval. 👁 💯 💯 💯 \n");
+   				 Missile_Type=VS_FOE;   /* rearm missile */
+       		Show_Mine_Type(cr, Mine_Char);
 //        Update_Interval(cr);
+				}
     }
 }
 
@@ -557,7 +559,6 @@ void SF_iteration(cairo_t *cr)
 //    }
 //    return(0);
 //}
-
 
 
 static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data)

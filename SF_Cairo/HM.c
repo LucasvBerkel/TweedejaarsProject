@@ -58,7 +58,6 @@ void Select_Mine_Menus()
 		Friend_Menu[i] = Char_Set[ri];
 
 	}
-	printf("Foe menu item: %s ", Foe_Menu[0]);	
 }
 //
 //// allocate space for 5 pointers to strings
@@ -326,7 +325,6 @@ void Show_Mine_Type(cairo_t *cr, char *Minetype)
 //  int svcolor;
 //  int x,y;
 	Mine_Type_Should_Update = 1;
-	printf("Setting type char equal to: %s \n", Minetype);
 	Mine_Char = Minetype;
 }
 
@@ -377,7 +375,6 @@ void Generate_Mine(cairo_t *cr)
 	{
 		Mine_Indicator = Foe_Menu[randrange(0,2)];
 	}
-	printf("Got Mine_Indicator: %s \n", Mine_Indicator);
 	Show_Mine_Type(cr, Mine_Indicator);
 }
 
@@ -438,7 +435,6 @@ void Handle_Mine(cairo_t *cr)
 //		  Draw_Mine(cr, Mine_X_Pos,Mine_Y_Pos,MINE_SIZE_FACTOR*MaxX);
 //			clear_prev_path(cr, PrevMine);
 			Mine_Should_Clean = 1;
-			printf("Mine is dead \n");
 							/* erase mine */
 		  Mine_Flag=DEAD;
 		  Mine_Dead_Counter=0;
@@ -453,7 +449,6 @@ void Handle_Mine(cairo_t *cr)
 		  if(Mine_Dead_Counter++ >= Mine_Wait_Loops)
 		    {
 		      Generate_Mine(cr);
-					printf("Spawned mine \n");
 		      Mine_Flag=ALIVE;
 		      Mine_Alive_Counter=0;
 		    }
@@ -463,7 +458,6 @@ void Handle_Mine(cairo_t *cr)
 		  Move_Mine(cr);
 		  if(Mine_Alive_Counter++ >= Mine_Live_Loops)
 			{
-				printf("Despawned mine because it lived too long \n");
 		  	Mine_Flag=KILL;
 			}
 		  if(Mine_Alive_Counter>MISSILE_FORT_TIME_LIMIT)
