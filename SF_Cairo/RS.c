@@ -1,5 +1,5 @@
 // OS X compilation:
-/* gcc -Wall -g  myvars.c TCOL.c DE.c HM.c RS.c -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo `pkg-config --cflags gtk+-3.0` `pkg-config --libs gtk+-3.0`  -o RS -Wno-dangling-else -Wno-switch; */
+/* gcc -Wall -g  myvars.c TCOL.c DE.c HM.c RS.c -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo `pkg-config --cflags gtk+-3.0` `pkg-config --libs gtk+-3.0`  -o RS -Wno-dangling-else -Wno-switch  -Wno-incompatible-pointer-types-discards-qualifiers */
 // To run without GTK warnings: (actually running without any error logging to the terminal)
 // ./RS 2>/dev/null 
 
@@ -36,8 +36,8 @@
 
 
 // I don't think we do anything with this menu stuff
-extern char Friend_Menu[3][1];
-extern char Foe_Menu[3][1];
+extern const char *Friend_Menu;
+extern const char *Foe_Menu[3];
 extern char *Mine_Indicator;
 extern mine_type Mine_Type;
 
@@ -77,15 +77,15 @@ int jitter_switch = 1;
 // Something to do with double presses or something
 // t2 - t1 should give some value in milliseconds, if that is above some threshold some
 // flag is set. 
-void handle_F3()
+void handle_3()
 {
-	if((Key==GDK_KEY_F3)&&(Lastkey!=GDK_KEY_F3)&&(!(Timing_Flag))) { /* first F3 keypress */
+	if((Key==GDK_KEY_3)&&(Lastkey!=GDK_KEY_3)&&(!(Timing_Flag))) { /* first I keypress */
        t1=clock();
        Timing_Flag=ON;
        Check_Mine_Flag=ON; /* is used by Get_User_Input(cr) */
    }
 
-   if((Key==GDK_KEY_F3)&&(Lastkey==GDK_KEY_F3)&&(Timing_Flag)) {   /* second F3 keypress */
+   if((Key==GDK_KEY_3)&&(Lastkey==GDK_KEY_3)&&(Timing_Flag)) {   /* second I keypress */
        t2=clock();
        Timing_Flag=OFF;
        Key=0;   /* to enable consecutive double_press */
@@ -96,27 +96,28 @@ void handle_F3()
 }
 
 void Check_Bonus_Input(cairo_t *cr) {
-//    if((Bonus_Display_Flag==NOT_PRESENT)||(Bonus_Display_Flag==NON_BONUS)) {
-//    } else if(Bonus_Display_Flag==FIRST_BONUS) {
-//        Bonus_Wasted_Flag=ON;
-//    } else if(Bonus_Display_Flag==SECOND_BONUS) {
-//        if(!Bonus_Wasted_Flag) {
-//            if(Key==GDK_KEY_F1) {
-//                No_Of_Points_Bonus_Taken++;
-//                Points=Points+100;
+    if((Bonus_Display_Flag==NOT_PRESENT)||(Bonus_Display_Flag==NON_BONUS)) {
+    } else if(Bonus_Display_Flag==FIRST_BONUS) {
+        Bonus_Wasted_Flag=ON;
+    } else if(Bonus_Display_Flag==SECOND_BONUS) {
+        if(!Bonus_Wasted_Flag) {
+            if(Key==GDK_KEY_1) {
+                No_Of_Points_Bonus_Taken++;
+                Points=Points+100;
 //                Update_Points(cr);
-//            } else {
-//                No_Of_Missiles_Bonus_Taken++;
-//                Missile_Stock=Missile_Stock+50;
-//                if(Missile_Stock>=100) Missile_Stock=100;
+            } else {
+                No_Of_Missiles_Bonus_Taken++;
+                Missile_Stock=Missile_Stock+50;
+                if(Missile_Stock>=100) Missile_Stock=100;
 //                Update_Shots(cr);
-//            }
-//        Bonus_Display_Flag=NOT_PRESENT;
-//        Bonus_Granted=ON;
+            }
+        Bonus_Display_Flag=NOT_PRESENT;
+        Bonus_Granted=ON;
 //        Xor_Bonus_Char(rn);    /* erase present $ char */
+				Bonus_Char_Should_Clean = 0;
 //        Write_Bonus_Message(cr); /*  Announce_Bonus  */
-//        }
-//    }
+        }
+    }
 }
 
 
@@ -129,15 +130,15 @@ void Get_User_Input(cairo_t *cr)
         if (Key==GDK_KEY_Left)  Rotate_Input=-1;      /*   LEFT  */
         if (Key==GDK_KEY_Right) Rotate_Input=1;       /*   RIGHT */ 
         if (Key==GDK_KEY_space)  New_Missile_Flag=ON;  /*   DOWN  */ // Used to be down
-        if (Key==GDK_KEY_F1)    Check_Bonus_Input(cr);        /*   P(oints) */
-        if (Key==GDK_KEY_F2)    Check_Bonus_Input(cr);        /*   M(issiles) */
+        if (Key==GDK_KEY_1)    Check_Bonus_Input(cr);        /*   P(oints) */
+        if (Key==GDK_KEY_2)    Check_Bonus_Input(cr);        /*   M(issiles) */
 				// probably not done right
-    		if (Key==GDK_KEY_F3)   handle_F3(); // was handled by kbd interrupt handler */ // hmm
+    		if (Key==GDK_KEY_3)   handle_I(); // was handled by kbd interrupt handler */ // hmm
 				// enter pauses the game 
         if (Key==GDK_KEY_Return) Freeze_Flag=Freeze_Flag^1; /* toggle freeze flag */ 
         if (Key==GDK_KEY_Escape)   End_Flag=ON;
     }
-    if(Check_Mine_Flag) /* after first press of F3 */
+    if(Check_Mine_Flag) /* after first press of I */
         {
             Check_Mine_Flag=OFF;
             if((Mine_Flag==ALIVE) && (Mine_Type==FRIEND))
@@ -722,9 +723,9 @@ void set_key(int key_value)
 	Lastkey = Key;
 	Key = key_value;
 //  A list of GTK hex key values as decimals
-//	GDK_KEY_F1 0xffbe 65470 
-//	GDK_KEY_F2 0xffbf 65471
-//	GDK_KEY_F3 0xffc0 65472
+//	GDK_KEY_1 0xffbe 65470 
+//	GDK_KEY_2 0xffbf 65471
+//	GDK_KEY_3 0xffc0 65472
 //	GDK_KEY_Left 0xff51 65361
 //	GDK_KEY_Up 0xff52 65362
 //	GDK_KEY_space 0x020 32 
@@ -758,10 +759,10 @@ gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
 //		case GDK_KEY_space:
 //			
 //			break;
-//		case GDK_KEY_F3:
+//		case GDK_KEY_3:
 //
 //			break;
-//		case GDK_KEY_F2:
+//		case GDK_KEY_2:
 //
 //		case GDK_KEY_Return:
 //			
