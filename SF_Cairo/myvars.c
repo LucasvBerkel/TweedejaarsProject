@@ -4,6 +4,10 @@
 #include "myconst.h"
 #include "myext.h"
 #include "myenums.h"
+#include <sys/time.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <math.h>
 
 cairo_t *SF_canvas;
 cairo_surface_t *surface;
@@ -66,9 +70,12 @@ struct aim_sess_results{
 };
 
 
-clock_t t0;  /* time when FOE mine is born */
-clock_t t1;  /* double press interval start */
-clock_t t2;  /* double press interval end */
+//clock_t t0;  /* time when FOE mine is born */
+//clock_t t1;  /* double press interval start */
+//clock_t t2;  /* double press interval end */
+struct timeval t0;
+struct timeval intv_t1;
+struct timeval intv_t2;
 
 char *Mine_Char;
 

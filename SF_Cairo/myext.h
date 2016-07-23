@@ -79,9 +79,12 @@ extern int Resource_Display_Interval;
 extern char Restart_Flag;
 
 // Used to be double longs
-extern clock_t t0;  /* time when FOE mine is born */
-extern clock_t t1;  /* double press interval start */
-extern clock_t t2;  /* double press interval end */
+//extern clock_t t0;  /* time when FOE mine is born */
+//extern clock_t t1;  /* double press interval start */
+//extern clock_t t2;  /* double press interval end */
+extern struct timeval t0;
+extern struct timeval intv_t1;
+extern struct timeval intv_t2;
 
 		/* GAME PRAMATERS */
 extern int Ship_Rotate_Step;

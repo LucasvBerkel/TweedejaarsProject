@@ -15,9 +15,9 @@
 //#include <dos.h>
 #include <time.h>
 #include <math.h>
+#include <sys/time.h>
 #include <unistd.h>
 #include <string.h>
-#include <stdlib.h>
 
 //#include "myconst.h"
 //#include "myvars.h"
@@ -75,24 +75,35 @@ int jitter_switch = 1;
 //extern Initialize_Graphics();
 
 // Something to do with double presses or something
-// t2 - t1 should give some value in milliseconds, if that is above some threshold some
+// intv_t2 - intv_t1 should give some value in milliseconds, if that is above some threshold some
 // flag is set. 
+
+
+
+int timeval_subtract(struct timeval *result, struct timeval *t2, struct timeval *t1)
+{
+    long int diff = (t2->tv_usec + 1000000 * t2->tv_sec) - (t1->tv_usec + 1000000 * t1->tv_sec);
+    result->tv_sec = diff / 1000000;
+    result->tv_usec = diff % 1000000;
+
+    return (diff<0);
+}
+
 void handle_3()
 {
 	if((Key==GDK_KEY_3)&&(Lastkey!=GDK_KEY_3)&&(!(Timing_Flag))) { /* first I keypress */
-       t1=clock();
-       Timing_Flag=ON;
-       Check_Mine_Flag=ON; /* is used by Get_User_Input(cr) */
-   }
+		gettimeofday(&intv_t1, NULL);
+    Timing_Flag=ON;
+    Check_Mine_Flag=ON; /* is used by Get_User_Input(cr) */
+	}
 
-   if((Key==GDK_KEY_3)&&(Lastkey==GDK_KEY_3)&&(Timing_Flag)) {   /* second I keypress */
-       t2=clock();
-       Timing_Flag=OFF;
-       Key=0;   /* to enable consecutive double_press */
-       /* where with next keypress Lastkey=0 */
-       Display_Interval_Flag=ON;  /* is used in main */
+	if((Key==GDK_KEY_3)&&(Lastkey==GDK_KEY_3)&&(Timing_Flag)) {   /* second I keypress */
+		gettimeofday(&intv_t2, NULL);
+		Timing_Flag=OFF;
+		Key=0;   /* to enable consecutive double_press */
+		/* where with next keypress Lastkey=0 */
+		Display_Interval_Flag=ON;  /* is used in main */
    }
-
 }
 
 void Check_Bonus_Input(cairo_t *cr) {
@@ -138,12 +149,14 @@ void Get_User_Input(cairo_t *cr)
 //        if (Key==GDK_KEY_Return) Freeze_Flag=Freeze_Flag^1; /* toggle freeze flag */ 
 //        if (Key==GDK_KEY_Escape)   End_Flag=ON;
     }
-    if(Check_Mine_Flag) /* after first press of 1 */
+    if(Check_Mine_Flag) /* after first press of 3 */
         {
             Check_Mine_Flag=OFF;
             if((Mine_Flag==ALIVE) && (Mine_Type==FRIEND))
-    Missile_Type=WASTED;
-        Show_Mine_Type(cr, Mine_Indicator);
+						{
+    					Missile_Type=WASTED;
+        			Show_Mine_Type(cr, Mine_Indicator);
+						}
         }
 }
 
@@ -190,12 +203,18 @@ void Clear_Interval()   /* clear double-press interval */
 //        setcolor(svcolor); /* restore previous color */
 }
 
+
+
+
 void Find_Interval(cairo_t *cr)   /* display double-press interval */
 {
 //    int svcolor;
 //    int x,y; // Unused
     int interval;
-    interval=Double_Press_Interval=((double)(t2-t1)/CLOCKS_PER_SEC)*1000.0; /* in milliseconds */
+		struct timeval tvDiff;
+//    interval=Double_Press_Interval=round(((double)(intv_t2-intv_t1)/(double)CLOCKS_PER_SEC)*1000.0); /* in milliseconds */  
+		timeval_subtract(&tvDiff, &intv_t2, &intv_t1);
+		interval=Double_Press_Interval=round(tvDiff.tv_usec/1000.0);
     if((interval<SF_DELAY*20)&&(interval>SF_DELAY)) /* only when interval makes sense */
     {		
         if((interval>=Interval_Lower_Limit)&&(interval<=Interval_Upper_Limit)
@@ -568,6 +587,9 @@ static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data
 	// Oddly enough, clipping seems to work different accros surfaces. Therefore it is 
 	// sometimes wise to set things to always update here. (a clip within a quartz 	
 	// surface erases everything outside of the clipping region)
+  struct timeval loop_start_time;
+	gettimeofday(&loop_start_time, NULL); // Get the time at this point
+
 	Initialize_Graphics(cr);  // Why is this needed again
 
 	if(Initialized_Graphics == 0)
@@ -580,11 +602,11 @@ static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data
 	Fort_Should_Update = 1;
 	if(!Explosion_Flag && !Jitter_Flag)
 	{
-		unsigned long elapsed_time;
-	  clock_t loop_start_time;
+		unsigned int elapsed_time;
+		struct timeval loop_end_time, loopDiff;
 		struct timespec tim;
 	  tim.tv_sec = 0;
-		loop_start_time=clock();
+
 
 //		printf("In sf iter \n ");
 		SF_iteration(cr);
@@ -606,12 +628,15 @@ static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data
 		Draw_Hexagone(cr, MaxX/2,MaxY/2,SMALL_HEXAGONE_SIZE_FACTOR*MaxX);
 		stroke_in_clip(cr);
 		update_drawing(cr);
-		elapsed_time=((double)(clock()-loop_start_time)/(double)CLOCKS_PER_SEC)*1000.0;
-	  tim.tv_nsec = (SF_DELAY-elapsed_time) * 1000000L;
+		gettimeofday(&loop_end_time, NULL);
+		timeval_subtract(&loopDiff, &loop_end_time, &loop_start_time);
+//		elapsed_time=((double)(clock()-loop_start_time)/(double)CLOCKS_PER_SEC)*1000.0;
+		elapsed_time = round(loopDiff.tv_usec/1000.0);
     if(elapsed_time < SF_DELAY)
 		{
 //				printf("Sleeping for %Lf \n", SF_DELAY-elapsed_time);
 //        ms_sleep(SF_DELAY-elapsed_time);  /* wait up to 50 milliseconds */
+		  	tim.tv_nsec = (SF_DELAY-elapsed_time) * 1000000L;
 				nanosleep(&tim , NULL);
 		}
 	}

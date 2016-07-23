@@ -8,6 +8,7 @@
 //#include <dos.h>
 #include <time.h>
 #include <math.h>
+#include <sys/time.h>
 #include <string.h>
 
 //#include <cairo.h>
@@ -229,7 +230,8 @@ void Handle_Fortress(cairo_t *cr)
 
 void Handle_Speed_Score(cairo_t *cr)
 {
-  int interval;
+  struct timeval tDiff;
+	int interval;
   int dts;
 
   if(Game_Type==SPACE_FORTRESS)
@@ -238,7 +240,8 @@ void Handle_Speed_Score(cairo_t *cr)
   if(Mine_Type==FOE)
     if(Missile_Type==VS_FOE) /* successful double press */
       {
-	interval=((t0-t2)/CLOCKS_PER_SEC)*1000; /* time interval from missile */
+			timeval_subtract(&tDiff, &intv_t2, &t0);
+			interval=round(tDiff.tv_usec / 1000.0); /* time interval from missile */
 			/* appearance to end of successful */
 			/* double press interval      */
 	if(interval<=1000) dts=40;
@@ -364,7 +367,8 @@ void Generate_Mine(cairo_t *cr)
     {
       Mine_Type=FOE;
 			// I'm not sure if this line does anything
-      t0=clock(); /* when "a mine is born .."? */  // Why and how does it acces this?
+			gettimeofday(&t0, NULL);
+//      t0=clock(); /* when "a mine is born .."? */  // Why and how does it access this?
     }
 
   if (Mine_Type==FRIEND) 

@@ -28,6 +28,7 @@ void ms_sleep(unsigned long miliseconds);
 /****** capture any keyboard input via indicated routine **********/
 //void Capture_Kbd(void interrupt far (*func) () );
 
+int timeval_subtract(struct timeval *result, struct timeval *t2, struct timeval *t1);
 void Restore_Kbd();
 
 void Get_User_Input();

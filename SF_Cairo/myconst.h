@@ -40,7 +40,7 @@
 #define SHELL_SPEED 3.45 // was 7
 #define MAX_NO_OF_MISSILES 6
 //#define SF_DELAY 50.0
-#define SF_DELAY 50	// was 47
+#define SF_DELAY 44	// was 47
 #define ANIMATION_DELAY_EXP 50  // In Milliseconds
 #define ANIMATION_DELAY_JITTER 10
 // All the color values have been altered to be RGB tuples
