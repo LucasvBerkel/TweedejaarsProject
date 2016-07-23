@@ -107,16 +107,28 @@ void handle_3()
 }
 
 void Check_Bonus_Input(cairo_t *cr) {
-    if((Bonus_Display_Flag==NOT_PRESENT)||(Bonus_Display_Flag==NON_BONUS)) {
-    } else if(Bonus_Display_Flag==FIRST_BONUS) {
+    if((Bonus_Display_Flag==NOT_PRESENT)||(Bonus_Display_Flag==NON_BONUS)) 
+		{
+			printf("Did nothing! \n"); // do nothing
+    } 
+		else if(Bonus_Display_Flag==FIRST_BONUS) {
         Bonus_Wasted_Flag=ON;
-    } else if(Bonus_Display_Flag==SECOND_BONUS) {
-        if(!Bonus_Wasted_Flag) {
-            if(Key==GDK_KEY_1) {
+    } 
+		else if(Bonus_Display_Flag==SECOND_BONUS) 
+		{
+        if(!Bonus_Wasted_Flag) 
+				{
+            if(Key==GDK_KEY_1) 
+						{
+								printf("✨  Got a cool points bonus! ✨ \n");
                 No_Of_Points_Bonus_Taken++;
                 Points=Points+100;
 //                Update_Points(cr);
-            } else {
+            } 
+						//GDK_KEY_2, Get_User_Input() only calls this function when the input is '1' or '2'
+						else  
+						{
+								printf("🎈  Got a missile bonus! 🎈 \n");
                 No_Of_Missiles_Bonus_Taken++;
                 Missile_Stock=Missile_Stock+50;
                 if(Missile_Stock>=100) Missile_Stock=100;
@@ -127,8 +139,12 @@ void Check_Bonus_Input(cairo_t *cr) {
 //        Xor_Bonus_Char(rn);    /* erase present $ char */
 				Bonus_Char_Should_Clean = 0;
 //        Write_Bonus_Message(cr); /*  Announce_Bonus  */
-        }
-    }
+				}
+				else
+				{
+					printf(" Wasted bonus  💦  \n");
+				}
+		}
 }
 
 
@@ -167,7 +183,6 @@ void ms_sleep(unsigned long miliseconds)
   tim.tv_sec = 0;
   tim.tv_nsec = miliseconds * 1000000L;
 	nanosleep(&tim , &tim2);
-
 }
 
 
