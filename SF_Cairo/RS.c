@@ -1,5 +1,7 @@
-// OS X compilation:
-/* gcc -Wall -g  myvars.c TCOL.c DE.c HM.c RS.c -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo `pkg-config --cflags gtk+-3.0` `pkg-config --libs gtk+-3.0`  -o RS -Wno-dangling-else -Wno-switch  -Wno-incompatible-pointer-types-discards-qualifiers */
+// OS X compilation (with GUI):
+/* clang -Wall -g  myvars.c TCOL.c DE.c HM.c RS.c -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo `pkg-config --cflags gtk+-3.0` `pkg-config --libs gtk+-3.0`  -o RS -Wno-dangling-else -Wno-switch -D GUI */
+// To disable the gui and compile as a library, leave out the GUI switch above. (i.e. remove
+// the -u option)
 // To run without GTK warnings: (actually running without any error logging to the terminal)
 // ./RS 2>/dev/null 
 
@@ -34,11 +36,13 @@
     #define M_PI 3.14159265358979323846
 #endif
 
+#define JITTER_MODE 1
+#define EXPLOSION_MODE 2
 
 // I don't think we do anything with this menu stuff
-extern const char *Friend_Menu;
-extern const char *Foe_Menu[3];
-extern char *Mine_Indicator;
+//extern const char *Friend_Menu[3];
+//extern const char *Foe_Menu[3];
+//extern char *Mine_Indicator;
 extern mine_type Mine_Type;
 
 int jitter_switch = 1;
@@ -124,6 +128,7 @@ void Check_Bonus_Input(cairo_t *cr) {
                 No_Of_Points_Bonus_Taken++;
                 Points=Points+100;
 //                Update_Points(cr);
+								Points_Should_Update = 1;
             } 
 						//GDK_KEY_2, Get_User_Input() only calls this function when the input is '1' or '2'
 						else  
@@ -163,7 +168,7 @@ void Get_User_Input(cairo_t *cr)
     		if (Key==GDK_KEY_3)   handle_3(); // was handled by kbd interrupt handler */ // hmm
 				// enter pauses the game 
 //        if (Key==GDK_KEY_Return) Freeze_Flag=Freeze_Flag^1; /* toggle freeze flag */ 
-//        if (Key==GDK_KEY_Escape)   End_Flag=ON;
+        if (Key==GDK_KEY_Escape)   End_Flag=ON;
     }
     if(Check_Mine_Flag) /* after first press of 3 */
         {
@@ -514,87 +519,79 @@ void SF_iteration(cairo_t *cr)
 }
 
 
-// Misses some syntax
-//int Run_SF(cairo_t *cr)
-//{
-//    clock_t elapsed_time;
-//    clock_t loop_start_time;
-    // SCORE SAVE FILE
-		// TODO: instead of this file, make a python function that returns the score as an int
-		// Probably just some kind of wrapper function like get_score that you can call after
-		// update_frame() that just returns the Score global
-//    FILE *f = fopen("SAVE\\SCORE.TXT", "w");
-//    if (f == NULL) {
-//        printf("A state file is not present.\n");
-//        exit(1);
-//    }
-//    fclose(f); 
-//		Init_Game();
-//		Open_Graphics();
-//		Initialize_Graphics(cr);  Probably not needed (or depends on GTK/versus array render)
-//		Reset_Screen(cr); 
-//		 Draw_Frame(cr here?)
-//		Loop_Counter=0;
-//
-//    Init_Session();
-//    Game_Counter=0;
-//    do {   /* loop on number of games here */
-//        SF_iteration
-//        } while(!Restart_Flag&&!End_Flag&&(Loop_Counter < One_Game_Loops));
-//				 This says quit the loop if the time defined by One_Game_Loops (default is 3 min)
-//				 has passed (this can be measured with clock I guess?) Because the loop always takes
-//				 exactly 50ms we can just increment loop counter until it reaches a threshold 
-//        /* ESC or three minutes */
-//
-//         RUNNING FILE
-//        f = fopen("SAVE\\SCORE.TXT", "w"); // Open this earlier for performace
-//        fprintf(f, "FALSE");
-//        fclose(f);
-//
-//        Restore_Tik();
-//        Reset_Timer();
-//        Restore_Kbd();
-//        Set_Kbd_Rate(0x4); /* to repeat rate 20Hz */
-//
-//        nosound();   /* just in case */
-//        sound(400);
-//        delay(500); // Not intersting cus only sound
-//        nosound();
-//        Game_Counter++;
-//        
-//         final_display();
-//        Close_Graphics(cr);
-//				 Pretty sure we can skip this
-//        printf("Episode %d score: %d\n", Game_Counter, Score);
-//        if(!Restart_Flag && !End_Flag) {
-//            while(1) {
-//								char ex = 0;
-//                char ex = getch(); // getch reads one keyboard input char from the user
-//                if(ex==9) {
-//                    break;
-//                } else if(ex==27) {
-//                    return(0);
-//                }
-//            }
-//        }
-//
-//        
-//        clrscr();  // From graphics.h or something
-//        /* end one game here */
-//    } while(!Restart_Flag && !End_Flag);
-//    } while((Game_Counter< No_Of_Games)&&(!End_Flag));
-//
-//    nosound();   /* just in case */
-//    sound(400);
-//    delay(1000);
-//    nosound();
-//    if(Restart_Flag) {
-//        return(1);
-//    }
-//    return(0);
-//}
+// Does one iteration of the game: either in animation modus or in game event modus.
+// The modus is checked by some global flags
+// Returns the mode of the iteration, which might unnused?
+int game_iteration(cairo_t *cr)
+{
+	if(!Explosion_Flag && !Jitter_Flag)
+	{
+		clean(cr);
+		SF_iteration(cr);
+		return 0;
+	}
+	else if(Explosion_Flag)
+	{
+		// Handle drawing here, as otherwhise the ship will move to it's new location
+		cairo_new_path(cr);
+		cairo_set_source_rgb(cr, SF_YELLOW);
+		cairo_append_path(cr, PrevShip);
+		cairo_stroke(cr);
 
+//			cairo_fill_preserve(cr);
+	
+		// This actually does nothing the first time around
+		// explosion_step2 is sort of the inner, yellow circle, one step behind step1
+		for(int i = 0; i < Explosion_Step+1; i++)
+		{
+			explosion_step2(cr, ExpX, ExpY, i);
+		}
+		explosion_step1(cr, ExpX, ExpY, Explosion_Step);
+		Explosion_Step++;
 
+		if((Explosion_Step * 10) >= ExpRadius)
+		{
+			Explosion_Step = 0;
+			Explosion_Flag = 0;
+			Ship_Should_Update = 1;
+			Ship_Should_Clean = 1;
+			Reset_Screen(cr);
+		}
+		return EXPLOSION_MODE;
+	}
+	else if(Jitter_Flag)
+	{
+		Ship_Should_Update = 0; // Take control of ship handling
+		Ship_Should_Clean = 0;
+		if(jitter_switch)
+		{
+			jitter_step1(cr, Jitter_Step);
+			jitter_switch = 0;
+		}
+		else
+		{
+			jitter_step2(cr, Jitter_Step);
+			Jitter_Step--;
+			jitter_switch = 1;
+		}
+		if(Jitter_Step < 1)
+		{
+			Jitter_Step = 8;
+			Jitter_Flag = 0;
+
+			// Restore Ship to it's previous position
+			clear_prev_path(cr, PrevShip);
+			Draw_Ship(cr,Ship_X_Pos,Ship_Y_Pos,Ship_Headings, SHIP_SIZE_FACTOR*MaxX);
+			stroke_in_clip(cr);
+		}
+		return JITTER_MODE;
+	}
+	return -1;
+}
+
+#ifdef GUI
+// Translate this to non gui call (i.e. keep some variable set stuff, and calc the time u need
+// to wait still in this thingy)
 static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 {
 //	printf("Ship pos on draw: %d %d\n", Ship_X_Pos, Ship_Y_Pos);
@@ -602,7 +599,11 @@ static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data
 	// Oddly enough, clipping seems to work different accros surfaces. Therefore it is 
 	// sometimes wise to set things to always update here. (a clip within a quartz 	
 	// surface erases everything outside of the clipping region)
-  struct timeval loop_start_time;
+	unsigned int elapsed_time;
+	struct timeval loop_start_time, loop_end_time, loopDiff;
+	struct timespec tim;
+  tim.tv_sec = 0;
+
 	gettimeofday(&loop_start_time, NULL); // Get the time at this point
 
 	Initialize_Graphics(cr);  // Why is this needed again
@@ -614,35 +615,38 @@ static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data
 	}
 	// Main sf stuff
 
+
+	for(int m = 0; m < MAX_NO_OF_MISSILES; m++)
+	{ 
+		if (Missile_Flag[m]==ALIVE)
+		{
+			Missile_Should_Update[m] = 1;
+		}
+	}
+	int mode_code = game_iteration(cr);
 	Fort_Should_Update = 1;
-	if(!Explosion_Flag && !Jitter_Flag)
+	Ship_Should_Update = 1;
+	Fort_Should_Clean = 1;
+	Ship_Should_Clean = 1;
+	if(!Mine_Type_Should_Clean)	
 	{
-		unsigned int elapsed_time;
-		struct timeval loop_end_time, loopDiff;
-		struct timespec tim;
-	  tim.tv_sec = 0;
+		Mine_Type_Should_Update = 1;
+	}
+	Points_Should_Update = 1; // Show the first time around right?
+	Velocity_Should_Update = 1;
+	Speed_Should_Update = 1;
+	Vulner_Should_Update = 1;
+	Interval_Should_Update = 1;
+	Shots_Should_Update = 1;
+	Control_Should_Update = 1;
 
+	Draw_Frame(cr);
+	Draw_Hexagone(cr, MaxX/2,MaxY/2,SMALL_HEXAGONE_SIZE_FACTOR*MaxX);
+	stroke_in_clip(cr);
+	update_drawing(cr);
 
-//		printf("In sf iter \n ");
-		SF_iteration(cr);
-//		printf("After \n");
-		Ship_Should_Update = 1;
-
-		Draw_Frame(cr);
-
-
-		Update_Points(cr);
-		Update_Control(cr);
-		Update_Velocity(cr);
-		Update_Vulner(cr);
-		Update_Interval(cr);
-		Update_Speed(cr);
-		Update_Shots(cr);
-
-		clean(cr);
-		Draw_Hexagone(cr, MaxX/2,MaxY/2,SMALL_HEXAGONE_SIZE_FACTOR*MaxX);
-		stroke_in_clip(cr);
-		update_drawing(cr);
+	if(mode_code == 0)
+	{
 		gettimeofday(&loop_end_time, NULL);
 		timeval_subtract(&loopDiff, &loop_end_time, &loop_start_time);
 //		elapsed_time=((double)(clock()-loop_start_time)/(double)CLOCKS_PER_SEC)*1000.0;
@@ -655,129 +659,75 @@ static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data
 				nanosleep(&tim , NULL);
 		}
 	}
-	else  // Animating
+	if(mode_code == JITTER_MODE)
 	{
-		Draw_Frame(cr);
-		// we don't want our object disappearing!
-		if (Mine_Should_Update) // Only update when already on
-		{
-			Mine_Should_Update = 1; 
-		}
-		if (Shell_Should_Update)
-		{
-			Shell_Should_Update = 1;
-		}
-		if(Explosion_Flag)
-		{
-			unsigned long exp_sleep;
-			// Handle drawing here, as otherwhise the ship will move to it's new location
-			Ship_Should_Update = 0;
-			Ship_Should_Clean = 0;
-			cairo_new_path(cr);
-			cairo_set_source_rgb(cr, SF_YELLOW);
-			cairo_append_path(cr, PrevShip);
-			cairo_stroke(cr);
-
-//			cairo_fill_preserve(cr);
-		
-			// This actually does nothing the first time around
-			// explosion_step2 is sort of the inner, yellow circle, one step behind step1
-			for(int i = 0; i < Explosion_Step+1; i++)
-			{
-				explosion_step2(cr, ExpX, ExpY, i);
-			}
-			explosion_step1(cr, ExpX, ExpY, Explosion_Step);
-			
-
-			exp_sleep = (250.0/ ((double) Explosion_Step)) + ANIMATION_DELAY_EXP;
-			ms_sleep(exp_sleep);
-			Explosion_Step++;
-			if((Explosion_Step * 10) >= ExpRadius)
-			{
-				Explosion_Step = 0;
-				Explosion_Flag = 0;
-				Ship_Should_Update = 1;
-				Ship_Should_Clean = 1;
-				Reset_Screen(cr);
-			}
-		}
-		else if(Jitter_Flag)
-		{
-			Ship_Should_Update = 0;
-			Ship_Should_Clean = 0;
-
-			for(int m = 0; m < MAX_NO_OF_MISSILES; m++)
-			{ 
-				if (Missile_Flag[m]==ALIVE)
-				{
-					Missile_Should_Update[m] = 1;
-				}
-			}
-			if(jitter_switch)
-			{
-				jitter_step1(cr, Jitter_Step);
-				jitter_switch = 0;
-			}
-			else
-			{
-				jitter_step2(cr, Jitter_Step);
-				Jitter_Step--;
-				jitter_switch = 1;
-			}
-		  ms_sleep((((unsigned long)Jitter_Step)*5L) + ANIMATION_DELAY_JITTER);
-
-			if(Jitter_Step < 1)
-			{
-				Jitter_Step = 8;
-				Jitter_Flag = 0;
-
-				// Restore Ship to it's previous position
-				clear_prev_path(cr, PrevShip);
-				Draw_Ship(cr,Ship_X_Pos,Ship_Y_Pos,Ship_Headings, SHIP_SIZE_FACTOR*MaxX);
-				stroke_in_clip(cr);
-			}
-		}
-		Update_Points(cr);
-		Update_Control(cr);
-		Update_Velocity(cr);
-		Update_Vulner(cr);
-		Update_Interval(cr);
-		Update_Speed(cr);
-		Update_Shots(cr);
-		clean(cr);
-		Draw_Hexagone(cr, MaxX/2,MaxY/2,SMALL_HEXAGONE_SIZE_FACTOR*MaxX);
-		stroke_in_clip(cr);
-		update_drawing(cr);
+		ms_sleep((((unsigned long)Jitter_Step)*5L) + ANIMATION_DELAY_JITTER);
+	}
+	else if(mode_code == JITTER_MODE)
+	{
+		ms_sleep((250.0/ ((double) Explosion_Step-1)) + ANIMATION_DELAY_EXP);
 	}
 
 
+
+  
 	
+//	if(!Explosion_Flag && !Jitter_Flag)
+//	{
+//		unsigned int elapsed_time;
+//		struct timeval loop_end_time, loopDiff;
+//		struct timespec tim;
+//	  tim.tv_sec = 0;
+//
+//
+////		printf("In sf iter \n ");
+//		SF_iteration(cr);
+////		printf("After \n");
+//
+//		Draw_Frame(cr);
+//
+//
+//		Update_Points(cr);
+//		Update_Control(cr);
+//		Update_Velocity(cr);
+//		Update_Vulner(cr);
+//		Update_Interval(cr);
+//		Update_Speed(cr);
+//		Update_Shots(cr);
+//
+//		clean(cr);
+//		Draw_Hexagone(cr, MaxX/2,MaxY/2,SMALL_HEXAGONE_SIZE_FACTOR*MaxX);
+//		stroke_in_clip(cr);
+//		update_drawing(cr);
+//		gettimeofday(&loop_end_time, NULL);
+//		timeval_subtract(&loopDiff, &loop_end_time, &loop_start_time);
+////		elapsed_time=((double)(clock()-loop_start_time)/(double)CLOCKS_PER_SEC)*1000.0;
+//		elapsed_time = round(loopDiff.tv_usec/1000.0);
+//    if(elapsed_time < SF_DELAY)
+//		{
+////				printf("Sleeping for %Lf \n", SF_DELAY-elapsed_time);
+////        ms_sleep(SF_DELAY-elapsed_time);  /* wait up to 50 milliseconds */
+//		  	tim.tv_nsec = (SF_DELAY-elapsed_time) * 1000000L;
+//				nanosleep(&tim , NULL);
+//		}
+//	}
+//	else  // Animating
+//	{
+		// we don't want our object disappearing!
+			
 
 
 	return FALSE; // Not sure why this should return false
 }
 
-// This is so that the python interface can set the key (maybe move to DE? (nah, runloop 
-// is also here))
-void set_key(int key_value)
-{
-	Lastkey = Key;
-	Key = key_value;
-//  A list of GTK hex key values as decimals
-//	GDK_KEY_1 0xffbe 65470 
-//	GDK_KEY_2 0xffbf 65471
-//	GDK_KEY_3 0xffc0 65472
-//	GDK_KEY_Left 0xff51 65361
-//	GDK_KEY_Up 0xff52 65362
-//	GDK_KEY_space 0x020 32 
-}
 
 
 gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
 {
-		Lastkey = Key;
-		Key = event->keyval;
-		New_Input_Flag=ON;
+
+//		Lastkey = Key;
+//		Key = event->keyval;
+		set_key(event->keyval); // Only set the key here
 	
 //  switch (event->keyval)
 //  {
@@ -890,7 +840,85 @@ int main(int argc, char *argv[])
 
   return 0;
 }
+#endif
 
 
-
-
+// Misses some syntax
+//int Run_SF(cairo_t *cr)
+//{
+//    clock_t elapsed_time;
+//    clock_t loop_start_time;
+    // SCORE SAVE FILE
+		// TODO: instead of this file, make a python function that returns the score as an int
+		// Probably just some kind of wrapper function like get_score that you can call after
+		// update_frame() that just returns the Score global
+//    FILE *f = fopen("SAVE\\SCORE.TXT", "w");
+//    if (f == NULL) {
+//        printf("A state file is not present.\n");
+//        exit(1);
+//    }
+//    fclose(f); 
+//		Init_Game();
+//		Open_Graphics();
+//		Initialize_Graphics(cr);  Probably not needed (or depends on GTK/versus array render)
+//		Reset_Screen(cr); 
+//		 Draw_Frame(cr here?)
+//		Loop_Counter=0;
+//
+//    Init_Session();
+//    Game_Counter=0;
+//    do {   /* loop on number of games here */
+//        SF_iteration
+//        } while(!Restart_Flag&&!End_Flag&&(Loop_Counter < One_Game_Loops));
+//				 This says quit the loop if the time defined by One_Game_Loops (default is 3 min)
+//				 has passed (this can be measured with clock I guess?) Because the loop always takes
+//				 exactly 50ms we can just increment loop counter until it reaches a threshold 
+//        /* ESC or three minutes */
+//
+//         RUNNING FILE
+//        f = fopen("SAVE\\SCORE.TXT", "w"); // Open this earlier for performace
+//        fprintf(f, "FALSE");
+//        fclose(f);
+//
+//        Restore_Tik();
+//        Reset_Timer();
+//        Restore_Kbd();
+//        Set_Kbd_Rate(0x4); /* to repeat rate 20Hz */
+//
+//        nosound();   /* just in case */
+//        sound(400);
+//        delay(500); // Not intersting cus only sound
+//        nosound();
+//        Game_Counter++;
+//        
+//         final_display();
+//        Close_Graphics(cr);
+//				 Pretty sure we can skip this
+//        printf("Episode %d score: %d\n", Game_Counter, Score);
+//        if(!Restart_Flag && !End_Flag) {
+//            while(1) {
+//								char ex = 0;
+//                char ex = getch(); // getch reads one keyboard input char from the user
+//                if(ex==9) {
+//                    break;
+//                } else if(ex==27) {
+//                    return(0);
+//                }
+//            }
+//        }
+//
+//        
+//        clrscr();  // From graphics.h or something
+//        /* end one game here */
+//    } while(!Restart_Flag && !End_Flag);
+//    } while((Game_Counter< No_Of_Games)&&(!End_Flag));
+//
+//    nosound();   /* just in case */
+//    sound(400);
+//    delay(1000);
+//    nosound();
+//    if(Restart_Flag) {
+//        return(1);
+//    }
+//    return(0);
+//}

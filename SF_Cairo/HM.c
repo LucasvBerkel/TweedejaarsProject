@@ -27,25 +27,6 @@ int Mine_Alive_Counter=0;
 int Mine_Dead_Counter=0;
 int Missile_Delay_Counter=0;
 
-const char *Char_Set[]={"Y","M","P","B","Q","K","C","W","R","Z"};
-char Tmp_Char_Set[10][1];
-
-const char *Foe_Menu[3];
-const char *Friend_Menu[3];
-char *Mine_Indicator;
-
-
-//int Get_Random_Index(int vec[])
-//{
-//  int k;
-//
-//  do
-//     { k=random(10); }
-//  while (vec[k]==-1);
-//
-//  vec[k]=-1;
-//  return(k);
-//}
 
 // Not needed ? 
 void Select_Mine_Menus()
@@ -110,7 +91,7 @@ void Update_Ship_Dynamics()
        Rotate_Input=0;        /* reset input */
      }
   if (Accel_Input!=0)
-     {
+	{
        Ship_X_Speed=Ship_X_Speed+0.65*Ship_Accel*Fsin(Ship_Headings);
 
        Ship_Y_Speed=Ship_Y_Speed-0.65*Ship_Accel*Fcos(Ship_Headings);
@@ -118,42 +99,55 @@ void Update_Ship_Dynamics()
 
        /* assure it does not exceed MAXspeed */
 
-       if(fabs(Ship_X_Speed)>Ship_Max_Speed)
-		 if(Ship_X_Speed<0) Ship_X_Speed=-Ship_Max_Speed;
-				    else
-				    Ship_X_Speed=Ship_Max_Speed;
-       if(fabs(Ship_Y_Speed)>Ship_Max_Speed)
-		 if(Ship_Y_Speed<0) Ship_Y_Speed=-Ship_Max_Speed;
-				    else
-				    Ship_Y_Speed=Ship_Max_Speed;
-
-     }  /* end accel_input */
+		if(fabs(Ship_X_Speed)>Ship_Max_Speed)
+		{
+			if(Ship_X_Speed<0)
+			{
+				Ship_X_Speed=-Ship_Max_Speed;
+			}
+		   else
+			{
+				Ship_X_Speed=Ship_Max_Speed;
+			}
+		}
+		if(fabs(Ship_Y_Speed)>Ship_Max_Speed)
+		{
+			if(Ship_Y_Speed<0)
+			{
+				Ship_Y_Speed=-Ship_Max_Speed;
+			}
+			  else
+			{
+				Ship_Y_Speed=Ship_Max_Speed;
+			}
+	  }  /* end accel_input */
+	}
 		/* now update ship position */
 
-    if ((Ship_X_Speed!=0.0)||(Ship_Y_Speed!=0.0))
-    {
+  if ((Ship_X_Speed!=0.0)||(Ship_Y_Speed!=0.0))
+  {
 //       Ship_Display_Update=1; /* ship moves */ // Already set
-       Ship_X_Pos=Ship_X_Pos+Ship_X_Speed;
-       Ship_Y_Pos=Ship_Y_Pos+Ship_Y_Speed;
-			/* check if crossed screen boundary */
-       if(Ship_X_Pos<0) { Ship_X_Pos=MaxX;
-			  Wrap_Around_Flag=ON; }
-       if(Ship_X_Pos>MaxX) { Ship_X_Pos=0;
-				     Wrap_Around_Flag=ON; }
-       if(Ship_Y_Pos<0) { Ship_Y_Pos=MaxY;
-			  Wrap_Around_Flag=ON; }
-       if(Ship_Y_Pos>MaxY) { Ship_Y_Pos=0;
-				     Wrap_Around_Flag=ON; }
-			/* check if bumped into the fortress */
-       if(sqrt(pow(Ship_X_Pos-MaxX/2,2)+
-	       pow(Ship_Y_Pos-MaxY/2,2) ) < (COLLISION_DIST) )
-			 {
+     Ship_X_Pos=Ship_X_Pos+Ship_X_Speed;
+     Ship_Y_Pos=Ship_Y_Pos+Ship_Y_Speed;
+	/* check if crossed screen boundary */
+     if(Ship_X_Pos<0) { Ship_X_Pos=MaxX;
+	  Wrap_Around_Flag=ON; }
+     if(Ship_X_Pos>MaxX) { Ship_X_Pos=0;
+		     Wrap_Around_Flag=ON; }
+     if(Ship_Y_Pos<0) { Ship_Y_Pos=MaxY;
+	  Wrap_Around_Flag=ON; }
+     if(Ship_Y_Pos>MaxY) { Ship_Y_Pos=0;
+		     Wrap_Around_Flag=ON; }
+	/* check if bumped into the fortress */
+     if(sqrt(pow(Ship_X_Pos-MaxX/2,2)+
+      pow(Ship_Y_Pos-MaxY/2,2) ) < (COLLISION_DIST) )
+	 {
 	   Ship_X_Speed=-Ship_X_Speed;		/* reverse direction */
 	   Ship_Y_Speed=-Ship_Y_Speed;
 	   Ship_X_Pos=Ship_X_Pos+Ship_X_Speed; /* move ship out of range */
 	   Ship_Y_Pos=Ship_Y_Pos+Ship_Y_Speed;
-	 		}
-   	} /* end ship is moving */
+		}
+ 	} /* end ship is moving */
 }
 
 void Update_Ship_Display(cairo_t *cr)
@@ -373,11 +367,11 @@ void Generate_Mine(cairo_t *cr)
 
   if (Mine_Type==FRIEND) 
 	{
-		Mine_Indicator = Friend_Menu[randrange(0,2)];
+		Mine_Indicator = (char*)Friend_Menu[randrange(0,2)];
 	}
   else
 	{
-		Mine_Indicator = Foe_Menu[randrange(0,2)];
+		Mine_Indicator = (char*)Foe_Menu[randrange(0,2)];
 	}
 	Show_Mine_Type(cr, Mine_Indicator);
 }

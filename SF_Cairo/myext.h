@@ -38,6 +38,8 @@ extern cairo_path_t *PrevFort;
 extern cairo_path_t *PrevMine;
 extern cairo_path_t *PrevShell;
 
+extern int Terminal_State;;
+
 extern int Ship_Should_Update;
 extern int Bonus_Char_Should_Update;
 extern int Mine_Should_Update;
@@ -45,6 +47,14 @@ extern int Fort_Should_Update;
 extern int Missile_Should_Update[MAX_NO_OF_MISSILES]; // Make this an array for all the missiles
 extern int Shell_Should_Update;
 extern int Mine_Type_Should_Update;
+// Panel text
+extern int Points_Should_Update;
+extern int Velocity_Should_Update;
+extern int Speed_Should_Update;
+extern int Vulner_Should_Update;
+extern int Interval_Should_Update;
+extern int Shots_Should_Update;
+extern int Control_Should_Update;
 
 extern int Mine_Type_Should_Clean;
 extern int Ship_Should_Clean;
@@ -52,7 +62,21 @@ extern int Bonus_Char_Should_Clean;
 extern int Mine_Should_Clean;
 extern int Shell_Should_Clean;
 extern int Fort_Should_Clean;
-extern int Missile_Should_Clean[MAX_NO_OF_MISSILES]; // Make this an array for all the missiles
+extern int Missile_Should_Clean[MAX_NO_OF_MISSILES];
+extern int Points_Should_Clean;
+extern int Velocity_Should_Clean;
+extern int Speed_Should_Clean;
+extern int Vulner_Should_Clean;
+extern int Interval_Should_Clean;
+extern int Shots_Should_Clean;
+extern int Control_Should_Clean;
+
+extern const char *Char_Set[];
+extern char Tmp_Char_Set[10][1];
+
+extern const char *Foe_Menu[3];
+extern const char *Friend_Menu[3];
+extern char *Mine_Indicator;
 
 extern int Explosion_Flag;
 extern int Explosion_Step;
@@ -91,7 +115,7 @@ extern int Ship_Rotate_Step;
 extern int Ship_Used;
 extern float Ship_Max_Speed;
 extern double Ship_Accel;
-extern int Ship_Angular_Step;
+extern float Ship_Angular_Step;
 extern int Missile_Speed;
 extern int Mine_Wait_Loops;
 extern int Mine_Live_Loops;

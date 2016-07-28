@@ -1,6 +1,6 @@
 // Probably add in myvars.c somewhere
 // OS X compilation
-// gcc -Wall -g myvars.c DE.c -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo `pkg-config --cflags gtk+-3.0` `pkg-config --libs gtk+-3.0` -o DE
+// clang -Wall -g myvars.c DE.c -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo `pkg-config --cflags gtk+-3.0` `pkg-config --libs gtk+-3.0` -o DE
 // Linux compilation
 // gcc -Wall -g myvars.c DE.c -lm `pkg-config --cflags cairo` `pkg-config --libs cairo` `pkg-config --cflags gtk+-3.0` `pkg-config --libs gtk+-3.0`  -o DE
 // Without gtk support:
@@ -19,7 +19,7 @@
 #define DE_H
 #include <math.h>
 //#include <cairo.h>
-#ifdef __APPLE__
+#if defined(GUI) && defined(__APPLE__)
 	#include <cairo-quartz.h> // Is this available on linux? No!
 #endif
 //#include <gtk/gtk.h>
@@ -38,6 +38,7 @@
 
 #include "DE.h"
 #include "HM.h"
+#include "RS.h"
 
 //#include <boost/python/module.hpp>
 //#include <boost/python/def.hpp>
@@ -108,7 +109,11 @@ void Initialize_Graphics(cairo_t *cr)
 		// Supply a value VAL between 100.0 and 240.0 (as a double)
 		cairo_set_line_width(cr, (135.0 * 1) / ((double) MaxY * 1));
 	}
-	else
+	else if(cairo_surface_get_type(cairo_get_target(cr)) == CAIRO_SURFACE_TYPE_IMAGE)
+	{
+			cairo_set_line_width(cr, (200.0 * 1) / ((double) MaxY * 1));
+	}
+	else // Mostly quartz?
 	{
 		cairo_set_line_width(cr, (90.1 * 1) / ((double) MaxY * 1)); // for image_surf use 239
 	}
@@ -336,6 +341,49 @@ void cairo_bounding_box(cairo_t *cr)
 	cairo_append_path(cr,ol_path);
 }
 
+void set_initial_vals(cairo_t *cr)
+{
+	Terminal_State = 0;
+	Select_Mine_Menus();
+	cairo_path_t *empty_path = cairo_copy_path(cr);
+	PrevShip = empty_path;
+	for(int i = 0; i < MAX_NO_OF_MISSILES; i++)
+	{
+		PrevMissile[i] = empty_path;
+	}
+
+//	Set_Bonus_Chars();	// Probably not needed because we don't need to save them in memory
+	// first or whatver
+	Points_Should_Update = 1;
+	Velocity_Should_Update = 1;
+	Speed_Should_Update = 1;
+	Vulner_Should_Update = 1;
+	Interval_Should_Update = 1;
+	Shots_Should_Update = 1;
+	Control_Should_Update = 1;
+	
+	PrevFort = empty_path;
+	PrevMine = empty_path;
+	PrevShell = empty_path; 
+	memset(Missile_Should_Update, 0, MAX_NO_OF_MISSILES);
+	memset(Missile_Should_Clean, 0, MAX_NO_OF_MISSILES);
+	Reset_Screen(cr);
+}
+
+void set_key(int key_value)
+{
+	Lastkey = Key;
+	Key = key_value;
+	New_Input_Flag=ON;
+//  A list of GTK hex key values as decimals
+//	GDK_KEY_1 0xffbe 65470 
+//	GDK_KEY_2 0xffbf 65471
+//	GDK_KEY_3 0xffc0 65472
+//	GDK_KEY_Left 0xff51 65361
+//	GDK_KEY_Up 0xff52 65362
+//	GDK_KEY_space 0x020 32 
+}
+
 // Placed here to center the whole interface in one file
 // (which might eliminate the GTK support)
 // For the python interface
@@ -344,6 +392,18 @@ int get_score()
 	return Score;
 }
 
+// Resets the Space fortress game (i.e. the non gtk standard drawing for learning surface)
+void reset_sf()
+{
+	Initialized_Graphics = 0;
+	set_initial_vals(SF_canvas);
+	Reset_Screen(SF_canvas);
+}
+
+int get_terminal_state()
+{
+	return Terminal_State;
+}
 
 // W and H are the dimensions of the clipping rectangle
 void cairo_clip_text(cairo_t *cr, int x1, int y1, int w,  int h)
@@ -440,16 +500,57 @@ void clean(cairo_t *cr)
 		clear_prev_path(cr, PrevShell);
 		Shell_Should_Clean = 0;
 	}
+
+	if(Points_Should_Clean)
+	{
+		Update_Points(cr);
+		Points_Should_Clean = 0;
+	}
+	if(Velocity_Should_Clean)
+	{
+		Update_Velocity(cr);
+	}
+	if(Speed_Should_Clean)
+	{
+		Update_Speed(cr);
+		Speed_Should_Clean = 0;
+	}
+	if(Vulner_Should_Clean)
+	{
+		Update_Vulner(cr);
+		Vulner_Should_Clean = 0 ;
+	}
+	if(Interval_Should_Clean)
+	{
+		Update_Interval(cr);
+		Interval_Should_Clean = 0;
+	}
+	if(Shots_Should_Clean)
+	{
+		Update_Shots(cr);
+		Shots_Should_Clean = 0;
+	}
+	if(Control_Should_Clean)
+	{
+		Update_Control(cr);
+		Control_Should_Clean = 0;
+	}
+//	if(Mine_Type_Should_Clean)
+//	{
+//		Draw_Mine_Type(cr, 0);
+//		Mine_Type_Should_Clean = 0;
+//	}
 	if(Bonus_Char_Should_Clean) // Set to always update (i.e. change nothing)
 	{
 		// write black bonus char  over previous one
 		Draw_Bonus_Char(cr, 1);
 		cairo_reset_clip(cr);
 		Bonus_Char_Should_Clean = 0;
-//		Bonus_Char_Should_Update = 0;
+		Bonus_Char_Should_Update = 0;
 	}
 	if(Mine_Type_Should_Clean)
 	{
+		printf("Claening mine \n");
 		Draw_Mine_Type(cr, 1);
 		Mine_Type_Should_Clean = 0;
 	}
@@ -487,7 +588,6 @@ void update_drawing(cairo_t *cr)
 	if (Mine_Should_Update)
 	{
 		Draw_Mine(cr, Mine_X_Pos,Mine_Y_Pos,MINE_SIZE_FACTOR*MaxX);
-//		cairo_bounding_box(cr);
 		stroke_in_clip(cr);
 		Mine_Should_Update = 0;
 	}
@@ -497,16 +597,51 @@ void update_drawing(cairo_t *cr)
 		stroke_in_clip(cr);
 		Shell_Should_Update = 0;
 	}
+	if(Points_Should_Update)
+	{
+		Update_Points(cr);
+		Points_Should_Update = 0;
+	}
+	if(Velocity_Should_Update)
+	{
+		Update_Velocity(cr);
+	}
+	if(Speed_Should_Update)
+	{
+		Update_Speed(cr);
+		Speed_Should_Update = 0;
+	}
+	if(Vulner_Should_Update)
+	{
+		Update_Vulner(cr);
+		Vulner_Should_Update = 0 ;
+	}
+	if(Interval_Should_Update)
+	{
+		Update_Interval(cr);
+		Interval_Should_Update = 0;
+	}
+	if(Shots_Should_Update)
+	{
+		Update_Shots(cr);
+		Shots_Should_Update = 0;
+	}
+	if(Control_Should_Update)
+	{
+		Update_Control(cr);
+		Control_Should_Update = 0;
+	}
+	if(Mine_Type_Should_Update)
+	{
+		Draw_Mine_Type(cr, 0);
+		Mine_Type_Should_Update = 0;
+	}
 	if(Bonus_Char_Should_Update) // Set to always update (i.e. change nothing)
 	{
 		Draw_Bonus_Char(cr, 0);
 		cairo_reset_clip(cr);
 		// Blah blah? write bonus char 
 		// nothing here tho
-	}
-	if(Mine_Type_Should_Update)
-	{
-		Draw_Mine_Type(cr, 0);
 	}
 }
 
@@ -835,42 +970,22 @@ float Find_Headings(double x1, double y1, double x2, double y2)
 		/* quadrant=3 */ return(180.0+arcsinalfa*57.3+0.5);
 }
 
-//void set_initial_vals(cairo_t *cr)
-//{
-//	memset(Missile_Should_Update, 0, MAX_NO_OF_MISSILES);
-//	memset(Missile_Should_Clean, 0, MAX_NO_OF_MISSILES);
-//}
-
-void set_initial_vals(cairo_t *cr)
-{
-	Select_Mine_Menus();
-	cairo_path_t *empty_path = cairo_copy_path(cr);
-	PrevShip = empty_path;
-	for(int i = 0; i < MAX_NO_OF_MISSILES; i++)
-	{
-		PrevMissile[i] = empty_path;
-	}
-
-//	Set_Bonus_Chars();	// Probably not needed because we don't need to save them in memory
-	// first or whatver
-	
-	PrevFort = empty_path;
-	PrevMine = empty_path;
-	PrevShell = empty_path; 
-	memset(Missile_Should_Update, 0, MAX_NO_OF_MISSILES);
-	memset(Missile_Should_Clean, 0, MAX_NO_OF_MISSILES);
-	Reset_Screen(cr);
-}
-
-void Show_Score(cairo_t *cr, int val, int x, int y) /* anywhere within data panel */
+void Show_Score(cairo_t *cr, int val, int x, int y, int erease)
 {
 //    int svcolor;
 //    svcolor=getcolor();
 		char val_str[15];
 
     cairo_translate(cr, 0, Panel_Y_Start);
-
-    cairo_set_source_rgb(cr, SF_YELLOW);
+		if(erease)
+		{
+    	cairo_set_source_rgb(cr, 0, 0, 0);
+		}
+		else
+		{
+			cairo_set_source_rgb(cr, SF_YELLOW);
+		}
+		
     /* data panel in screen global coordinates */
 
 //    putimage(x,y,buffer1,COPY_PUT); /* erase garbage */
@@ -881,7 +996,7 @@ void Show_Score(cairo_t *cr, int val, int x, int y) /* anywhere within data pane
 
 		sprintf(val_str, "%d", val);
 //		cairo_set_font_size(cr, 40);
-    cairo_text_at(cr, x,y, val_str);
+    cairo_text_at(cr, x, y, val_str);
 //		cairo_reset_clip(cr);
 //    setviewport( Xmargin, 0, Xmargin+MaxX, MaxY, 1);   /* restore gaming area */
 		cairo_translate(cr, 0 , -Panel_Y_Start);
@@ -898,28 +1013,28 @@ void Update_Points(cairo_t *cr)
 	// Data line is equal to Data_Line=2*Height+4;, with the panel ystart translated
 	// It is the middle line of the data panel, so that would be the clip rect height
 	cairo_clip_text(cr, Points_X-11, Panel_Y_Start+Data_Line-4, 20, Data_Line/2-1);
-	Show_Score(cr, Points,Points_X-8,Data_Line);
+	Show_Score(cr, Points,Points_X-8,Data_Line, Points_Should_Clean);
 	cairo_reset_clip(cr);
 }
 
 void Update_Control(cairo_t *cr)
 {
 	cairo_clip_text(cr, Control_X-11, Panel_Y_Start+Data_Line-4, 15, Data_Line/2-1);
-	Show_Score(cr, Control,Control_X-8,Data_Line);
+	Show_Score(cr, Control,Control_X-8,Data_Line, Control_Should_Clean);
 	cairo_reset_clip(cr);
 }
 
 void Update_Velocity(cairo_t *cr)
 {
 	cairo_clip_text(cr, Velocity_X-6, Panel_Y_Start+Data_Line-4, 15, Data_Line/2-1);
-	Show_Score(cr, Velocity,Velocity_X,Data_Line);
+	Show_Score(cr, Velocity,Velocity_X,Data_Line, Velocity_Should_Clean);
 	cairo_reset_clip(cr);
 }
 
 void Update_Vulner(cairo_t *cr)  /* for vulner only */
 {
 	cairo_clip_text(cr, Vulner_X-5, Panel_Y_Start+Data_Line-4, 15, Data_Line/2-1);
-	Show_Score(cr, Vulner_Counter,Vulner_X,Data_Line);
+	Show_Score(cr, Vulner_Counter,Vulner_X,Data_Line, Vulner_Should_Clean);
 	cairo_reset_clip(cr);
 }
 
@@ -928,21 +1043,21 @@ void Update_Vulner(cairo_t *cr)  /* for vulner only */
 void Update_Interval(cairo_t *cr)
 {
 	cairo_clip_text(cr, Interval_X-6, Panel_Y_Start+Data_Line-4, 15, Data_Line/2-1);
-	Show_Score(cr, Double_Press_Interval,Interval_X,Data_Line);
+	Show_Score(cr, Double_Press_Interval,Interval_X,Data_Line, Interval_Should_Clean);
 	cairo_reset_clip(cr);
 }
 
 void Update_Speed(cairo_t *cr)
 {
 	cairo_clip_text(cr, Speed_X-11, Panel_Y_Start+Data_Line-4, 16, Data_Line/2-1);
-	Show_Score(cr, Speed,Speed_X-8,Data_Line);
+	Show_Score(cr, Speed,Speed_X-8,Data_Line, Speed_Should_Clean);
 	cairo_reset_clip(cr);
 }
 
 void Update_Shots(cairo_t *cr)
 {
 	cairo_clip_text(cr, Shots_X-5, Panel_Y_Start+Data_Line-4, 15, Data_Line/2-1);
-	Show_Score(cr, Missile_Stock,Shots_X,Data_Line);
+	Show_Score(cr, Missile_Stock,Shots_X,Data_Line, Shots_Should_Clean);
 	cairo_reset_clip(cr);
 }
 
@@ -995,13 +1110,15 @@ void Reset_Screen(cairo_t *cr)
 		Ship_Should_Clean = 1;
 
             /* reset panel */
-    Update_Points(cr);
-    Update_Vulner(cr);
-    Update_Interval(cr);
-    Update_Shots(cr);
-    Update_Control(cr);
-    Update_Velocity(cr);
-    Update_Speed(cr);
+		// This is done in set_initial_vals now
+//    Update_Points(cr);
+//    Update_Vulner(cr);
+//    Update_Interval(cr);
+//    Update_Shots(cr);
+//    Update_Control(cr);
+//    Update_Velocity(cr);
+//    Update_Speed(cr);
+	
 
 }  /* end reset screen */
 
@@ -1013,7 +1130,7 @@ void start_drawing()
 //	surface = cairo_quartz_surface_create(CAIRO_FORMAT_RGB16_565, WINDOW_WIDTH, WINDOW_HEIGHT);
 	SF_canvas = cairo_create(surface);
 	Initialize_Graphics(SF_canvas);
-	set_initial_vals(SF_canvas);
+	reset_sf();
 	// restore the line width
 	cairo_set_line_width(SF_canvas, (224.1 * 1) / ((double) MaxY * 1));
 	Draw_Frame(SF_canvas); // Draw the basis
@@ -1093,7 +1210,11 @@ void update_frame(cairo_t *cr)
 
 unsigned char* update_frame_SF()
 {
-	update_frame(SF_canvas);
+	// This should have the form clean -> sf_iter -> update, because bottom panel text will in 
+  // this  way be ereased, numerically updated, and then visually updated
+	clean(SF_canvas);
+	game_iteration(SF_canvas);
+	update_drawing(SF_canvas);
 	return cairo_image_surface_get_data(surface);
 }
 

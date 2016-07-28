@@ -44,13 +44,24 @@ float Find_Headings(double x1, double y1, double x2, double y2);
 
 //void set_initial_vals(cairo_t *cr);
 void start_drawing();
-
+void set_key(int key_value);
 void stop_drawing();
 
 int move_update();
 void update_frame(cairo_t *cr);
 unsigned char* update_frame_SF();
 void stroke_in_clip(cairo_t *cr);
+
+void Show_Score(cairo_t *cr, int val, int x, int y, int erease);
+
+void Update_Points(cairo_t *cr);
+void Update_Control(cairo_t *cr);
+void Update_Velocity(cairo_t *cr);
+
+void Update_Vulner(cairo_t *cr);
+void Update_Interval(cairo_t *cr);
+void Update_Speed(cairo_t *cr);
+void Update_Shots(cairo_t *cr);
 
 void explosion_step1(cairo_t *cr, int X_Pos,int Y_Pos,int step);
 void explosion_step2(cairo_t *cr, int X_Pos,int Y_Pos,int step);

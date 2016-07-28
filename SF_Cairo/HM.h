@@ -3,8 +3,6 @@
 #include <cairo.h>
 
 
-
-//int Get_Random_Index(int vec[]);
 void Select_Mine_Menus();
 
 void Update_Ship_Dynamics();

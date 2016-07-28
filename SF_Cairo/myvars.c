@@ -19,23 +19,48 @@ cairo_path_t *PrevFort;
 cairo_path_t *PrevMine;
 cairo_path_t *PrevShell;
 
-int Ship_Should_Update;
-int Mine_Should_Update;
-int Fort_Should_Update;
+int Terminal_State;
+
+int Ship_Should_Update = 0;
+int Mine_Should_Update = 0;
+int Fort_Should_Update = 0;
 int Missile_Should_Update[MAX_NO_OF_MISSILES] = {0};
-int Shell_Should_Update;
+int Shell_Should_Update = 0;
 int Bonus_Char_Should_Update = 0;
 int Mine_Type_Should_Update = 0;
+int Points_Should_Update = 0; // Show the first time around right?
+int Velocity_Should_Update = 0;
+int Speed_Should_Update = 0;
+int Vulner_Should_Update = 0;
+int Interval_Should_Update = 0;
+int Shots_Should_Update = 0;
+int Control_Should_Update = 0;
+
 
 int Bonus_Char_Should_Clean = 0;
-int Ship_Should_Clean;
-int Mine_Should_Clean;
+int Ship_Should_Clean = 0;
+int Mine_Should_Clean = 0;
 int Fort_Should_Clean;
 int Missile_Should_Clean[MAX_NO_OF_MISSILES] = {0};
 int Shell_Should_Clean;
 int Mine_Type_Should_Clean = 0;
+int Points_Should_Clean = 0;
+int Velocity_Should_Clean = 0;
+int Speed_Should_Clean = 0;
+int Vulner_Should_Clean = 0;
+int Interval_Should_Clean = 0;
+int Shots_Should_Clean = 0;
+int Control_Should_Clean = 0;
 
-char Initialized_Graphics;
+char Initialized_Graphics = 0;
+
+const char *Char_Set[]={"Y","M","P","B","Q","K","C","W","R","Z"};
+char Tmp_Char_Set[10][1];
+
+const char *Foe_Menu[3];
+const char *Friend_Menu[3];
+char *Mine_Indicator;
+
 
 int Explosion_Flag = 0;
 int Explosion_Step = 0;
@@ -45,11 +70,6 @@ int ExpY;
 
 int Jitter_Flag = 0;
 int Jitter_Step = 8;
-
-/* Not that good maybe because for example multiple missile can exist */
-int Missile_X;
-int Missile_Y;
-int Missile_Heading;
 
 struct jstk_pos{
   int x_center;
@@ -86,7 +106,7 @@ int Resource_Display_Interval=RESOURCE_DISPLAY_INTERVAL;
 int No_Resource_Display_Interval=NO_RESOURCE_DISPLAY_INTERVAL;
 int Interval_Upper_Limit=SF_DELAY*20;
 int Interval_Lower_Limit=SF_DELAY*5;
-int Ship_Angular_Step=10;   /* Display increment in degrees */
+float Ship_Angular_Step=6.5;   /* Display increment in degrees */ // was 10
 float Ship_Max_Speed=2.5;        /* dots per loop */ // was 5
 double Ship_Accel=0.5;            /* dots/(loop*loop) */ // was 1 // was was 0.6
 int Mine_Speed=2;	   /* in screen dots per loop */ // was 4

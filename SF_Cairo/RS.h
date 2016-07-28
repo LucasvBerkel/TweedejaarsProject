@@ -7,11 +7,12 @@
 #endif
 
 #include <cairo.h>
+#ifdef GUI
 #include <gtk/gtk.h>
+#endif
 
+int game_iteration(cairo_t *cr);
 void SF_iteration(cairo_t *cr);
-void animation_loop(GtkWidget *darea);
-gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data);
 void set_initial_vals(cairo_t *cr);
 void handle_F3();
 
@@ -39,20 +40,11 @@ void Get_User_Input();
 
 void Set_Graphics_Eraser();
 
-void Show_Score(cairo_t *cr, int val, int x, int y);
-
 /* Every update_X function here had a "return(0)" zero statement on it's last line, without  
 specifying a return type. I removed all of these return statements and modified the function 
 return type to void to surpress warnings. */ 
 
-void Update_Points(cairo_t *cr);
-void Update_Control(cairo_t *cr);
-void Update_Velocity(cairo_t *cr);
 
-void Update_Vulner(cairo_t *cr);
-void Update_Interval(cairo_t *cr);
-void Update_Speed(cairo_t *cr);
-void Update_Shots(cairo_t *cr);
 
 void Clear_Interval();
 
@@ -79,22 +71,18 @@ void Handle_Bonus();
 
 int Run_SF(cairo_t *cr);
 
+#ifdef GUI
+void animation_loop(GtkWidget *darea);
+gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data);
+#endif
+
 /*************************************************************************/
 
         /* Run_Aiming Module  4.4.90 */
 
 /**************************************************************************/
 
-void Announce_Game_End();
 
-void Announce_Session_End();
-void Update_Mines(cairo_t *cr);
-void Update_Score(cairo_t *cr);
 
-void Reset_Aim_Screen(cairo_t *cr);
-
-void Init_Aim_Session();
-
-void Run_Aiming(cairo_t *cr);
 
 

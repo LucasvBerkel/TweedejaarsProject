@@ -256,6 +256,7 @@ void Test_Collisions(cairo_t *cr)
 	   {
 	     Points=Points-100;
 	     Gen_Explosion(cr, Ship_X_Pos,Ship_Y_Pos,80);
+			 Terminal_State = 1;
 	     Ship_Killings_Counter=0;
 //	     Reset_Screen(cr);
 	   }
@@ -290,6 +291,7 @@ void Test_Collisions(cairo_t *cr)
 	       {
 		 Points=Points-100;
 		 Gen_Explosion(cr, Ship_X_Pos,Ship_Y_Pos,80);
+			Terminal_State = 1;
 		 Ship_Killings_Counter=0;
 //		 Reset_Screen();
 	       }
@@ -372,6 +374,7 @@ void Test_Collisions(cairo_t *cr)
 					Bonus_Granted=OFF;
 		     }
 		Gen_Explosion(cr, Missile_X_Pos[i],Missile_Y_Pos[i],120);
+		Terminal_State = 1;
 //		Reset_Screen(cr)
 		Handle_Missile_Flag=OFF;
 		Last_Missile_Hit=Loop_Counter;
