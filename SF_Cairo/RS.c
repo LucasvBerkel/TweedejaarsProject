@@ -36,8 +36,6 @@
     #define M_PI 3.14159265358979323846
 #endif
 
-#define JITTER_MODE 1
-#define EXPLOSION_MODE 2
 
 // I don't think we do anything with this menu stuff
 //extern const char *Friend_Menu[3];
@@ -526,7 +524,6 @@ int game_iteration(cairo_t *cr)
 {
 	if(!Explosion_Flag && !Jitter_Flag)
 	{
-		clean(cr);
 		SF_iteration(cr);
 		return 0;
 	}
@@ -623,6 +620,8 @@ static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data
 			Missile_Should_Update[m] = 1;
 		}
 	}
+	clean(cr);
+	Draw_Frame(cr);
 	int mode_code = game_iteration(cr);
 	Fort_Should_Update = 1;
 	Ship_Should_Update = 1;
@@ -640,10 +639,10 @@ static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data
 	Shots_Should_Update = 1;
 	Control_Should_Update = 1;
 
-	Draw_Frame(cr);
+
+
 	Draw_Hexagone(cr, MaxX/2,MaxY/2,SMALL_HEXAGONE_SIZE_FACTOR*MaxX);
 	stroke_in_clip(cr);
-	update_drawing(cr);
 
 	if(mode_code == 0)
 	{
@@ -661,12 +660,15 @@ static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data
 	}
 	if(mode_code == JITTER_MODE)
 	{
+		Ship_Should_Update = 0;
+		Ship_Should_Clean = 0;
 		ms_sleep((((unsigned long)Jitter_Step)*5L) + ANIMATION_DELAY_JITTER);
 	}
-	else if(mode_code == JITTER_MODE)
+	else if(mode_code == EXPLOSION_MODE)
 	{
-		ms_sleep((250.0/ ((double) Explosion_Step-1)) + ANIMATION_DELAY_EXP);
+		ms_sleep((250.0/ ((double) Explosion_Step)) + ANIMATION_DELAY_EXP);
 	}
+	update_drawing(cr);
 
 
 

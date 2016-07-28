@@ -1213,7 +1213,17 @@ unsigned char* update_frame_SF()
 	// This should have the form clean -> sf_iter -> update, because bottom panel text will in 
   // this  way be ereased, numerically updated, and then visually updated
 	clean(SF_canvas);
-	game_iteration(SF_canvas);
+	int mode_code = game_iteration(SF_canvas);
+	if(mode_code == JITTER_MODE) 
+	{
+		cairo_stroke(SF_canvas);
+		ms_sleep((((unsigned long)Jitter_Step)*5L) + ANIMATION_DELAY_JITTER);
+	}
+	else if(mode_code == EXPLOSION_MODE) 
+	{
+		cairo_stroke(SF_canvas);
+		ms_sleep((250.0/ ((double) Explosion_Step-1)) + ANIMATION_DELAY_EXP);
+	}
 	update_drawing(SF_canvas);
 	return cairo_image_surface_get_data(surface);
 }

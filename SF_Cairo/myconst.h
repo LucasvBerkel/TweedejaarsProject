@@ -11,6 +11,9 @@
 	and must be present in the current directory!
 */
 
+#define JITTER_MODE 1
+#define EXPLOSION_MODE 2
+
 #define POINTS_FONT_SIZE 5.5
 
 #define UP 72
@@ -41,7 +44,7 @@
 #define MAX_NO_OF_MISSILES 6
 //#define SF_DELAY 50.0
 #define SF_DELAY 44	// was 47
-#define ANIMATION_DELAY_EXP 50  // In Milliseconds
+#define ANIMATION_DELAY_EXP 60  // In Milliseconds
 #define ANIMATION_DELAY_JITTER 10
 // All the color values have been altered to be RGB tuples
 
