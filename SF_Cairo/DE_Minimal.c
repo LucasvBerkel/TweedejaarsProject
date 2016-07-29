@@ -1,14 +1,12 @@
 // Probably add in myvars.c somewhere
 // OS X compilation
-// clang -Wall -g myvars.c DE.c -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo `pkg-config --cflags gtk+-3.0` `pkg-config --libs gtk+-3.0` -o DE
+// clang -Wall -g myvars.c DE_Minimal.c -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo  -o DE_Minimal
 // Linux compilation
-// gcc -Wall -g myvars.c DE.c -lm `pkg-config --cflags cairo` `pkg-config --libs cairo` `pkg-config --cflags gtk+-3.0` `pkg-config --libs gtk+-3.0`  -o DE
-// Without gtk support:
-// gcc -Wall -g DE.c -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo -o DE
+// clang -Wall -g myvars.c DE.c -lm `pkg-config --cflags cairo` `pkg-config --libs cairo` `pkg-config --cflags gtk+-3.0` `pkg-config --libs gtk+-3.0`  -o DE
 
 // To shared library: (without any GUI functionality)
-// gcc -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo  -Wall -g -fPIC -c  myvars.c DE.c HM.c TCOL.c RS.c -Wno-dangling-else -Wno-switch -O3
-// gcc -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo -shared -o sf_frame_lib.so myvars.o HM.o RS.o TCOL.o DE.o -O3
+// clang -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo  -Wall -g -fPIC -c  myvars.c DE_Minimal.c HM.c TCOL.c RS.c -Wno-dangling-else -Wno-switch -O3
+// clang -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo -shared -o sf_frame_lib.so myvars.o HM.o RS.o TCOL.o DE_Minimal.o -O3
 
 
 /* DISPLAY ELEMENTS	 6 Feb. 90 18:00
@@ -36,7 +34,7 @@
 #include "myext.h"
 #endif
 
-#include "DE.h"
+#include "DE_Minimal.h"
 #include "HM.h"
 #include "RS.h"
 
@@ -88,7 +86,7 @@ void Initialize_Graphics(cairo_t *cr)
 	int x,dx;
 
 	MaxX = WINDOW_WIDTH;
-	MaxY = WINDOW_HEIGHT;			/* Originally read the size of the screen	*/
+	MaxY = WINDOW_HEIGHT - TEXT_HEIGHT*2;			/* Originally read the size of the screen	*/
 //	SF_canvas = cr;
 
 	// code works
@@ -190,8 +188,8 @@ void Initialize_Graphics(cairo_t *cr)
 //		MaxX=MaxX*AspectRatio;	/********* MaxX and MaxY give a square */
 //		MaxX=MaxX-t1/AspectRatio;	/******** less two panel lines */
 //	}
-	Xmargin=OldMaxX/2-MaxX/2;
-	cairo_translate(cr, Xmargin, 0);
+//	Xmargin=OldMaxX/2-MaxX/2;
+//	cairo_translate(cr, Xmargin, 0);
 	// -- void setviewport(int left, int top, int right, int bottom, int clip);
 	// setviewport function is used to restrict drawing to a particular portion on the screen. 	// For example "setviewport(100 , 100, 200, 200, 1)" will restrict our drawing activity
 	// inside the rectangle(100,100, 200, 200).
@@ -410,7 +408,7 @@ int get_terminal_state()
 void cairo_clip_text(cairo_t *cr, int x1, int y1, int w,  int h)
 {
 	cairo_rectangle(cr, x1, y1, w, h); // Not optimal
-//	cairo_stroke_preserve(cr);
+	cairo_stroke_preserve(cr);
 	cairo_clip(cr);
 }
 
@@ -432,7 +430,7 @@ void Draw_Mine_Type(cairo_t *cr, int erease)
   x=IFF_X; y=Data_Line;
 	cairo_clip_text(cr, x-2, y+Panel_Y_Start-6, TEXT_WIDTH+2, TEXT_HEIGHT+2);
 	// What does this viewport do in context?
-	cairo_translate(cr, 0, Panel_Y_Start);
+//	cairo_translate(cr, 0, Panel_Y_Start);
 //  setviewport( Xmargin, Panel_Y_Start, Xmargin+MaxX, Panel_Y_End, 1); // ?
 //  putimage(x,y,buffer1,COPY_PUT); /* erase garbage */
 //	char Minetype_str[4];
@@ -440,7 +438,7 @@ void Draw_Mine_Type(cairo_t *cr, int erease)
 //	printf("Drawing mine type with char %s and original char \n", Mine_Char);
 	cairo_text_at(cr, x, y, Mine_Char); // Originally was "%c" Minetype
 //  gprintf(&x,&y,"%c",Minetype);
-	cairo_translate(cr, 0, -Panel_Y_Start);
+//	cairo_translate(cr, 0, -Panel_Y_Start);
 	cairo_reset_clip(cr);
 //  setviewport( Xmargin, 0, Xmargin+MaxX, MaxY, 1);
 //  setcolor(svcolor); /* restore previous color */
@@ -582,55 +580,55 @@ void update_drawing(cairo_t *cr)
 
 void Draw_Frame(cairo_t *cr)
 {
-	int Height;
-//	int t,t1,svcolor; // All unused
-
-	int x,y,dx;
-
-
-	// See initialize_graphics for description
-//	Height=textheight("H");		/* Get basic text height */
-		Height = TEXT_HEIGHT;
+//	int Height;
+////	int t,t1,svcolor; // All unused
+//
+//	int x,y,dx;
+//
+//
+//	// See initialize_graphics for description
+////	Height=textheight("H");		/* Get basic text height */
+//		Height = TEXT_HEIGHT;
 
 	// removes anything on the screen
 //	cleardevice();
  	// FRAME_COLOR is the color of the green border
 //	setcolor(FRAME_COLOR);
-	cairo_rectangle(cr, -Xmargin, 0, WINDOW_WIDTH,WINDOW_HEIGHT); // Cheap fix
+	cairo_rectangle(cr, 0, 0, WINDOW_WIDTH,WINDOW_HEIGHT); // Cheap fix
 	cairo_set_source_rgb(cr, 0, 0, 0);
 	cairo_fill(cr);
-	cairo_set_source_rgb(cr, SF_GREEN);
+//	cairo_set_source_rgb(cr, SF_GREEN);
 	/* handle panel */
 	// See init graphics for description of this function
 //	setviewport( Xmargin, Panel_Y_Start, Xmargin+MaxX, Panel_Y_End, 1);
 	// Emulate this setviewport call with a matrix translation
-	cairo_translate(cr, 0, Panel_Y_Start);
+//	cairo_translate(cr, 0, Panel_Y_Start);
 
 	/* data panel in screen global coordinates */
 
 	// Bottom panel? yes bottom panel
 //  void rectangle(int left, int top, int right, int bottom);
 //	rectangle(0,0,MaxX,MaxY_Panel);
-	cairo_rectangle(cr, 0, 0, MaxX, MaxY_Panel);
+//	cairo_rectangle(cr, 0, 0, MaxX, MaxY_Panel);
 	// The line function is used to draw a line from a point(x1,y1) to point(x2,y2)
 	// void line(int x1, int y1, int x2, int y2);
 
 //	line(0,2*Height,MaxX,2*Height);/
 	// The line on top of the info panel
-	cairo_line(cr, 0, 2*Height-1, MaxX, 2*Height-1);
-	cairo_stroke(cr);
+//	cairo_line(cr, 0, 2*Height-1, MaxX, 2*Height-1);
+//	cairo_stroke(cr);
 
 	/* write panel headers */
-	x=2;
-	y=4;
-	dx=MaxX/8; /* step between two headers */
+//	x=2;
+//	y=4;
+//	dx=MaxX/8; /* step between two headers */
 	// Called somewhere else
 //	Data_Line=2*Height+4;
-	#ifdef GUI
-	Data_Line=2*Height+4;
-	#else
-	Data_Line=2*Height+8;
-	#endif
+//	#ifdef GUI
+//	Data_Line=2*Height+4;
+//	#else
+//	Data_Line=2*Height+8;
+//	#endif
 	// I guess gprintf(x_pixel, y_pixel, str);
 
 //		gprintf ( &x, &y,"	PNTS");
@@ -642,14 +640,14 @@ void Draw_Frame(cairo_t *cr)
 //		x=x+dx; gprintf ( &x, &y," SPEED");
 //		x=x+dx; gprintf ( &x, &y," SHOTS");
 
-	cairo_text_at(cr, x, y+1, "    PNTS");
-	x=x+dx; cairo_text_at(cr, x, y+1, "   CNTRL");
-	x=x+dx; cairo_text_at(cr, x, y+1, "    VLCTY");
-	x=x+dx; cairo_text_at(cr, x, y+1, "   VLNER");
-	x=x+dx; cairo_text_at(cr, x, y+1, "        IFF ");
-	x=x+dx; cairo_text_at(cr, x, y+1, "    INTRVL");
-	x=x+dx; cairo_text_at(cr, x, y+1, "    SPEED");
-	x=x+dx; cairo_text_at(cr, x, y+1, "   SHOTS");
+//	cairo_text_at(cr, x, y+1, "    PNTS");
+//	x=x+dx; cairo_text_at(cr, x, y+1, "   CNTRL");
+//	x=x+dx; cairo_text_at(cr, x, y+1, "    VLCTY");
+//	x=x+dx; cairo_text_at(cr, x, y+1, "   VLNER");
+//	x=x+dx; cairo_text_at(cr, x, y+1, "        IFF ");
+//	x=x+dx; cairo_text_at(cr, x, y+1, "    INTRVL");
+//	x=x+dx; cairo_text_at(cr, x, y+1, "    SPEED");
+//	x=x+dx; cairo_text_at(cr, x, y+1, "   SHOTS");
 
 	/* draw vertical lines between columns */
 
@@ -660,23 +658,23 @@ void Draw_Frame(cairo_t *cr)
 //		x=x-dx; line(x,0,x,MaxY_Panel);
 //		x=x-dx; line(x,0,x,MaxY_Panel);
 //		x=x-dx; line(x,0,x,MaxY_Panel);
-	cairo_line(cr,x,0,x,MaxY_Panel);
-	x=x-dx; cairo_line(cr,x,0,x,MaxY_Panel);
-	x=x-dx; cairo_line(cr,x,0,x,MaxY_Panel);
-	x=x-dx; cairo_line(cr,x,0,x,MaxY_Panel);
-	x=x-dx; cairo_line(cr,x,0,x,MaxY_Panel);
-	x=x-dx; cairo_line(cr,x,0,x,MaxY_Panel);
-	x=x-dx; cairo_line(cr,x,0,x,MaxY_Panel);
-	cairo_stroke(cr);
+//	cairo_line(cr,x,0,x,MaxY_Panel);
+//	x=x-dx; cairo_line(cr,x,0,x,MaxY_Panel);
+//	x=x-dx; cairo_line(cr,x,0,x,MaxY_Panel);
+//	x=x-dx; cairo_line(cr,x,0,x,MaxY_Panel);
+//	x=x-dx; cairo_line(cr,x,0,x,MaxY_Panel);
+//	x=x-dx; cairo_line(cr,x,0,x,MaxY_Panel);
+//	x=x-dx; cairo_line(cr,x,0,x,MaxY_Panel);
+//	cairo_stroke(cr);
 
 	// setviewport( Xmargin, 0, Xmargin+MaxX, MaxY, 1); /* in screen global coordinates */
 	// translate back from the previous viewport call
-	cairo_translate(cr, 0, -Panel_Y_Start);
-	// full panel?
-//	rectangle(0,0,MaxX,MaxY); 		/* main frame of the viewport */
-	cairo_rectangle(cr,0,0,MaxX,MaxY); // Maybe drop this or something
- 	cairo_stroke(cr);
-
+//	cairo_translate(cr, 0, -Panel_Y_Start);
+//	// full panel?
+////	rectangle(0,0,MaxX,MaxY); 		/* main frame of the viewport */
+//	cairo_rectangle(cr,0,0,MaxX,MaxY); // Maybe drop this or something
+// 	cairo_stroke(cr);
+//
 
 	/* set graphics eraser is done in main */
 	// Not needed basically
@@ -917,7 +915,7 @@ void Show_Score(cairo_t *cr, int val, int x, int y, int erease)
 //    svcolor=getcolor();
 		char val_str[15];
 
-    cairo_translate(cr, 0, Panel_Y_Start);
+//    cairo_translate(cr, 0, Panel_Y_Start);
 		if(erease)
 		{
     	cairo_set_source_rgb(cr, 0, 0, 0);
@@ -940,7 +938,7 @@ void Show_Score(cairo_t *cr, int val, int x, int y, int erease)
     cairo_text_at(cr, x, y, val_str);
 //		cairo_reset_clip(cr);
 //    setviewport( Xmargin, 0, Xmargin+MaxX, MaxY, 1);   /* restore gaming area */
-		cairo_translate(cr, 0 , -Panel_Y_Start);
+//		cairo_translate(cr, 0 , -Panel_Y_Start);
 
 //    setcolor(svcolor); /* restore previous color */
 }
@@ -953,29 +951,29 @@ void Update_Points(cairo_t *cr, int earese)
 {
 	// Data line is equal to Data_Line=2*Height+4;, with the panel ystart translated
 	// It is the middle line of the data panel, so that would be the clip rect height
-	cairo_clip_text(cr, Points_X-15, Panel_Y_Start+Data_Line-6, 27, (Data_Line/2)-1);
-	Show_Score(cr, Points,Points_X-14,Data_Line, earese);
+	cairo_clip_text(cr, Points_X-15, WINDOW_HEIGHT-TEXT_HEIGHT-1, 27, TEXT_HEIGHT+1);
+	Show_Score(cr, Points,Points_X-14,WINDOW_HEIGHT-1, earese);
 	cairo_reset_clip(cr);
 }
 
 void Update_Control(cairo_t *cr, int earese)
 {
-	cairo_clip_text(cr, Control_X-11, Panel_Y_Start+Data_Line-6, 20, (Data_Line/2)-1);
-	Show_Score(cr, Control,Control_X-10,Data_Line, earese);
+	cairo_clip_text(cr, Control_X-11, WINDOW_HEIGHT-TEXT_HEIGHT-1, 20, TEXT_HEIGHT+1);
+	Show_Score(cr, Control,Control_X-10,WINDOW_HEIGHT-1, earese);
 	cairo_reset_clip(cr);
 }
 
 void Update_Velocity(cairo_t *cr, int earese)
 {
-	cairo_clip_text(cr, Velocity_X-6, Panel_Y_Start+Data_Line-6, 15, (Data_Line/2)-1);
-	Show_Score(cr, Velocity,Velocity_X,Data_Line, earese);
+	cairo_clip_text(cr, Velocity_X-6, WINDOW_HEIGHT-TEXT_HEIGHT-1, 15, TEXT_HEIGHT+1);
+	Show_Score(cr, Velocity,Velocity_X-5,WINDOW_HEIGHT-1, earese);
 	cairo_reset_clip(cr);
 }
 
 void Update_Vulner(cairo_t *cr, int earese)  /* for vulner only */
 {
-	cairo_clip_text(cr, Vulner_X-7, Panel_Y_Start+Data_Line-6, 17, (Data_Line/2)-1);
-	Show_Score(cr, Vulner_Counter,Vulner_X,Data_Line, earese);
+	cairo_clip_text(cr, Vulner_X-7, WINDOW_HEIGHT-TEXT_HEIGHT-1, 17, TEXT_HEIGHT+1);
+	Show_Score(cr, Vulner_Counter,Vulner_X-6,WINDOW_HEIGHT-1, earese);
 	cairo_reset_clip(cr);
 }
 
@@ -983,22 +981,22 @@ void Update_Vulner(cairo_t *cr, int earese)  /* for vulner only */
 
 void Update_Interval(cairo_t *cr, int earese)
 {
-	cairo_clip_text(cr, Interval_X-8, Panel_Y_Start+Data_Line-6, 17, (Data_Line/2)-1);
-	Show_Score(cr, Double_Press_Interval,Interval_X,Data_Line, earese);
+	cairo_clip_text(cr, Interval_X-8, WINDOW_HEIGHT-TEXT_HEIGHT-1, 17, TEXT_HEIGHT+1);
+	Show_Score(cr, Double_Press_Interval,Interval_X-7,WINDOW_HEIGHT-1, earese);
 	cairo_reset_clip(cr);
 }
 
 void Update_Speed(cairo_t *cr, int earese)
 {
-	cairo_clip_text(cr, Speed_X-12, Panel_Y_Start+Data_Line-6, 19, (Data_Line/2)-1);
-	Show_Score(cr, Speed,Speed_X-6,Data_Line, earese);
+	cairo_clip_text(cr, Speed_X-12, WINDOW_HEIGHT-TEXT_HEIGHT-1, 19, TEXT_HEIGHT+1);
+	Show_Score(cr, Speed,Speed_X-11,WINDOW_HEIGHT-1, earese);
 	cairo_reset_clip(cr);
 }
 
 void Update_Shots(cairo_t *cr, int earese)
 {
-	cairo_clip_text(cr, Shots_X-12, Panel_Y_Start+Data_Line-6, 17, (Data_Line/2)-1);
-	Show_Score(cr, Missile_Stock,Shots_X-10,Data_Line, earese);
+	cairo_clip_text(cr, Shots_X-12, WINDOW_HEIGHT-TEXT_HEIGHT-1, 20, TEXT_HEIGHT+1);
+	Show_Score(cr, Missile_Stock,Shots_X-12,WINDOW_HEIGHT-1, earese);
 	cairo_reset_clip(cr);
 }
 
@@ -1259,5 +1257,26 @@ void Reset_Screen(cairo_t *cr)
 
 }  /* end reset screen */
 
+int main()
+{
+	start_drawing();
+	update_frame_SF();
+	cairo_surface_write_to_png(surface, "test.png");
+}
+
+
+
+
+
 
 #endif
+
+
+
+
+
+
+
+
+
+

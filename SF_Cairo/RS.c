@@ -1,5 +1,5 @@
 // OS X compilation (with GUI):
-/* clang -Wall -g  myvars.c TCOL.c DE.c HM.c RS.c -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo `pkg-config --cflags gtk+-3.0` `pkg-config --libs gtk+-3.0`  -o RS -Wno-dangling-else -Wno-switch -D GUI */
+/* clang -Wall -g  myvars.c TCOL.c DE.c HM.c RS.c -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo `pkg-config --cflags gtk+-3.0` `pkg-config --libs gtk+-3.0`  -o RS -Wno-dangling-else -Wno-switch -D GUI -O3 */
 // To disable the gui and compile as a library, leave out the GUI switch above. (i.e. remove
 // the -u option)
 // To run without GTK warnings: (actually running without any error logging to the terminal)
@@ -126,8 +126,8 @@ void Check_Bonus_Input(cairo_t *cr) {
 						{
                 No_Of_Points_Bonus_Taken++;
                 Points=Points+100;
-								Points_Should_Update = 1;
-								Points_Should_Clean = 1;
+//								Points_Should_Update = 1;
+//								Points_Should_Clean = 1;
             } 
 						//GDK_KEY_2, Get_User_Input() only calls this function when the input is '1' or '2'
 						else  
@@ -135,8 +135,8 @@ void Check_Bonus_Input(cairo_t *cr) {
                 No_Of_Missiles_Bonus_Taken++;
                 Missile_Stock=Missile_Stock+50;
                 if(Missile_Stock>=100) Missile_Stock=100;
- 								Shots_Should_Update = 1;
-								Shots_Should_Clean = 1;
+// 								Shots_Should_Update = 1;
+//								Shots_Should_Clean = 1;
             }
         Bonus_Display_Flag=NOT_PRESENT;
         Bonus_Granted=ON;
@@ -238,8 +238,7 @@ void Find_Interval(cairo_t *cr)   /* display double-press interval */
 					printf("Got interval. 👁 💯 💯 💯 \n");
    				 Missile_Type=VS_FOE;   /* rearm missile */
        		Show_Mine_Type(cr, Mine_Char);
-					Interval_Should_Update = 1;
-					Interval_Should_Clean = 1;
+
 //        Update_Interval(cr);
 				}
     }
@@ -505,13 +504,7 @@ void SF_iteration(cairo_t *cr)
 	}
 	Accumulate_Data(cr);
 	Handle_Bonus();
-	if(Effect_Flag) {
-	// This only says something like
-	// The game should always wait 50ms between frames, so sleep until the loop
-	// body takes 50ms
-	// is this valid c?
-		Effect_Flag=OFF;  /* no delay necessary */
-	}
+
 	Score=Points+Velocity+Control+Speed;
 }
 
@@ -519,22 +512,17 @@ void SF_iteration(cairo_t *cr)
 // Does one iteration of the game: either in animation modus or in game event modus.
 // The modus is checked by some global flags
 // Returns the mode of the iteration, which might unnused?
-int game_iteration(cairo_t *cr)
+void game_iteration(cairo_t *cr)
 {
 	if(!Explosion_Flag && !Jitter_Flag)
 	{
 		SF_iteration(cr);
-		return 0;
 	}
 	else if(Explosion_Flag)
 	{
 		// Handle drawing here, as otherwhise the ship will move to it's new location
-		cairo_new_path(cr);
-		cairo_set_source_rgb(cr, SF_YELLOW);
-		cairo_append_path(cr, PrevShip);
-		cairo_stroke(cr);
+//		cairo_new_path(cr);
 
-//			cairo_fill_preserve(cr);
 	
 		// This actually does nothing the first time around
 		// explosion_step2 is sort of the inner, yellow circle, one step behind step1
@@ -545,20 +533,22 @@ int game_iteration(cairo_t *cr)
 		explosion_step1(cr, ExpX, ExpY, Explosion_Step);
 		Explosion_Step++;
 
+		cairo_set_source_rgb(cr, SF_YELLOW);
+		cairo_append_path(cr, PrevShip);
+//		stroke_in_clip(cr);
+
 		if((Explosion_Step * 10) >= ExpRadius)
 		{
 			Explosion_Step = 0;
 			Explosion_Flag = 0;
-			Ship_Should_Update = 1;
-			Ship_Should_Clean = 1;
 			Reset_Screen(cr);
 		}
-		return EXPLOSION_MODE;
 	}
 	else if(Jitter_Flag)
 	{
-		Ship_Should_Update = 0; // Take control of ship handling
-		Ship_Should_Clean = 0;
+//		cairo_set_source_rgb(cr, 1, 0, 0);
+//		cairo_rectangle(cr, 0, 0, MaxX,  MaxY);
+//		cairo_fill(cr);
 		if(jitter_switch)
 		{
 			jitter_step1(cr, Jitter_Step);
@@ -577,12 +567,10 @@ int game_iteration(cairo_t *cr)
 
 			// Restore Ship to it's previous position
 			clear_prev_path(cr, PrevShip);
-			Draw_Ship(cr,Ship_X_Pos,Ship_Y_Pos,Ship_Headings, SHIP_SIZE_FACTOR*MaxX);
-			stroke_in_clip(cr);
+//			Draw_Ship(cr,Ship_X_Pos,Ship_Y_Pos,Ship_Headings,SHIP_SIZE_FACTOR*MaxX);
+//			stroke_in_clip(cr);
 		}
-		return JITTER_MODE;
 	}
-	return -1;
 }
 
 #ifdef GUI
@@ -621,15 +609,15 @@ static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data
 	}
 	clean(cr);
 	Draw_Frame(cr);
-	int mode_code = game_iteration(cr);
+	game_iteration(cr);
 	Fort_Should_Update = 1;
 	Ship_Should_Update = 1;
 	Fort_Should_Clean = 1;
 	Ship_Should_Clean = 1;
-	if(!Mine_Type_Should_Clean)	
-	{
-		Mine_Type_Should_Update = 1;
-	}
+//	if(!Mine_Type_Should_Clean)	
+//	{
+//		Mine_Type_Should_Update = 1;
+//	}
 	Points_Should_Update = 1; // Show the first time around right?
 	Velocity_Should_Update = 1;
 	Speed_Should_Update = 1;
@@ -642,7 +630,7 @@ static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data
 	Draw_Hexagone(cr, MaxX/2,MaxY/2,SMALL_HEXAGONE_SIZE_FACTOR*MaxX);
 	stroke_in_clip(cr);
 
-	if(mode_code == 0)
+	if(!Jitter_Flag && !Explosion_Flag)
 	{
 		gettimeofday(&loop_end_time, NULL);
 		timeval_subtract(&loopDiff, &loop_end_time, &loop_start_time);
@@ -656,13 +644,11 @@ static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data
 				nanosleep(&tim , NULL);
 		}
 	}
-	if(mode_code == JITTER_MODE)
+	if(Jitter_Flag)
 	{
-		Ship_Should_Update = 0;
-		Ship_Should_Clean = 0;
 		ms_sleep((((unsigned long)Jitter_Step)*5L) + ANIMATION_DELAY_JITTER);
 	}
-	else if(mode_code == EXPLOSION_MODE)
+	else if(Explosion_Flag)
 	{
 		ms_sleep((250.0/ ((double) Explosion_Step)) + ANIMATION_DELAY_EXP);
 	}

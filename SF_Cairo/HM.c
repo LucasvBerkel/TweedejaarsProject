@@ -75,12 +75,14 @@ void Select_Mine_Menus()
 //	free(Foe_Menu);
 //}
 
-void Update_Ship_Dynamics()
+
+
+void Move_Ship(cairo_t *cr)
 {
   Ship_Old_Headings=Ship_Headings;
   Ship_X_Old_Pos=Ship_X_Pos;
   Ship_Y_Old_Pos=Ship_Y_Pos;
-  Ship_Display_Update=0; /* do not refresh if no movement */
+//  Ship_Display_Update=0; /* do not refresh if no movement */
 
   if (Rotate_Input!=0)      /* if ship rotates */
      {
@@ -148,35 +150,7 @@ void Update_Ship_Dynamics()
 	   Ship_Y_Pos=Ship_Y_Pos+Ship_Y_Speed;
 		}
  	} /* end ship is moving */
-}
 
-void Update_Ship_Display(cairo_t *cr)
-{
-//		/* erase ship in old location */
-//	clear_prev_path(cr, PrevShip);
-	Ship_Should_Clean = 1; 	
-//  Draw_Ship(cr,Ship_X_Old_Pos,Ship_Y_Old_Pos,Ship_Old_Headings,SHIP_SIZE_FACTOR
-//							     *MaxX);
-		/* draw ship in new location */
-
-//  Draw_Ship(cr,Ship_X_Pos,Ship_Y_Pos,Ship_Headings,SHIP_SIZE_FACTOR*MaxX);
-//	stroke_in_clip(cr);
-	Ship_Should_Update = 1;
-	
-}
-
-void Move_Ship(cairo_t *cr)
-{
-  Update_Ship_Dynamics();
-  if(Ship_Display_Update)
-	{
-		Update_Ship_Display(cr);
-	}
-	else
-	{
-//		Ship_Should_Clean = 0;
-		Ship_Should_Update = 0;
-	}
 }
 
 void Fire_Shell(cairo_t *cr)
@@ -189,7 +163,8 @@ void Fire_Shell(cairo_t *cr)
 //  Draw_Shell(cr, Shell_X_Pos,Shell_Y_Pos,Shell_Headings,
 //				SHELL_SIZE_FACTOR*MaxX);  /* first time */ // First time??
 //	stroke_in_clip(cr);
-	Ship_Should_Update = 1; // first time apperantly 
+//	Shell_Should_Update = 1; // first time apperantly 
+	Shell_Should_Clean = 1;
 //  sound(800);
 //  Sound_Flag=6;
 }
@@ -211,12 +186,10 @@ void Handle_Fortress(cairo_t *cr)
   {
 //		clear_prev_path(cr, PrevShip);
 		//       Draw_Fort(cr, MaxX/2,MaxY/2,Fort_Headings,FORT_SIZE_FACTOR*MaxX);
-		Fort_Should_Clean = 1;
 		//						/* erase old position */
 		Fort_Headings=nh;
 //		Draw_Fort(cr, MaxX/2,MaxY/2,Fort_Headings,FORT_SIZE_FACTOR*MaxX);
 //		stroke_in_clip(cr);
-		Fort_Should_Update = 1;
 		/* draw new position */
 		Fort_Lock_Counter=0;  /* reset firing counter */
   }
@@ -289,15 +262,12 @@ void Handle_Speed_Score(cairo_t *cr)
    if(Mine_Alive_Counter<=200) dts=-100;
 
   Speed=Speed+dts;
-	Speed_Should_Update = 1;
-	Speed_Should_Clean = 1;
+
 //  Update_Speed(cr);
   if(Game_Type==AIMING_TEST)
     {
       Score=Mines+Speed;
 //      Update_Score(cr);
-				Points_Should_Update = 1;
-				Points_Should_Clean = 1;
     }
 }
 
@@ -306,7 +276,7 @@ void Handle_Speed_Score(cairo_t *cr)
 void Clear_Mine_Type(cairo_t *cr)
 {
 //  int x,y;
-	Mine_Type_Should_Update = 0;
+//	Mine_Type_Should_Update = 0;
 	Mine_Type_Should_Clean = 1;
 //  setviewport( Xmargin, Panel_Y_Start, Xmargin+MaxX, Panel_Y_End, 1);
 //	cairo_translate(cr, 0, Panel_Y_Start);
@@ -357,8 +327,7 @@ void Generate_Mine(cairo_t *cr)
   Reset_Mine_Headings();
 
 //  Draw_Mine(cr,Mine_X_Pos,Mine_Y_Pos,MINE_SIZE_FACTOR*MaxX);  /* draw mine first time */
-	Mine_Should_Update = 1;
-
+	Mine_Should_Clean = 1;
 
   if(randrange(0,1)) Mine_Type=FRIEND; // was random(2)
   else
@@ -395,7 +364,6 @@ void Move_Mine(cairo_t *cr)
 
 
 //    Draw_Mine(cr, Mine_X_Pos,Mine_Y_Pos,MINE_SIZE_FACTOR*MaxX);  /* redraw mine */
-		Mine_Should_Update = 1;
 //		stroke_in_clip(cr);
 
     if(--Mine_Course_Count<=0)  Reset_Mine_Headings();
@@ -443,7 +411,8 @@ void Handle_Mine(cairo_t *cr)
 		  Missile_Type=VS_FRIEND;
 		  Missile_Vs_Mine_Only=OFF;
 		  Timing_Flag=OFF;
-		  Clear_Mine_Type(cr); /* clear mine type display */
+//		  Clear_Mine_Type(cr); /* clear mine type display */
+			Mine_Type_Should_Clean = 1;
 //		  Clear_Interval(); // Double press checking  
 		  break;
 		}
@@ -478,7 +447,8 @@ void Handle_Shell(cairo_t *cr)
 //		  Draw_Shell(cr, Shell_X_Pos,Shell_Y_Pos,Shell_Headings,
 //			    SHELL_SIZE_FACTOR*MaxX); /* erase shell */
 //			clear_prev_path(cr, PrevMine);
-			Shell_Should_Update = 1;
+			Shell_Should_Clean = 1;
+//			Shell_Should_Update = 1;
 		  Shell_Flag=DEAD;
 		  break;
 		}
@@ -492,12 +462,9 @@ void Handle_Shell(cairo_t *cr)
 		  Shell_Y_Pos=Shell_Y_Pos+Shell_Y_Speed;
 		  if( (Shell_X_Pos<0) || (Shell_X_Pos>MaxX)
 		      || (Shell_Y_Pos<0) || (Shell_Y_Pos>MaxY) )
+			{
 		    Shell_Flag=KILL;  /* kill shell */
-		  else
-//		    Draw_Shell(cr, Shell_X_Pos,Shell_Y_Pos,Shell_Headings,
-//					SHELL_SIZE_FACTOR*MaxX);
-//				stroke_in_clip(cr);
-				Shell_Should_Update = 1;
+			}
 		}
  } /* end switch */
 }
@@ -582,8 +549,7 @@ void Handle_Missile(cairo_t *cr)
 				{
 	 	 			Missile_Stock--;
 //	  			Update_Shots(cr);
-					Shots_Should_Update = 1;
-					Shots_Should_Clean = 1;
+
 				}
    } while(OFF); /* to enable the break command */
 }

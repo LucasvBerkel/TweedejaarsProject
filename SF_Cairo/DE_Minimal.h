@@ -4,15 +4,15 @@
 #define TEXT_HEIGHT 4 // The height of character "h" in pixels in Cairo (with monospace font)
 #define TEXT_WIDTH 8 // The width of character "z" in pixels (with monospace font)
 #else
-#define TEXT_HEIGHT 6
+#define TEXT_HEIGHT 5
 #define TEXT_WIDTH 8 
 #endif
 #define SF_YELLOW 1.0, 1.0, 0.33
 #define SF_GREEN 0.0, 0.66, 0.0
 #define SF_BLUE 0.33, 1.0, 1.0
 #define SF_ORANGE 1.0, 0.33, 0.33
-#define WINDOW_HEIGHT 240
-#define WINDOW_WIDTH 320
+#define WINDOW_WIDTH 240
+#define WINDOW_HEIGHT 240 + TEXT_HEIGHT*2
 
 float deg2rad(int deg);
 void Open_Graphics(void);

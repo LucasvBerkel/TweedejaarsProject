@@ -331,8 +331,7 @@ void Test_Collisions(cairo_t *cr)
 		 Points=Points+20;
 		 Vulner_Counter++;
 //		 Update_Vulner(cr);
-    Vulner_Should_Update = 1;
-		Vulner_Should_Clean = 1;
+
 	       }
 	     else
 	     if((Missile_Type==VS_FOE)&&(Mine_Type==FOE))
@@ -382,8 +381,6 @@ void Test_Collisions(cairo_t *cr)
 		Points=Points+4; /* is this correct */
 		Vulner_Counter++;
 //		Update_Vulner(cr);
-    Vulner_Should_Update = 1;
-		Vulner_Should_Clean = 1;
 		Last_Missile_Hit=Loop_Counter;
 	      }
 	    else /* Vulner_Counter<11 */
@@ -392,8 +389,6 @@ void Test_Collisions(cairo_t *cr)
 				{
 				  Vulner_Counter++;
 //					Update_Vulner(cr);
-					Vulner_Should_Update = 1;
-					Vulner_Should_Clean = 1;
 				  Points=Points+4;
 				  Last_Missile_Hit=Loop_Counter;
 				}
@@ -401,8 +396,6 @@ void Test_Collisions(cairo_t *cr)
 				{
 				  Vulner_Counter=0; /* for speeeding, ha ha ha .... */
 //					Update_Vulner(cr);
-						Vulner_Should_Update = 1;
-						Vulner_Should_Clean = 1;
 				  Last_Missile_Hit=Loop_Counter;
 //				  Zero_Vulner_Sound();
 				}
@@ -427,8 +420,6 @@ void Accumulate_Data(cairo_t *cr)
 		{
  			Velocity=Velocity+7;
 //			Update_Velocity(cr); // --- UNCOMMENT --- // 
-	    Velocity_Should_Update = 1;
-			Velocity_Should_Clean = 1;
 		}
 
 	/* update Control */
@@ -453,10 +444,6 @@ void Accumulate_Data(cairo_t *cr)
 	 Wrap_Around_Flag=OFF;
        }
 //     Update_Control(cr);
-	    Control_Should_Update = 1;
-			Control_Should_Clean = 1;
-	    Points_Should_Update = 1;
-			Points_Should_Clean = 1;
 //     Update_Points(cr);
 
    } /* if data-update-counter */

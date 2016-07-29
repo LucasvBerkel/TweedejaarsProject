@@ -11,7 +11,7 @@
 #include <gtk/gtk.h>
 #endif
 
-int game_iteration(cairo_t *cr);
+void game_iteration(cairo_t *cr);
 void SF_iteration(cairo_t *cr);
 void set_initial_vals(cairo_t *cr);
 void handle_F3();

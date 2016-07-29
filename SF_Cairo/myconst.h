@@ -14,7 +14,13 @@
 #define JITTER_MODE 1
 #define EXPLOSION_MODE 2
 
+#ifdef GUI
 #define POINTS_FONT_SIZE 5.5
+#else
+#define POINTS_FONT_SIZE 7.5
+#endif
+
+
 
 
 #define UP 65363
