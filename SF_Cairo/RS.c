@@ -29,7 +29,9 @@
 #include "TCOL.h"
 #include "RS.h"
 
-#include <gdk/gdkkeysyms.h>
+// Dropped in favor of manually defined key constants to be able to compile a fully GTK
+// independent game/library/binary
+//#include <gdk/gdkkeysyms.h>
 
 // Linux does not have M_PI in math.h for some reason
 #ifndef M_PI
@@ -93,13 +95,13 @@ int timeval_subtract(struct timeval *result, struct timeval *t2, struct timeval 
 
 void handle_3()
 {
-	if((Key==GDK_KEY_3)&&(Lastkey!=GDK_KEY_3)&&(!(Timing_Flag))) { /* first I keypress */
+	if((Key==KEY_3)&&(Lastkey!=KEY_3)&&(!(Timing_Flag))) { /* first I keypress */
 		gettimeofday(&intv_t1, NULL);
     Timing_Flag=ON;
     Check_Mine_Flag=ON; /* is used by Get_User_Input(cr) */
 	}
 
-	if((Key==GDK_KEY_3)&&(Lastkey==GDK_KEY_3)&&(Timing_Flag)) {   /* second I keypress */
+	if((Key==KEY_3)&&(Lastkey==KEY_3)&&(Timing_Flag)) {   /* second I keypress */
 		gettimeofday(&intv_t2, NULL);
 		Timing_Flag=OFF;
 		Key=0;   /* to enable consecutive double_press */
@@ -111,7 +113,7 @@ void handle_3()
 void Check_Bonus_Input(cairo_t *cr) {
     if((Bonus_Display_Flag==NOT_PRESENT)||(Bonus_Display_Flag==NON_BONUS)) 
 		{
-			printf("Did nothing! \n"); // do nothing
+			;
     } 
 		else if(Bonus_Display_Flag==FIRST_BONUS) {
         Bonus_Wasted_Flag=ON;
@@ -120,32 +122,27 @@ void Check_Bonus_Input(cairo_t *cr) {
 		{
         if(!Bonus_Wasted_Flag) 
 				{
-            if(Key==GDK_KEY_1) 
+            if(Key==KEY_1) 
 						{
-								printf("✨  Got a cool points bonus! ✨ \n");
                 No_Of_Points_Bonus_Taken++;
                 Points=Points+100;
-//                Update_Points(cr);
 								Points_Should_Update = 1;
+								Points_Should_Clean = 1;
             } 
 						//GDK_KEY_2, Get_User_Input() only calls this function when the input is '1' or '2'
 						else  
 						{
-								printf("🎈  Got a missile bonus! 🎈 \n");
                 No_Of_Missiles_Bonus_Taken++;
                 Missile_Stock=Missile_Stock+50;
                 if(Missile_Stock>=100) Missile_Stock=100;
-//                Update_Shots(cr);
+ 								Shots_Should_Update = 1;
+								Shots_Should_Clean = 1;
             }
         Bonus_Display_Flag=NOT_PRESENT;
         Bonus_Granted=ON;
 //        Xor_Bonus_Char(rn);    /* erase present $ char */
 				Bonus_Char_Should_Clean = 0;
 //        Write_Bonus_Message(cr); /*  Announce_Bonus  */
-				}
-				else
-				{
-					printf(" Wasted bonus  💦  \n");
 				}
 		}
 }
@@ -156,17 +153,17 @@ void Get_User_Input(cairo_t *cr)
     if (New_Input_Flag) /* new input occured */
     {
         New_Input_Flag=OFF; /* make sure no repetitions on same input */
-        if (Key==GDK_KEY_Up) Accel_Input=1;        /*   UP    */
-        if (Key==GDK_KEY_Left)  Rotate_Input=-1;      /*   LEFT  */
-        if (Key==GDK_KEY_Right) Rotate_Input=1;       /*   RIGHT */ 
-        if (Key==GDK_KEY_space)  New_Missile_Flag=ON;  /*   DOWN  */ // Used to be down
-        if (Key==GDK_KEY_1)    Check_Bonus_Input(cr);        /*   P(oints) */
-        if (Key==GDK_KEY_2)    Check_Bonus_Input(cr);        /*   M(issiles) */
+        if (Key==RIGHT) Accel_Input=1;        /*   UP    */
+        if (Key==LEFT)  Rotate_Input=-1;      /*   LEFT  */
+        if (Key==UP) Rotate_Input=1;       /*   RIGHT */ 
+        if (Key==SPACE)  New_Missile_Flag=ON;  /*   DOWN  */ // Used to be down
+        if (Key==KEY_1)    Check_Bonus_Input(cr);        /*   P(oints) */
+        if (Key==KEY_2)    Check_Bonus_Input(cr);        /*   M(issiles) */
 				// probably not done right
-    		if (Key==GDK_KEY_3)   handle_3(); // was handled by kbd interrupt handler */ // hmm
+    		if (Key==KEY_3)   handle_3(); // was handled by kbd interrupt handler */ // hmm
 				// enter pauses the game 
 //        if (Key==GDK_KEY_Return) Freeze_Flag=Freeze_Flag^1; /* toggle freeze flag */ 
-        if (Key==GDK_KEY_Escape)   End_Flag=ON;
+//        if (Key==GDK_KEY_Escape)   End_Flag=ON;
     }
     if(Check_Mine_Flag) /* after first press of 3 */
         {
@@ -241,6 +238,8 @@ void Find_Interval(cairo_t *cr)   /* display double-press interval */
 					printf("Got interval. 👁 💯 💯 💯 \n");
    				 Missile_Type=VS_FOE;   /* rearm missile */
        		Show_Mine_Type(cr, Mine_Char);
+					Interval_Should_Update = 1;
+					Interval_Should_Clean = 1;
 //        Update_Interval(cr);
 				}
     }
@@ -638,7 +637,6 @@ static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data
 	Interval_Should_Update = 1;
 	Shots_Should_Update = 1;
 	Control_Should_Update = 1;
-
 
 
 	Draw_Hexagone(cr, MaxX/2,MaxY/2,SMALL_HEXAGONE_SIZE_FACTOR*MaxX);

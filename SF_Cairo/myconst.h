@@ -16,14 +16,15 @@
 
 #define POINTS_FONT_SIZE 5.5
 
-#define UP 72
-#define DOWN 80
-#define LEFT 75
-#define RIGHT 77
+
+#define UP 65363
+#define SPACE 32
+#define LEFT 65361
+#define RIGHT 65362
 #define ESC -1
-#define F1 0xF1     /* 241 decimal */
-#define F2 0xF2     /* 242 decimal */
-#define F3 0xF3     /* 243 decimal */
+#define KEY_1 49
+#define KEY_2 50
+#define KEY_3 51
 #define ENTER 13
 #define REGULAR_CRAP 1
 #define EXTENDED_CRAP 2

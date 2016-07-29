@@ -1,5 +1,4 @@
 #include <cairo.h>
-#include <gtk/gtk.h>
 
 void Gen_Explosion(cairo_t *cr, int X_Pos,int Y_Pos,int Radius);
 

@@ -174,7 +174,7 @@ void Move_Ship(cairo_t *cr)
 	}
 	else
 	{
-		Ship_Should_Clean = 0;
+//		Ship_Should_Clean = 0;
 		Ship_Should_Update = 0;
 	}
 }
@@ -289,11 +289,15 @@ void Handle_Speed_Score(cairo_t *cr)
    if(Mine_Alive_Counter<=200) dts=-100;
 
   Speed=Speed+dts;
+	Speed_Should_Update = 1;
+	Speed_Should_Clean = 1;
 //  Update_Speed(cr);
   if(Game_Type==AIMING_TEST)
     {
       Score=Mines+Speed;
 //      Update_Score(cr);
+				Points_Should_Update = 1;
+				Points_Should_Clean = 1;
     }
 }
 
@@ -578,6 +582,8 @@ void Handle_Missile(cairo_t *cr)
 				{
 	 	 			Missile_Stock--;
 //	  			Update_Shots(cr);
+					Shots_Should_Update = 1;
+					Shots_Should_Clean = 1;
 				}
    } while(OFF); /* to enable the break command */
 }

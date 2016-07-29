@@ -24,6 +24,10 @@
 //	int score;
 //};
 
+// Addded for backwards compability 
+extern int Missile_X;
+extern int Missile_Y;
+
 extern char *Mine_Char;
 
 extern cairo_t *SF_canvas;

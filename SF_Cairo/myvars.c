@@ -9,6 +9,10 @@
 #include <stdio.h>
 #include <math.h>
 
+// Addded for backwards compability
+int Missile_X;
+int Missile_Y;
+
 cairo_t *SF_canvas;
 cairo_surface_t *surface;
 cairo_font_options_t *font_options;

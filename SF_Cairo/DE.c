@@ -6,9 +6,9 @@
 // Without gtk support:
 // gcc -Wall -g DE.c -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo -o DE
 
-// To shared library: (comment out GTK related code for this to work) 
-// gcc -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo  -Wall -g -fPIC -c  myvars.c DE.c
-// gcc -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo -shared -o sf_frame_lib.so myvars.o DE.o
+// To shared library: (without any GUI functionality)
+// gcc -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo  -Wall -g -fPIC -c  myvars.c DE.c HM.c TCOL.c RS.c
+// gcc -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo -shared -o sf_frame_lib.so myvars.o HM.o RS.o TCOL.o DE.o
 
 
 /* DISPLAY ELEMENTS	 6 Feb. 90 18:00
@@ -111,7 +111,7 @@ void Initialize_Graphics(cairo_t *cr)
 	}
 	else if(cairo_surface_get_type(cairo_get_target(cr)) == CAIRO_SURFACE_TYPE_IMAGE)
 	{
-			cairo_set_line_width(cr, (200.0 * 1) / ((double) MaxY * 1));
+			cairo_set_line_width(cr, (190.0 * 1) / ((double) MaxY * 1));
 	}
 	else // Mostly quartz?
 	{
@@ -509,6 +509,7 @@ void clean(cairo_t *cr)
 	if(Velocity_Should_Clean)
 	{
 		Update_Velocity(cr);
+		Velocity_Should_Clean = 0;
 	}
 	if(Speed_Should_Clean)
 	{
@@ -550,7 +551,6 @@ void clean(cairo_t *cr)
 	}
 	if(Mine_Type_Should_Clean)
 	{
-		printf("Claening mine \n");
 		Draw_Mine_Type(cr, 1);
 		Mine_Type_Should_Clean = 0;
 	}
@@ -602,9 +602,14 @@ void update_drawing(cairo_t *cr)
 		Update_Points(cr);
 		Points_Should_Update = 0;
 	}
+	else
+	{
+		printf("Not updatigng pts \n       ");
+	}
 	if(Velocity_Should_Update)
 	{
 		Update_Velocity(cr);
+		Velocity_Should_Update = 0;
 	}
 	if(Speed_Should_Update)
 	{
@@ -1111,6 +1116,24 @@ void Reset_Screen(cairo_t *cr)
 
             /* reset panel */
 		// This is done in set_initial_vals now
+	Mine_Type_Should_Update = 1;
+	Points_Should_Update = 1; // Show the first time around right?
+	Velocity_Should_Update = 1;
+	Speed_Should_Update = 1;
+	Vulner_Should_Update = 1;
+	Interval_Should_Update = 1;
+	Shots_Should_Update = 1;
+	Control_Should_Update = 1;
+
+	Mine_Type_Should_Clean = 1;
+	Points_Should_Clean = 1; // Show the first time around right?
+	Velocity_Should_Clean = 1;
+	Speed_Should_Clean = 1;
+	Vulner_Should_Clean = 1;
+	Interval_Should_Clean = 1;
+	Shots_Should_Clean = 1;
+	Control_Should_Clean = 1;	
+
 //    Update_Points(cr);
 //    Update_Vulner(cr);
 //    Update_Interval(cr);
@@ -1214,16 +1237,16 @@ unsigned char* update_frame_SF()
   // this  way be ereased, numerically updated, and then visually updated
 	clean(SF_canvas);
 	int mode_code = game_iteration(SF_canvas);
+	Ship_Should_Update = 1;
+	Ship_Should_Clean = 1;
+	Fort_Should_Update = 1;
+	Fort_Should_Clean = 1;
 	if(mode_code == JITTER_MODE) 
 	{
-		cairo_stroke(SF_canvas);
-		ms_sleep((((unsigned long)Jitter_Step)*5L) + ANIMATION_DELAY_JITTER);
+		Ship_Should_Update = 0;
+		Ship_Should_Clean = 0;
 	}
-	else if(mode_code == EXPLOSION_MODE) 
-	{
-		cairo_stroke(SF_canvas);
-		ms_sleep((250.0/ ((double) Explosion_Step-1)) + ANIMATION_DELAY_EXP);
-	}
+	Points_Should_Update = 1;
 	update_drawing(SF_canvas);
 	return cairo_image_surface_get_data(surface);
 }

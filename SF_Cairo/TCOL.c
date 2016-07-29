@@ -263,7 +263,6 @@ void Test_Collisions(cairo_t *cr)
 	 else
 	   {
 	     Points=Points-50;
-			 printf("Killing mine because it bumped into the ship \n");
 	     Mine_Flag=KILL;
 	     Handle_Mine(cr); 		/* kill mine */
 	     if(Shell_Flag==ALIVE)
@@ -302,7 +301,6 @@ void Test_Collisions(cairo_t *cr)
 		 Handle_Shell(cr); // Uncomment when done
 		 if(Mine_Flag==ALIVE)    /* kill  mine  */
 		   {
-					printf("Killing mine because ship was hit by shell \n");
 		     Mine_Flag=KILL;
 		     Handle_Mine(cr); /* erase mine and reset counters */
 		   }
@@ -324,7 +322,6 @@ void Test_Collisions(cairo_t *cr)
 			    Mine_X_Pos,Mine_Y_Pos,COLLISION_DIST) )
 
 	   {
-			printf("Struck mine \n");
 	     Missile_Flag[i]=KILL;
 	     Handle_Missile_Flag=ON;
 	     goodshot=OFF;
@@ -334,6 +331,8 @@ void Test_Collisions(cairo_t *cr)
 		 Points=Points+20;
 		 Vulner_Counter++;
 //		 Update_Vulner(cr);
+    Vulner_Should_Update = 1;
+		Vulner_Should_Clean = 1;
 	       }
 	     else
 	     if((Missile_Type==VS_FOE)&&(Mine_Type==FOE))
@@ -345,7 +344,6 @@ void Test_Collisions(cairo_t *cr)
 	       {
 		 goodshot=OFF; /* redundant */
 		 Gen_Snap_Effect();
-			printf("Killing mine because it was hit by the player \n");
 		 Mine_Flag=KILL;
 		 Handle_Mine(cr);
 	       }
@@ -358,7 +356,6 @@ void Test_Collisions(cairo_t *cr)
 	 if(Check_Collision(Missile_X_Pos[i],Missile_Y_Pos[i],
 			    MaxX/2,MaxY/2,COLLISION_DIST) )
 	 {
-		printf("Fortress was struck \n");
 	   Missile_Flag[i]=KILL;
 	   Handle_Missile_Flag=ON;
 	   if(Missile_Type==VS_FRIEND)
@@ -384,7 +381,9 @@ void Test_Collisions(cairo_t *cr)
 	      {
 		Points=Points+4; /* is this correct */
 		Vulner_Counter++;
-		Update_Vulner(cr);
+//		Update_Vulner(cr);
+    Vulner_Should_Update = 1;
+		Vulner_Should_Clean = 1;
 		Last_Missile_Hit=Loop_Counter;
 	      }
 	    else /* Vulner_Counter<11 */
@@ -393,6 +392,8 @@ void Test_Collisions(cairo_t *cr)
 				{
 				  Vulner_Counter++;
 //					Update_Vulner(cr);
+					Vulner_Should_Update = 1;
+					Vulner_Should_Clean = 1;
 				  Points=Points+4;
 				  Last_Missile_Hit=Loop_Counter;
 				}
@@ -400,6 +401,8 @@ void Test_Collisions(cairo_t *cr)
 				{
 				  Vulner_Counter=0; /* for speeeding, ha ha ha .... */
 //					Update_Vulner(cr);
+						Vulner_Should_Update = 1;
+						Vulner_Should_Clean = 1;
 				  Last_Missile_Hit=Loop_Counter;
 //				  Zero_Vulner_Sound();
 				}
@@ -424,6 +427,8 @@ void Accumulate_Data(cairo_t *cr)
 		{
  			Velocity=Velocity+7;
 //			Update_Velocity(cr); // --- UNCOMMENT --- // 
+	    Velocity_Should_Update = 1;
+			Velocity_Should_Clean = 1;
 		}
 
 	/* update Control */
@@ -448,6 +453,10 @@ void Accumulate_Data(cairo_t *cr)
 	 Wrap_Around_Flag=OFF;
        }
 //     Update_Control(cr);
+	    Control_Should_Update = 1;
+			Control_Should_Clean = 1;
+	    Points_Should_Update = 1;
+			Points_Should_Clean = 1;
 //     Update_Points(cr);
 
    } /* if data-update-counter */

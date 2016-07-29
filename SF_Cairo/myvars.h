@@ -10,22 +10,14 @@ cairo_surface_t *surface;
 cairo_font_options_t *font_options;
 
 cairo_path_t *PrevShip;
-cairo_path_t *PrevMissile[MAX_NO_OF_MISSILES]; // Initialized in Initialize_Graphics
+cairo_path_t *PrevMissile;
 cairo_path_t *PrevFort;
 cairo_path_t *PrevMine;
-cairo_path_t *PrevShell;
 
 int Ship_Should_Update;
 int Mine_Should_Update;
 int Fort_Should_Update;
-int Missile_Should_Update[MAX_NO_OF_MISSILES] = {0};
-int Shell_Should_Update;
-
-int Ship_Should_Clean;
-int Mine_Should_Clean;
-int Fort_Should_Clean;
-int Missile_Should_Clean[MAX_NO_OF_MISSILES] = {0};
-int Shell_Should_Clean;
+int Missile_Should_Update;
 
 char Initialized_Graphics;
 
@@ -85,7 +77,9 @@ int Fort_Lock_Interval=FORT_LOCK_INTERVAL; /* in loops */
 int Collision_Distance=COLLISION_DIST; /*********** in screen dots */
 
 		/* VARIABLES */
-mine_type Mine_Type;
+
+
+
 
 int Bonus_Indication_Index=0; /* first entry in the Vector   crap****/
 int Ship_X_Pos;
@@ -220,8 +214,6 @@ int Freeze_Flag=0;
 //	   int Normal_Game_Termination;
 //	   }game;
 
-int Wrap_Around_Flag;
-
 char filename[MAX_DIR_PATH];
 //char select[MAX_DIR_PATH];
 char curdir[MAX_DIR_PATH];
@@ -250,4 +242,4 @@ int No_Of_Bonus_Windows=0;
 int Fort_Lock_Counter=0;
 int Effect_Flag=OFF;
 
-#endif                      
+#endif
