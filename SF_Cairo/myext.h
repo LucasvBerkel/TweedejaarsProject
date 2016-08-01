@@ -117,9 +117,9 @@ extern struct timeval intv_t2;
 		/* GAME PRAMATERS */
 extern int Ship_Rotate_Step;
 extern int Ship_Used;
-extern float Ship_Max_Speed;
-extern double Ship_Accel;
-extern float Ship_Angular_Step;
+extern int Ship_Max_Speed;
+extern int Ship_Accel;
+extern int Ship_Angular_Step;
 extern int Missile_Speed;
 extern int Mine_Wait_Loops;
 extern int Mine_Live_Loops;
@@ -127,14 +127,14 @@ extern int Mine_Speed;
 extern int Missile_Limit_Flag;
 
 		/* VARIABLES */
-extern float Ship_X_Pos;
-extern float Ship_Y_Pos;
-extern float Ship_X_Old_Pos;
-extern float Ship_Y_Old_Pos;
+extern int Ship_X_Pos;
+extern int Ship_Y_Pos;
+extern int Ship_X_Old_Pos;
+extern int Ship_Y_Old_Pos;
 extern float Ship_X_Speed;
 extern float Ship_Y_Speed;
-extern float Ship_Headings;
-extern float Ship_Old_Headings;
+extern int Ship_Headings;
+extern int Ship_Old_Headings;
 extern int Rotate_Input;
 extern int Accel_Input;
 extern int Ship_Display_Update;
@@ -303,8 +303,8 @@ extern int Fort_Lock_Counter;
 
 		/* FUNCTIONS */
 
-extern float Fcos(double Headings_Degs); /* compute cos of 0 - 359 degrees */
-extern float Fsin(double Headings_Degs); /* compute sin of 0 - 359 degrees */
+extern float Fcos(int Headings_Degs); /* compute cos of 0 - 359 degrees */
+extern float Fsin(int Headings_Degs); /* compute sin of 0 - 359 degrees */
 extern void Draw_Ship (cairo_t *cr, int x, int y, int Headings, int size);
 extern void Draw_Hexagone(cairo_t *cr, int X_Center,int Y_Center,int Hex_Size);
 extern void Draw_Frame(cairo_t *cr);

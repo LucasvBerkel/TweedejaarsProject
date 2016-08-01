@@ -1,5 +1,5 @@
 // OS X compilation (with GUI):
-/* clang -Wall -g  myvars.c TCOL.c DE.c HM.c RS.c -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo `pkg-config --cflags gtk+-3.0` `pkg-config --libs gtk+-3.0`  -o RS -Wno-dangling-else -Wno-switch -D GUI -O3 */
+/* clang -Wall -g  myvars.c TCOL.c DE.c HM.c RS.c -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo `pkg-config --cflags gtk+-3.0` `pkg-config --libs gtk+-3.0`  -o RS -Wno-dangling-else -Wno-switch -D GUI */
 // To disable the gui and compile as a library, leave out the GUI switch above. (i.e. remove
 // the -u option)
 // To run without GTK warnings: (actually running without any error logging to the terminal)
@@ -153,14 +153,14 @@ void Get_User_Input(cairo_t *cr)
     if (New_Input_Flag) /* new input occured */
     {
         New_Input_Flag=OFF; /* make sure no repetitions on same input */
-        if (Key==RIGHT) Accel_Input=1;        /*   UP    */
-        if (Key==LEFT)  Rotate_Input=-1;      /*   LEFT  */
-        if (Key==UP) Rotate_Input=1;       /*   RIGHT */ 
-        if (Key==SPACE)  New_Missile_Flag=ON;  /*   DOWN  */ // Used to be down
-        if (Key==KEY_1)    Check_Bonus_Input(cr);        /*   P(oints) */
-        if (Key==KEY_2)    Check_Bonus_Input(cr);        /*   M(issiles) */
-				// probably not done right
-    		if (Key==KEY_3)   handle_3(); // was handled by kbd interrupt handler */ // hmm
+      if (Key==UP) Accel_Input=1;        /*   UP    */
+      else if (Key==LEFT)  Rotate_Input=-1;      /*   LEFT  */
+      else if (Key==RIGHT) Rotate_Input=1;       /*   RIGHT */ 
+      else if (Key==SPACE)  New_Missile_Flag=ON;  /*   DOWN  */ // Used to be down
+      else if (Key==KEY_1)    Check_Bonus_Input(cr);        /*   P(oints) */
+      else if (Key==KEY_2)    Check_Bonus_Input(cr);        /*   M(issiles) */
+		// probably not done right
+  		else if (Key==KEY_3)   handle_3(); // was handled by kbd interrupt handler */ // hmm
 				// enter pauses the game 
 //        if (Key==GDK_KEY_Return) Freeze_Flag=Freeze_Flag^1; /* toggle freeze flag */ 
 //        if (Key==GDK_KEY_Escape)   End_Flag=ON;
@@ -607,24 +607,26 @@ static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data
 			Missile_Should_Update[m] = 1;
 		}
 	}
+	printf("Ship Position: (%d, %d) Ship Headings: %d \n", Ship_X_Pos, Ship_Y_Pos, Ship_Headings);
 	clean(cr);
 	Draw_Frame(cr);
 	game_iteration(cr);
-	Fort_Should_Update = 1;
-	Ship_Should_Update = 1;
-	Fort_Should_Clean = 1;
-	Ship_Should_Clean = 1;
-//	if(!Mine_Type_Should_Clean)	
-//	{
-//		Mine_Type_Should_Update = 1;
-//	}
-	Points_Should_Update = 1; // Show the first time around right?
-	Velocity_Should_Update = 1;
-	Speed_Should_Update = 1;
-	Vulner_Should_Update = 1;
-	Interval_Should_Update = 1;
-	Shots_Should_Update = 1;
-	Control_Should_Update = 1;
+
+//	Fort_Should_Update = 1;
+//	Ship_Should_Update = 1;
+//	Fort_Should_Clean = 1;
+//	Ship_Should_Clean = 1;
+////	if(!Mine_Type_Should_Clean)	
+////	{
+////		Mine_Type_Should_Update = 1;
+////	}
+//	Points_Should_Update = 1; // Show the first time around right?
+//	Velocity_Should_Update = 1;
+//	Speed_Should_Update = 1;
+//	Vulner_Should_Update = 1;
+//	Interval_Should_Update = 1;
+//	Shots_Should_Update = 1;
+//	Control_Should_Update = 1;
 
 
 	Draw_Hexagone(cr, MaxX/2,MaxY/2,SMALL_HEXAGONE_SIZE_FACTOR*MaxX);
@@ -654,55 +656,6 @@ static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data
 	}
 	update_drawing(cr);
 
-
-
-  
-	
-//	if(!Explosion_Flag && !Jitter_Flag)
-//	{
-//		unsigned int elapsed_time;
-//		struct timeval loop_end_time, loopDiff;
-//		struct timespec tim;
-//	  tim.tv_sec = 0;
-//
-//
-////		printf("In sf iter \n ");
-//		SF_iteration(cr);
-////		printf("After \n");
-//
-//		Draw_Frame(cr);
-//
-//
-//		Update_Points(cr);
-//		Update_Control(cr);
-//		Update_Velocity(cr);
-//		Update_Vulner(cr);
-//		Update_Interval(cr);
-//		Update_Speed(cr);
-//		Update_Shots(cr);
-//
-//		clean(cr);
-//		Draw_Hexagone(cr, MaxX/2,MaxY/2,SMALL_HEXAGONE_SIZE_FACTOR*MaxX);
-//		stroke_in_clip(cr);
-//		update_drawing(cr);
-//		gettimeofday(&loop_end_time, NULL);
-//		timeval_subtract(&loopDiff, &loop_end_time, &loop_start_time);
-////		elapsed_time=((double)(clock()-loop_start_time)/(double)CLOCKS_PER_SEC)*1000.0;
-//		elapsed_time = round(loopDiff.tv_usec/1000.0);
-//    if(elapsed_time < SF_DELAY)
-//		{
-////				printf("Sleeping for %Lf \n", SF_DELAY-elapsed_time);
-////        ms_sleep(SF_DELAY-elapsed_time);  /* wait up to 50 milliseconds */
-//		  	tim.tv_nsec = (SF_DELAY-elapsed_time) * 1000000L;
-//				nanosleep(&tim , NULL);
-//		}
-//	}
-//	else  // Animating
-//	{
-		// we don't want our object disappearing!
-			
-
-
 	return FALSE; // Not sure why this should return false
 }
 
@@ -711,64 +664,12 @@ static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data
 gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
 {
 
-//		Lastkey = Key;
-//		Key = event->keyval;
-		set_key(event->keyval); // Only set the key here
-	
-//  switch (event->keyval)
-//  {
-//    case GDK_KEY_Left:
-////			Ship_Headings = (Ship_Headings - 5) % 360;
-////      Ship_Should_Update = 1;
-////			Ship_Should_Clean = 1;
-//
-//			break;
-//    case GDK_KEY_Up:
-////			Ship_X_Pos = (Ship_X_Pos + 5) % MaxX;
-////      Ship_Should_Update = 1;
-////			Ship_Should_Clean = 1;
-//			break;
-//    case GDK_KEY_Right:
-////			Ship_Headings = (Ship_Headings + 5) % 360;
-////      Ship_Should_Update = 1;
-////			Ship_Should_Clean = 1;
-//			break;
-//		case GDK_KEY_space:
-//			
-//			break;
-//		case GDK_KEY_3:
-//
-//			break;
-//		case GDK_KEY_2:
-//
-//		case GDK_KEY_Return:
-//			
-//			break;
-//		case GDK_KEY_Escape:
-//
-//			break;
-//    default: // Not sure if this always reached
-//      return FALSE;
-//  }
-
+	set_key(event->keyval); // Only set the key here
   return FALSE; 
 }
 
 void animation_loop(GtkWidget *darea)
 {
-	// Initilization of SF here
-
-    // SCORE SAVE FILE
-		// TODO: instead of this file, make a python function that returns the score as an int
-		// Probably just some kind of wrapper function like get_score that you can call after
-		// update_frame() that just returns the Score global
-//    FILE *f = fopen("SAVE\\SCORE.TXT", "w");
-//    if (f == NULL) {
-//        printf("A state file is not present.\n");
-//        exit(1);
-//    }
-//    fclose(f); 
-		
 
 	Init_Session();
 	Game_Counter=0;
@@ -826,85 +727,5 @@ int main(int argc, char *argv[])
 
   return 0;
 }
+
 #endif
-
-
-// Misses some syntax
-//int Run_SF(cairo_t *cr)
-//{
-//    clock_t elapsed_time;
-//    clock_t loop_start_time;
-    // SCORE SAVE FILE
-		// TODO: instead of this file, make a python function that returns the score as an int
-		// Probably just some kind of wrapper function like get_score that you can call after
-		// update_frame() that just returns the Score global
-//    FILE *f = fopen("SAVE\\SCORE.TXT", "w");
-//    if (f == NULL) {
-//        printf("A state file is not present.\n");
-//        exit(1);
-//    }
-//    fclose(f); 
-//		Init_Game();
-//		Open_Graphics();
-//		Initialize_Graphics(cr);  Probably not needed (or depends on GTK/versus array render)
-//		Reset_Screen(cr); 
-//		 Draw_Frame(cr here?)
-//		Loop_Counter=0;
-//
-//    Init_Session();
-//    Game_Counter=0;
-//    do {   /* loop on number of games here */
-//        SF_iteration
-//        } while(!Restart_Flag&&!End_Flag&&(Loop_Counter < One_Game_Loops));
-//				 This says quit the loop if the time defined by One_Game_Loops (default is 3 min)
-//				 has passed (this can be measured with clock I guess?) Because the loop always takes
-//				 exactly 50ms we can just increment loop counter until it reaches a threshold 
-//        /* ESC or three minutes */
-//
-//         RUNNING FILE
-//        f = fopen("SAVE\\SCORE.TXT", "w"); // Open this earlier for performace
-//        fprintf(f, "FALSE");
-//        fclose(f);
-//
-//        Restore_Tik();
-//        Reset_Timer();
-//        Restore_Kbd();
-//        Set_Kbd_Rate(0x4); /* to repeat rate 20Hz */
-//
-//        nosound();   /* just in case */
-//        sound(400);
-//        delay(500); // Not intersting cus only sound
-//        nosound();
-//        Game_Counter++;
-//        
-//         final_display();
-//        Close_Graphics(cr);
-//				 Pretty sure we can skip this
-//        printf("Episode %d score: %d\n", Game_Counter, Score);
-//        if(!Restart_Flag && !End_Flag) {
-//            while(1) {
-//								char ex = 0;
-//                char ex = getch(); // getch reads one keyboard input char from the user
-//                if(ex==9) {
-//                    break;
-//                } else if(ex==27) {
-//                    return(0);
-//                }
-//            }
-//        }
-//
-//        
-//        clrscr();  // From graphics.h or something
-//        /* end one game here */
-//    } while(!Restart_Flag && !End_Flag);
-//    } while((Game_Counter< No_Of_Games)&&(!End_Flag));
-//
-//    nosound();   /* just in case */
-//    sound(400);
-//    delay(1000);
-//    nosound();
-//    if(Restart_Flag) {
-//        return(1);
-//    }
-//    return(0);
-//}

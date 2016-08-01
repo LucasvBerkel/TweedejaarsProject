@@ -12,7 +12,7 @@
 #define SF_BLUE 0.33, 1.0, 1.0
 #define SF_ORANGE 1.0, 0.33, 0.33
 #define WINDOW_WIDTH 240
-#define WINDOW_HEIGHT 240 + TEXT_HEIGHT*2
+#define WINDOW_HEIGHT 240 + (TEXT_HEIGHT*3)
 
 float deg2rad(int deg);
 void Open_Graphics(void);

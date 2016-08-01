@@ -1,6 +1,6 @@
 // Probably add in myvars.c somewhere
 // OS X compilation
-// clang -Wall -g myvars.c DE_Minimal.c -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo  -o DE_Minimal
+// clang -Wall -g myvars.c TCOL.c RS.c HM.c DE_Minimal.c -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo  -o DE_Minimal
 // Linux compilation
 // clang -Wall -g myvars.c DE.c -lm `pkg-config --cflags cairo` `pkg-config --libs cairo` `pkg-config --cflags gtk+-3.0` `pkg-config --libs gtk+-3.0`  -o DE
 
@@ -48,54 +48,17 @@
 /*									*/
 
 
-void Open_Graphics(void)
-{
-//	int xasp,yasp;
-//
-//	// All old and should be replaced. (or probably is unneeded)
-//	/* =	-	=	-	=	-	=	-	=	-	=	-	=	-	=	-	=	-	=	-	 */
-//	/* Imported from graphics.h */
-////	GraphDriver = DETECT;
-//	/* Request auto-detection	*/
-//	/*GraphMode=EGAHI;*/
-////	initgraph( &GraphDriver, &GraphMode, "" );
-////	ErrorCode = graphresult();		/* Read result of initialization*/
-////	if( ErrorCode != grOk ){		/* Error occured during init	*/
-////	exit( 1 );
-////	}
-//
-//	//getpalette( &palette );		/* Read the palette from board	*/
-//
-//
-//	// Lol, max color is probably in the millions now
-////	MaxColors = getmaxcolor() + 1;	/* Read maximum number of colors*/
-////
-////	getaspectratio( &xasp, &yasp );	/* read the hardware aspect	*/
-////	AspectRatio = (double)xasp / (double)yasp; /* Get correction factor	*/
-////	GraphSqrFact=MaxX*AspectRatio/MaxY;		 /* for EGA cases */
-////	setwritemode(XOR_PUT);
-//	/* =	-	=	-	=	-	=	-	=	-	=	-	=	-	=	-	=	-	=	-	 */
-}
-
 // Maybe make an Initialize_Graphics just for SF? 
 void Initialize_Graphics(cairo_t *cr)
 {
-	int Height,OldMaxX;
+//	int Height,OldMaxX;
 //	int t,t1; // t is unused
-	int t1;
+//	int t1;
 	int x,dx;
 
 	MaxX = WINDOW_WIDTH;
-	MaxY = WINDOW_HEIGHT - TEXT_HEIGHT*2;			/* Originally read the size of the screen	*/
-//	SF_canvas = cr;
+	MaxY = WINDOW_HEIGHT - TEXT_HEIGHT*4;
 
-	// code works
-//	int side_panel_size=(MaxX - MaxY)/2;
-//	surface = cairo_quartz_surface_create(CAIRO_FORMAT_RGB24, MaxX, MaxY); // Notice that this isn't an image surface anymore
-	// move the next two lines somewhere else
-
-//	surface = cairo_image_surface_create(CAIRO_FORMAT_RGB16_565, MaxX, MaxY);
-//	cr = cairo_create(surface);
 	cairo_set_antialias(cr, CAIRO_ANTIALIAS_NONE);
 	cairo_set_line_cap(cr, CAIRO_LINE_CAP_SQUARE);
 	cairo_set_line_join(cr, CAIRO_LINE_JOIN_ROUND);
@@ -165,17 +128,16 @@ void Initialize_Graphics(cairo_t *cr)
 
 	//	The "textheight" function returns the height of a string in pixels.
 //	Height=textheight("H"); /* Get basic text height */
-	Height = TEXT_HEIGHT;
+//	Height = TEXT_HEIGHT;
 
- 	OldMaxX=MaxX;
-  t1=4*Height;
-
-  Panel_Y_End=MaxY;
-  Panel_Y_Start=MaxY-t1+2;
-  MaxY_Panel=Panel_Y_End-Panel_Y_Start;
-
-  MaxY=MaxY-t1;
-	MaxX=MaxY;
+// 	OldMaxX=MaxX;
+//  t1=4*Height;
+//
+//  Panel_Y_End=MaxY;
+//  Panel_Y_Start=MaxY-t1+2;
+//  MaxY_Panel=Panel_Y_End-Panel_Y_Start;
+//  MaxY=MaxY-t1;
+//	MaxX=MaxY;
 
 	// Any modern graphics library should handle this "if" statements themselves, if needed at
 	// all because we don't really need to know anymore wether or not we are on a vga display.
@@ -427,8 +389,10 @@ void Draw_Mine_Type(cairo_t *cr, int erease)
 			cairo_set_source_rgb(cr, 1.0, 102.0/255.0, 102.0/255.0); // Light red
 //    setcolor(LIGHTRED);
   }
-  x=IFF_X; y=Data_Line;
-	cairo_clip_text(cr, x-2, y+Panel_Y_Start-6, TEXT_WIDTH+2, TEXT_HEIGHT+2);
+  x=IFF_X; 
+//	y=Data_Line;
+	y = WINDOW_HEIGHT-2;
+	cairo_clip_text(cr, x-2, WINDOW_HEIGHT-TEXT_HEIGHT-2, TEXT_WIDTH+2, TEXT_HEIGHT+2);
 	// What does this viewport do in context?
 //	cairo_translate(cr, 0, Panel_Y_Start);
 //  setviewport( Xmargin, Panel_Y_Start, Xmargin+MaxX, Panel_Y_End, 1); // ?
@@ -594,9 +558,16 @@ void Draw_Frame(cairo_t *cr)
 //	cleardevice();
  	// FRAME_COLOR is the color of the green border
 //	setcolor(FRAME_COLOR);
-	cairo_rectangle(cr, 0, 0, WINDOW_WIDTH,WINDOW_HEIGHT); // Cheap fix
+	cairo_rectangle(cr, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 	cairo_set_source_rgb(cr, 0, 0, 0);
 	cairo_fill(cr);
+
+	cairo_set_source_rgb(cr, 0, 1, 0);
+	cairo_line(cr, 0, MaxY, MaxX, MaxY);
+	cairo_stroke(cr);
+	cairo_line(cr, 0, MaxY, 0, 0);
+	cairo_line(cr, MaxX, MaxY, MaxX, 0);
+	cairo_stroke(cr);
 //	cairo_set_source_rgb(cr, SF_GREEN);
 	/* handle panel */
 	// See init graphics for description of this function
@@ -826,7 +797,7 @@ void Draw_Missile (cairo_t *cr, int x, int y, int Headings, int size, int missil
 	int x2,y2;	/* ship's nose location */
 	int xl,yl;	 /* ship's left wing tip location */
 	int xr,yr;	 /* ship's right wing tip location */
-	int xc,yc;	/* fuselage and wings connecting point */
+	int xc,yc;	/* fuselage and wings	 connecting point */
 	int Right_Wing_Headings;
 	int Left_Wing_Headings;
 //	int svcolor;
@@ -951,29 +922,29 @@ void Update_Points(cairo_t *cr, int earese)
 {
 	// Data line is equal to Data_Line=2*Height+4;, with the panel ystart translated
 	// It is the middle line of the data panel, so that would be the clip rect height
-	cairo_clip_text(cr, Points_X-15, WINDOW_HEIGHT-TEXT_HEIGHT-1, 27, TEXT_HEIGHT+1);
-	Show_Score(cr, Points,Points_X-14,WINDOW_HEIGHT-1, earese);
+	cairo_clip_text(cr, Points_X-15, WINDOW_HEIGHT-TEXT_HEIGHT-2, 27, TEXT_HEIGHT+1);
+	Show_Score(cr, Points,Points_X-14,WINDOW_HEIGHT-2, earese);
 	cairo_reset_clip(cr);
 }
 
 void Update_Control(cairo_t *cr, int earese)
 {
-	cairo_clip_text(cr, Control_X-11, WINDOW_HEIGHT-TEXT_HEIGHT-1, 20, TEXT_HEIGHT+1);
-	Show_Score(cr, Control,Control_X-10,WINDOW_HEIGHT-1, earese);
+	cairo_clip_text(cr, Control_X-11, WINDOW_HEIGHT-TEXT_HEIGHT-2, 20, TEXT_HEIGHT+1);
+	Show_Score(cr, Control,Control_X-10,WINDOW_HEIGHT-2, earese);
 	cairo_reset_clip(cr);
 }
 
 void Update_Velocity(cairo_t *cr, int earese)
 {
-	cairo_clip_text(cr, Velocity_X-6, WINDOW_HEIGHT-TEXT_HEIGHT-1, 15, TEXT_HEIGHT+1);
-	Show_Score(cr, Velocity,Velocity_X-5,WINDOW_HEIGHT-1, earese);
+	cairo_clip_text(cr, Velocity_X-6, WINDOW_HEIGHT-TEXT_HEIGHT-2, 15, TEXT_HEIGHT+1);
+	Show_Score(cr, Velocity,Velocity_X-5,WINDOW_HEIGHT-2, earese);
 	cairo_reset_clip(cr);
 }
 
 void Update_Vulner(cairo_t *cr, int earese)  /* for vulner only */
 {
-	cairo_clip_text(cr, Vulner_X-7, WINDOW_HEIGHT-TEXT_HEIGHT-1, 17, TEXT_HEIGHT+1);
-	Show_Score(cr, Vulner_Counter,Vulner_X-6,WINDOW_HEIGHT-1, earese);
+	cairo_clip_text(cr, Vulner_X-7, WINDOW_HEIGHT-TEXT_HEIGHT-2, 17, TEXT_HEIGHT+1);
+	Show_Score(cr, Vulner_Counter,Vulner_X-6,WINDOW_HEIGHT-2, earese);
 	cairo_reset_clip(cr);
 }
 
@@ -981,30 +952,29 @@ void Update_Vulner(cairo_t *cr, int earese)  /* for vulner only */
 
 void Update_Interval(cairo_t *cr, int earese)
 {
-	cairo_clip_text(cr, Interval_X-8, WINDOW_HEIGHT-TEXT_HEIGHT-1, 17, TEXT_HEIGHT+1);
-	Show_Score(cr, Double_Press_Interval,Interval_X-7,WINDOW_HEIGHT-1, earese);
+	cairo_clip_text(cr, Interval_X-8, WINDOW_HEIGHT-TEXT_HEIGHT-2, 17, TEXT_HEIGHT+1);
+	Show_Score(cr, Double_Press_Interval,Interval_X-7,WINDOW_HEIGHT-2, earese);
 	cairo_reset_clip(cr);
 }
 
 void Update_Speed(cairo_t *cr, int earese)
 {
-	cairo_clip_text(cr, Speed_X-12, WINDOW_HEIGHT-TEXT_HEIGHT-1, 19, TEXT_HEIGHT+1);
-	Show_Score(cr, Speed,Speed_X-11,WINDOW_HEIGHT-1, earese);
+	cairo_clip_text(cr, Speed_X-12, WINDOW_HEIGHT-TEXT_HEIGHT-2, 19, TEXT_HEIGHT+1);
+	Show_Score(cr, Speed,Speed_X-11,WINDOW_HEIGHT-2, earese);
 	cairo_reset_clip(cr);
 }
 
 void Update_Shots(cairo_t *cr, int earese)
 {
-	cairo_clip_text(cr, Shots_X-12, WINDOW_HEIGHT-TEXT_HEIGHT-1, 20, TEXT_HEIGHT+1);
-	Show_Score(cr, Missile_Stock,Shots_X-12,WINDOW_HEIGHT-1, earese);
+	cairo_clip_text(cr, Shots_X-12, WINDOW_HEIGHT-TEXT_HEIGHT-2, 20, TEXT_HEIGHT+1);
+	Show_Score(cr, Missile_Stock,Shots_X-12,WINDOW_HEIGHT-2, earese);
 	cairo_reset_clip(cr);
 }
 
 void start_drawing()
 {
 	surface = cairo_image_surface_create(CAIRO_FORMAT_RGB16_565, WINDOW_WIDTH, WINDOW_HEIGHT);
-//	surface = cairo_quartz_surface_create(CAIRO_FORMAT_RGB16_565, WINDOW_WIDTH, WINDOW_HEIGHT);
-	SF_canvas = cairo_create(surface);
+printf("Stride: %d Height: %d Bytes: %d" , cairo_image_surface_get_stride(surface),  WINDOW_HEIGHT, WINDOW_HEIGHT * cairo_image_surface_get_stride(surface));	SF_canvas = cairo_create(surface);
 	Initialize_Graphics(SF_canvas);
 	reset_sf();
 	// restore the line width
@@ -1261,7 +1231,8 @@ int main()
 {
 	start_drawing();
 	update_frame_SF();
-	cairo_surface_write_to_png(surface, "test.png");
+	printf("Stride: %d Height: %d Bytes: %d" , cairo_image_surface_get_stride(surface),  WINDOW_HEIGHT, WINDOW_HEIGHT * cairo_image_surface_get_stride(surface));
+	cairo_surface_write_to_png(surface, "min.png");
 }
 
 

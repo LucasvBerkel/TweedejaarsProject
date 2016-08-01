@@ -86,22 +86,22 @@ void Move_Ship(cairo_t *cr)
 
   if (Rotate_Input!=0)      /* if ship rotates */
      {
-       Ship_Display_Update=1;  /* at least rotates */
+//       Ship_Display_Update=1;  /* at least rotates */
        Ship_Headings=Ship_Headings + Rotate_Input*Ship_Angular_Step;
        if (Ship_Headings<0) Ship_Headings= 359+Ship_Headings-1;
        if (Ship_Headings>359) Ship_Headings= Ship_Headings-359-1;
        Rotate_Input=0;        /* reset input */
      }
-  if (Accel_Input!=0)
+  else if (Accel_Input!=0)
 	{
        Ship_X_Speed=Ship_X_Speed+0.65*Ship_Accel*Fsin(Ship_Headings);
-
+			
        Ship_Y_Speed=Ship_Y_Speed-0.65*Ship_Accel*Fcos(Ship_Headings);
        Accel_Input=0; 	/* reset input */
 
        /* assure it does not exceed MAXspeed */
 
-		if(fabs(Ship_X_Speed)>Ship_Max_Speed)
+		if(fabsf(Ship_X_Speed)>Ship_Max_Speed)
 		{
 			if(Ship_X_Speed<0)
 			{
@@ -112,7 +112,7 @@ void Move_Ship(cairo_t *cr)
 				Ship_X_Speed=Ship_Max_Speed;
 			}
 		}
-		if(fabs(Ship_Y_Speed)>Ship_Max_Speed)
+		if(fabsf(Ship_Y_Speed)>Ship_Max_Speed)
 		{
 			if(Ship_Y_Speed<0)
 			{
@@ -174,12 +174,12 @@ void Handle_Fortress(cairo_t *cr)
 //  int dif,nh;
 	int nh;
 
-  if( (++Fort_Lock_Counter>FORT_LOCK_INTERVAL)&&(Shell_Flag==DEAD) )
-    {
-      Fire_Shell(cr);
-      Shell_Flag=ALIVE;
-      Fort_Lock_Counter=0;
-    }
+//  if( (++Fort_Lock_Counter>FORT_LOCK_INTERVAL)&&(Shell_Flag==DEAD) )
+//    {
+//      Fire_Shell(cr);
+//      Shell_Flag=ALIVE;
+//      Fort_Lock_Counter=0;
+//    }
 
   nh=Find_Headings((double)(MaxX/2.0), (double) (MaxY/2.0), (double)Ship_X_Pos,(double) Ship_Y_Pos);
   if (abs(Fort_Headings-nh)>10)
@@ -417,12 +417,12 @@ void Handle_Mine(cairo_t *cr)
 		  break;
 		}
   case DEAD   : {
-		  if(Mine_Dead_Counter++ >= Mine_Wait_Loops)
-		    {
-		      Generate_Mine(cr);
-		      Mine_Flag=ALIVE;
-		      Mine_Alive_Counter=0;
-		    }
+//		  if(Mine_Dead_Counter++ >= Mine_Wait_Loops)
+//		    {
+//		      Generate_Mine(cr);
+//		      Mine_Flag=ALIVE;
+//		      Mine_Alive_Counter=0;
+//		    }
 		   break;
 		}
   case ALIVE  : {

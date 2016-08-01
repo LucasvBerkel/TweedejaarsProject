@@ -23,10 +23,10 @@
 
 
 
-#define UP 65363
+#define UP 65362
 #define SPACE 32
 #define LEFT 65361
-#define RIGHT 65362
+#define RIGHT 65363
 #define ESC -1
 #define KEY_1 49
 #define KEY_2 50
@@ -47,10 +47,10 @@
 #define ARC_CONV 0.0174527       /* degrees to radians */
 #define MINE_COURSE_INTERVAL 10 // Was 10
 #define FORT_LOCK_INTERVAL 20
-#define SHELL_SPEED 3.45 // was 7
+#define SHELL_SPEED 7 // was 7
 #define MAX_NO_OF_MISSILES 6
 //#define SF_DELAY 50.0
-#define SF_DELAY 44	// was 47
+#define SF_DELAY 45	// was 47
 #define ANIMATION_DELAY_EXP 60  // In Milliseconds
 #define ANIMATION_DELAY_JITTER 10
 // All the color values have been altered to be RGB tuples
@@ -69,7 +69,7 @@
 #define TEXT_BACKGROUND BLUE
 #define TEXT_LINE_COLOR MAGENTA
 
-#define COLLISION_DIST 13 // Used to be 22
+#define COLLISION_DIST 22 // Used to be 22
 #define RESOURCE_DISPLAY_INTERVAL 120
 #define NO_RESOURCE_DISPLAY_INTERVAL 40
 #define MINE_SHIP_DISTANCE 200 /* in screen pixels */

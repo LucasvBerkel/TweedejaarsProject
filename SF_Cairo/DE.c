@@ -115,7 +115,8 @@ void Initialize_Graphics(cairo_t *cr)
 	}
 	else // Mostly quartz?
 	{
-		cairo_set_line_width(cr, (90.1 * 1) / ((double) MaxY * 1)); // for image_surf use 239
+//		printf("HEYO OAWO (change this back too!) \n");
+		cairo_set_line_width(cr, (240.025 * 1) / ((double) MaxY * 1)); // was 90.1
 	}
 //	cairo_set_line_width(cr, (90.1 * 1) / ((double) MaxY * 1));
 
@@ -176,8 +177,8 @@ void Initialize_Graphics(cairo_t *cr)
   Panel_Y_Start=MaxY-t1+2;
   MaxY_Panel=Panel_Y_End-Panel_Y_Start;
 
-  MaxY=MaxY-t1;
-	MaxX=MaxY;
+  MaxY=MaxY-t1-1; // Correct for
+	MaxX=MaxY-1;
 
 	// Any modern graphics library should handle this "if" statements themselves, if needed at
 	// all because we don't really need to know anymore wether or not we are on a vga display.
@@ -224,30 +225,21 @@ void Close_Graphics_SF()
 }
 
 
-float Fcos(double Headings_Degs) /* compute cos of 0 - 359 degrees */
+float Fcos(int Headings_Degs) /* compute cos of 0 - 359 degrees */
 {
 		float arc;
 		arc=Headings_Degs*ARC_CONV;
 		return(cos(arc));
 }
 
-float Fsin(double Headings_Degs) /* compute sin of 0 - 359 degrees */
+float Fsin(int Headings_Degs) /* compute sin of 0 - 359 degrees */
 {
 	float arc;
 	arc=Headings_Degs*ARC_CONV; /* convert degrees to radians */
 	return(sin(arc));
 }
 
-void snapCoords(cairo_t *canvas, int x, int y)
-{
-//		printf("Bef: %f %f\n", x, y);
-//    cairo_user_to_device(canvas, &x, &y);
-//		printf("After: %d %d\n", x, y);
-//		&x = round(x) + 0.5;
-//		&y = round(y) + 0.5;
-//		cairo_device_to_user
-//		printf("After [2]: %d %d\n", x, y);
-}
+
 
 void cairo_line(cairo_t *cr, int x_1, int y_1, int x_2, int y_2)
 {

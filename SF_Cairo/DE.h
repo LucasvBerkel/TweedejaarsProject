@@ -1,7 +1,7 @@
 #include <cairo.h>
 
 #ifdef GUI
-#define TEXT_HEIGHT 4 // The height of character "h" in pixels in Cairo (with monospace font)
+#define TEXT_HEIGHT 8 // The height of character "h" in pixels in Cairo (with monospace font)
 #define TEXT_WIDTH 8 // The width of character "z" in pixels (with monospace font)
 #else
 #define TEXT_HEIGHT 6
@@ -11,8 +11,8 @@
 #define SF_GREEN 0.0, 0.66, 0.0
 #define SF_BLUE 0.33, 1.0, 1.0
 #define SF_ORANGE 1.0, 0.33, 0.33
-#define WINDOW_HEIGHT 240
-#define WINDOW_WIDTH 320
+#define WINDOW_HEIGHT 480
+#define WINDOW_WIDTH 640
 
 float deg2rad(int deg);
 void Open_Graphics(void);
@@ -25,8 +25,8 @@ void Initialize_Graphics(cairo_t *cr);
 void Close_Graphics(cairo_t *cr);
 void Close_Graphics_SF();
 
-float Fcos(double Headings_Degs);
-float Fsin(double Headings_Degs);
+float Fcos(int Headings_Degs);
+float Fsin(int Headings_Degs);
 
 void snapCoords(cairo_t *canvas, int x, int y);
 void cairo_line(cairo_t *cr, int x1, int y1, int x2, int y2);
