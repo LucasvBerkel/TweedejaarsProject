@@ -1,11 +1,11 @@
 #include <cairo.h>
 
 #ifdef GUI
-#define TEXT_HEIGHT 8 // The height of character "h" in pixels in Cairo (with monospace font)
-#define TEXT_WIDTH 8 // The width of character "z" in pixels (with monospace font)
+#define TEXT_HEIGHT 8/SCALE_F // The height of character "h" in pixels in Cairo (with monospace font)
+#define TEXT_WIDTH 8/SCALE_F // The width of character "z" in pixels (with monospace font)
 #else
-#define TEXT_HEIGHT 6
-#define TEXT_WIDTH 8 
+#define TEXT_HEIGHT 6/SCALE_F
+#define TEXT_WIDTH 8/SCALE_F
 #endif
 #define SF_YELLOW 1.0, 1.0, 0.33
 #define SF_GREEN 0.0, 0.66, 0.0
@@ -15,7 +15,6 @@
 #define WINDOW_WIDTH 640
 
 float deg2rad(int deg);
-void Open_Graphics(void);
 void jitter_step1(cairo_t *cr, int step);
 void jitter_step2(cairo_t *cr, int step);
 void Reset_Screen(cairo_t *cr);
@@ -40,14 +39,14 @@ void update_drawing(cairo_t *cr);
 void Draw_Frame(cairo_t *cr);
 void Draw_Hexagone(cairo_t *cr,int X_Center,int Y_Center,int Hex_Outer_Radius);
 void Draw_Ship(cairo_t *cr, int x, int y, int Headings, int size);
-void Draw_Fort(cairo_t *cr, int x, int y, int Headings, int size );
+void Draw_Fort(cairo_t *cr, int x, int y, int Headings, int size);
 void Draw_Mine (cairo_t *cr, int x, int y, int size);
 void Draw_Missile (cairo_t *cr, int x, int y, int Headings, int size, int missile_idx);
 void Draw_Shell(cairo_t *cr, int x, int y, int Headings, int size);
 
-float Find_Headings(double x1, double y1, double x2, double y2);
+float Find_Headings(int x1, int y1, int x2, int y2);
 
-//void set_initial_vals(cairo_t *cr);
+void set_initial_vals(cairo_t *cr);
 void start_drawing();
 void set_key(int key_value);
 void stop_drawing();

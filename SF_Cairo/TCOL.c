@@ -13,7 +13,7 @@
 #include <cairo.h>
 #include <unistd.h>
 
-#include "DE.h"
+//#include "DE.h"
 #include "HM.h"
 #include "RS.h"
 #include "TCOL.h"
@@ -66,7 +66,7 @@ extern void Handle_Fortress(); */
 
 
 // Okay to drop animation? 
-void Gen_Explosion(cairo_t *cr, int X_Pos,int Y_Pos,int Radius)
+void Gen_Explosion(int X_Pos,int Y_Pos,int Radius)
 {
 //  int i,j;
 //  int iarc;
@@ -78,7 +78,7 @@ void Gen_Explosion(cairo_t *cr, int X_Pos,int Y_Pos,int Radius)
   int X_dot,Y_dot;
   int svcolor;
   int Last_Pitch; */
-
+	Terminal_State = 1;
   Effect_Flag=ON;
 	Explosion_Flag=1;
 //  svccd olor=getcolor();
@@ -171,7 +171,7 @@ void Zero_Vulner_Sound()
 
 // -- These kind of animation functions maybe should get some sort of special treatment 
 // within the step function as they redraw the ship with a delay multiple times -- 
-void Jitter_Ship(cairo_t *cr)
+void Jitter_Ship()
 {
 //  int Jitter_Headings;
 //  int Jitter_X_Pos,Jitter_Y_Pos;
@@ -213,17 +213,17 @@ void Jitter_Ship(cairo_t *cr)
 //	stroke_in_clip(cr);
 }
 
-void Reset_All_Missiles(cairo_t *cr)
+void Reset_All_Missiles()
 {
   int i;
 
   for (i=0;i<MAX_NO_OF_MISSILES;i++)
       if(Missile_Flag[i]==ALIVE)  Missile_Flag[i]=KILL;
-  Handle_Missile(cr);
+  Handle_Missile();
 }
 
-int Check_Collision(int First_X,int First_Y,int Second_X,
-		    int Second_Y,int Crash_Distance)
+int Check_Collision(float First_X,float First_Y,float Second_X,
+		    float Second_Y, int Crash_Distance)
 {
   int dist;
 
@@ -234,7 +234,7 @@ int Check_Collision(int First_X,int First_Y,int Second_X,
 		     return(0);
 }
 
-void Test_Collisions(cairo_t *cr)
+void Test_Collisions()
 {
   int breakflag;
   int i;
@@ -255,7 +255,7 @@ void Test_Collisions(cairo_t *cr)
 	if(Ship_Killings_Counter>=4)
 	   {
 	     Points=Points-100;
-	     Gen_Explosion(cr, Ship_X_Pos,Ship_Y_Pos,80);
+	     Gen_Explosion(Ship_X_Pos,Ship_Y_Pos,80);
 			 Terminal_State = 1;
 	     Ship_Killings_Counter=0;
 //	     Reset_Screen(cr);
@@ -264,15 +264,15 @@ void Test_Collisions(cairo_t *cr)
 	   {
 	     Points=Points-50;
 	     Mine_Flag=KILL;
-	     Handle_Mine(cr); 		/* kill mine */
+	     Handle_Mine(); 		/* kill mine */
 	     if(Shell_Flag==ALIVE)
 	     {
 		  	Shell_Flag=KILL;      /* kill shell */
-		  	Handle_Shell(cr); 
+		  	Handle_Shell(); 
 	     }
-	     Reset_All_Missiles(cr);    	/* kill all missiles */
+	     Reset_All_Missiles();    	/* kill all missiles */
 //	     Gen_Snap_Effect();
-	     Jitter_Ship(cr);		/* leaves ship on screen */
+	     Jitter_Ship();		/* leaves ship on screen */
 	   }
       }  /* end ship vs. mine collision */
 
@@ -289,7 +289,7 @@ void Test_Collisions(cairo_t *cr)
 	     if(Ship_Killings_Counter>=4)
 	       {
 		 Points=Points-100;
-		 Gen_Explosion(cr, Ship_X_Pos,Ship_Y_Pos,80);
+		 Gen_Explosion(Ship_X_Pos,Ship_Y_Pos,80);
 			Terminal_State = 1;
 		 Ship_Killings_Counter=0;
 //		 Reset_Screen();
@@ -298,15 +298,15 @@ void Test_Collisions(cairo_t *cr)
 	       {
 		 Points=Points-50;
 		 Shell_Flag=KILL;        /* kill shell */
-		 Handle_Shell(cr); // Uncomment when done
+		 Handle_Shell(); // Uncomment when done
 		 if(Mine_Flag==ALIVE)    /* kill  mine  */
 		   {
 		     Mine_Flag=KILL;
-		     Handle_Mine(cr); /* erase mine and reset counters */
+		     Handle_Mine(); /* erase mine and reset counters */
 		   }
-		 Reset_All_Missiles(cr);
+		 Reset_All_Missiles();
 		 Gen_Snap_Effect();
-		 Jitter_Ship(cr);     	/* leaves ship on screen */
+		 Jitter_Ship();     	/* leaves ship on screen */
 	       }
 	   }
 
@@ -344,7 +344,7 @@ void Test_Collisions(cairo_t *cr)
 		 goodshot=OFF; /* redundant */
 		 Gen_Snap_Effect();
 		 Mine_Flag=KILL;
-		 Handle_Mine(cr);
+		 Handle_Mine();
 	       }
 	  } /* end missile vs. mine */
 
@@ -369,7 +369,7 @@ void Test_Collisions(cairo_t *cr)
 //			Write_Bonus_Message();     /* erase bonus message */
 					Bonus_Granted=OFF;
 		     }
-		Gen_Explosion(cr, Missile_X_Pos[i],Missile_Y_Pos[i],120);
+		Gen_Explosion(Missile_X_Pos[i],Missile_Y_Pos[i],120);
 		Terminal_State = 1;
 //		Reset_Screen(cr)
 		Handle_Missile_Flag=OFF;
@@ -402,10 +402,10 @@ void Test_Collisions(cairo_t *cr)
 			}
 	 } /* missile vs. fortress */
   } /* end for missile do-loop */
-  if(Handle_Missile_Flag) Handle_Missile(cr); /* KILL them all */
+  if(Handle_Missile_Flag) Handle_Missile(); /* KILL them all */
 }
 
-void Accumulate_Data(cairo_t *cr)
+void Accumulate_Data()
 {
   float shipvel;
   int shipcenterdist;

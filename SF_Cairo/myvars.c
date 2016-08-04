@@ -25,35 +25,35 @@ cairo_path_t *PrevShell;
 
 int Terminal_State;
 
-int Ship_Should_Update = 0;
-int Mine_Should_Update = 0;
-int Fort_Should_Update = 0;
-int Missile_Should_Update[MAX_NO_OF_MISSILES] = {0};
-int Shell_Should_Update = 0;
+//int Ship_Should_Update = 0;
+//int Mine_Should_Update = 0;
+//int Fort_Should_Update = 0;
+//int Missile_Should_Update[MAX_NO_OF_MISSILES] = {0};
+//int Shell_Should_Update = 0;
 int Bonus_Char_Should_Update = 0;
-int Mine_Type_Should_Update = 0;
-int Points_Should_Update = 0; // Show the first time around right?
-int Velocity_Should_Update = 0;
-int Speed_Should_Update = 0;
-int Vulner_Should_Update = 0;
-int Interval_Should_Update = 0;
-int Shots_Should_Update = 0;
-int Control_Should_Update = 0;
+//int Mine_Type_Should_Update = 0;
+//int Points_Should_Update = 0; // Show the first time around right?
+//int Velocity_Should_Update = 0;
+//int Speed_Should_Update = 0;
+//int Vulner_Should_Update = 0;
+//int Interval_Should_Update = 0;
+//int Shots_Should_Update = 0;
+//int Control_Should_Update = 0;
 
-int Bonus_Char_Should_Clean = 0;
-int Ship_Should_Clean = 0;
-int Mine_Should_Clean = 0;
-int Fort_Should_Clean;
-int Missile_Should_Clean[MAX_NO_OF_MISSILES] = {0};
-int Shell_Should_Clean;
-int Mine_Type_Should_Clean = 0;
-int Points_Should_Clean = 0;
-int Velocity_Should_Clean = 0;
-int Speed_Should_Clean = 0;
-int Vulner_Should_Clean = 0;
-int Interval_Should_Clean = 0;
-int Shots_Should_Clean = 0;
-int Control_Should_Clean = 0;
+//int Bonus_Char_Should_Clean = 0;
+//int Ship_Should_Clean = 0;
+//int Mine_Should_Clean = 0;
+//int Fort_Should_Clean;
+//int Missile_Should_Clean[MAX_NO_OF_MISSILES] = {0};
+//int Shell_Should_Clean;
+//int Mine_Type_Should_Clean = 0;
+//int Points_Should_Clean = 0;
+//int Velocity_Should_Clean = 0;
+//int Speed_Should_Clean = 0;
+//int Vulner_Should_Clean = 0;
+//int Interval_Should_Clean = 0;
+//int Shots_Should_Clean = 0;
+//int Control_Should_Clean = 0;
 
 char Initialized_Graphics = 0;
 
@@ -96,9 +96,15 @@ struct aim_sess_results{
 //clock_t t0;  /* time when FOE mine is born */
 //clock_t t1;  /* double press interval start */
 //clock_t t2;  /* double press interval end */
-struct timeval t0;
-struct timeval intv_t1;
-struct timeval intv_t2;
+//int t0;
+//int intv_t1;
+//int intv_t2;
+
+int t0;
+int intv_t1;
+int intv_t2;
+
+
 
 char *Mine_Char;
 
@@ -107,8 +113,10 @@ int One_Game_Duration=3; 	/****** in minutes 1-6 allowed */
 int No_Of_Games=1;  /******** varies 1-9 */
 int Resource_Display_Interval=RESOURCE_DISPLAY_INTERVAL;
 int No_Resource_Display_Interval=NO_RESOURCE_DISPLAY_INTERVAL;
-int Interval_Upper_Limit=SF_DELAY*20;
-int Interval_Lower_Limit=SF_DELAY*5;
+//int Interval_Upper_Limit=SF_DELAY*20;
+//int Interval_Lower_Limit=SF_DELAY*5;
+int Interval_Upper_Limit=20;
+int Interval_Lower_Limit=5;
 int Ship_Angular_Step=10;   /* Display increment in degrees */ // was 10
 int Ship_Max_Speed=5;        /* dots per loop */ // was 5
 int Ship_Accel=1;            /* dots/(loop*loop) */ // was 1 // was was 0.6
@@ -117,9 +125,9 @@ int Mine_Wait_Loops=80;
 int Mine_Live_Loops=200;     /* new parameter */
 int Missile_Speed=30;		/* new parameter */
 int Missile_Limit_Flag=OFF; /******** missile borrowing is allowed */
-double Shell_Speed=SHELL_SPEED; /* in dots/loop */
+int Shell_Speed=SHELL_SPEED; /* in dots/loop */
 int Fort_Lock_Interval=FORT_LOCK_INTERVAL; /* in loops */
-int Collision_Distance=COLLISION_DIST; /*********** in screen dots */
+float Collision_Distance=COLLISION_DIST; /*********** in screen dots */
 
 		/* VARIABLES */
 mine_type Mine_Type;

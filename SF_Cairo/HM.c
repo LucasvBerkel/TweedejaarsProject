@@ -18,7 +18,7 @@
 //#include "myvars.h"
 
 // Added
-#include "DE.h"
+//#include "DE.h"
 #include "HM.h"
 #include "RS.h"
 
@@ -41,43 +41,10 @@ void Select_Mine_Menus()
 
 	}
 }
-//
-//// allocate space for 5 pointers to strings
-//	char **Friend_Menu = (char**)malloc(5*sizeof(char*));
-//
-////	Friend_Menu = (char**)malloc(3*sizeof(char*));
-//	Foe_Menu = (char**)malloc(3*sizeof(char*));
-//   int i = 0;
-//   //allocate space for each string
-//   // here allocate 50 bytes, which is more than enough for the strings
-//   for(i = 0; i < 3; i++){
-//       printf("%d\n", i);
-//       strings[i] = (char*)malloc(50*sizeof(char));
-//   }
-////  int vec[10];
-//  int i,ri;
-//
-//	for (i=0;i<3;i++)
-//  {
-//		ri=randrange(0, 9);
-//	  sprintf(Friend_Menu[i], Char_Set[ri]);
-//		ri=randrange(0, 9);
-//	  sprintf(Foe_Menu[i], Char_Set[ri]);
-//  }
-//
-//	for(i = 0; i < 5; i++)
-//	{
-//		free(Friend_Menu[i]);
-//		free(Foe_Menu[i]);
-//  }
-//    //finally release the first string
-//  free(Friend_Menu);
-//	free(Foe_Menu);
-//}
 
 
 
-void Move_Ship(cairo_t *cr)
+void Move_Ship()
 {
   Ship_Old_Headings=Ship_Headings;
   Ship_X_Old_Pos=Ship_X_Pos;
@@ -94,6 +61,7 @@ void Move_Ship(cairo_t *cr)
      }
   else if (Accel_Input!=0)
 	{
+
        Ship_X_Speed=Ship_X_Speed+0.65*Ship_Accel*Fsin(Ship_Headings);
 			
        Ship_Y_Speed=Ship_Y_Speed-0.65*Ship_Accel*Fcos(Ship_Headings);
@@ -123,6 +91,7 @@ void Move_Ship(cairo_t *cr)
 				Ship_Y_Speed=Ship_Max_Speed;
 			}
 	  }  /* end accel_input */
+
 	}
 		/* now update ship position */
 
@@ -153,10 +122,10 @@ void Move_Ship(cairo_t *cr)
 
 }
 
-void Fire_Shell(cairo_t *cr)
+void Fire_Shell()
 {
-  Shell_X_Pos=MaxX/2+0.5*SMALL_HEXAGONE_SIZE_FACTOR*MaxX*Fsin(Fort_Headings);
-  Shell_Y_Pos=MaxY/2-0.5*SMALL_HEXAGONE_SIZE_FACTOR*Fcos(Fort_Headings);
+  Shell_X_Pos=MaxX/2.0+0.5*SMALL_HEXAGONE_SIZE_FACTOR*MaxX*Fsin(Fort_Headings);
+  Shell_Y_Pos=MaxY/2.0-0.5*SMALL_HEXAGONE_SIZE_FACTOR*Fcos(Fort_Headings);
   Shell_Headings=Fort_Headings;
   Shell_X_Speed=SHELL_SPEED*Fsin(Shell_Headings);
   Shell_Y_Speed=-SHELL_SPEED*Fcos(Shell_Headings);
@@ -164,7 +133,7 @@ void Fire_Shell(cairo_t *cr)
 //				SHELL_SIZE_FACTOR*MaxX);  /* first time */ // First time??
 //	stroke_in_clip(cr);
 //	Shell_Should_Update = 1; // first time apperantly 
-	Shell_Should_Clean = 1;
+//	Shell_Should_Clean = 1;
 //  sound(800);
 //  Sound_Flag=6;
 }
@@ -174,14 +143,14 @@ void Handle_Fortress(cairo_t *cr)
 //  int dif,nh;
 	int nh;
 
-//  if( (++Fort_Lock_Counter>FORT_LOCK_INTERVAL)&&(Shell_Flag==DEAD) )
-//    {
-//      Fire_Shell(cr);
-//      Shell_Flag=ALIVE;
-//      Fort_Lock_Counter=0;
-//    }
+  if( (++Fort_Lock_Counter>FORT_LOCK_INTERVAL)&&(Shell_Flag==DEAD) )
+    {
+      Fire_Shell();
+      Shell_Flag=ALIVE;
+      Fort_Lock_Counter=0;
+    }
 
-  nh=Find_Headings((double)(MaxX/2.0), (double) (MaxY/2.0), (double)Ship_X_Pos,(double) Ship_Y_Pos);
+  nh=Find_Headings((MaxX/2.0), (MaxY/2.0), Ship_X_Pos,  Ship_Y_Pos);
   if (abs(Fort_Headings-nh)>10)
   {
 //		clear_prev_path(cr, PrevShip);
@@ -195,46 +164,43 @@ void Handle_Fortress(cairo_t *cr)
   }
 }
 
-void Handle_Speed_Score(cairo_t *cr)
+void Handle_Speed_Score()
 {
-  struct timeval tDiff;
+//  struct timeval tDiff;
 	int interval;
   int dts;
 
-  if(Game_Type==SPACE_FORTRESS)
-  {
   dts=0;
   if(Mine_Type==FOE)
     if(Missile_Type==VS_FOE) /* successful double press */
       {
-			timeval_subtract(&tDiff, &intv_t2, &t0);
-			interval=round(tDiff.tv_usec / 1000.0); /* time interval from missile */
+//			timeval_subtract(&tDiff, &intv_t2, &t0);
+			interval= intv_t2-t0; /* time interval from missile */
 			/* appearance to end of successful */
 			/* double press interval      */
-	if(interval<=1000) dts=40;
+	if(interval<=20) dts=40;
 	else
-	if(interval<=2000) dts=30;
+	if(interval<=40) dts=30;
 	else
-	if(interval<=3000) dts=20;
+	if(interval<=60) dts=20;
 	else
-	if(interval<=4000) dts=10;
+	if(interval<=80) dts=10;
 	else
-	if(interval<=5000) dts=0;
+	if(interval<=100) dts=0;
 	else
-	if(interval<=6000) dts=-10;
+	if(interval<=120) dts=-10;
 	else
-	if(interval<=7000) dts=-20;
+	if(interval<=140) dts=-20;
 	else
-	if(interval<=8000) dts=-30;
+	if(interval<=160) dts=-30;
 	else
-	if(interval<=9000) dts=-40;
+	if(interval<=180) dts=-40;
 	else
 	dts=-50;
      }
      else /* no successful double-press */
 	dts=-50; /* this is "unfair" */
    Speed=Speed+dts;
-  } /* end if(SPACE_FORTRESS) */
 
 	/* mine bonus for any type */
 
@@ -264,11 +230,7 @@ void Handle_Speed_Score(cairo_t *cr)
   Speed=Speed+dts;
 
 //  Update_Speed(cr);
-  if(Game_Type==AIMING_TEST)
-    {
-      Score=Mines+Speed;
-//      Update_Score(cr);
-    }
+
 }
 
 // 
@@ -277,7 +239,7 @@ void Clear_Mine_Type(cairo_t *cr)
 {
 //  int x,y;
 //	Mine_Type_Should_Update = 0;
-	Mine_Type_Should_Clean = 1;
+//	Mine_Type_Should_Clean = 1;
 //  setviewport( Xmargin, Panel_Y_Start, Xmargin+MaxX, Panel_Y_End, 1);
 //	cairo_translate(cr, 0, Panel_Y_Start);
 //  x=IFF_X; y=Data_Line;
@@ -291,12 +253,12 @@ void Clear_Mine_Type(cairo_t *cr)
 //  setviewport( Xmargin, 0, Xmargin+MaxX, MaxY, 1);
 }
 
-void Show_Mine_Type(cairo_t *cr, char *Minetype)
+void Show_Mine_Type(char *Minetype)
 {
 //  int svcolor;
 //  int x,y;
-	Mine_Type_Should_Update = 1;
-	Mine_Char = Minetype;
+//	Mine_Type_Should_Update = 1;
+	
 }
 
 void Reset_Mine_Headings()
@@ -312,7 +274,7 @@ int randrange(int min, int max)
 	return (rand() % (max + 1 - min)) + min;
 }
 
-void Generate_Mine(cairo_t *cr)
+void Generate_Mine()
 {
   int a;
   do
@@ -321,20 +283,20 @@ void Generate_Mine(cairo_t *cr)
 //    Mine_Y_Pos=random(MaxY);
 		Mine_X_Pos=randrange(0, MaxX);
 		Mine_Y_Pos=randrange(0, MaxY);
-    a=sqrt(pow(Mine_X_Pos-Ship_X_Pos,2)+pow(Mine_Y_Pos-Ship_Y_Pos,2) );
+    a=sqrt(pow(Mine_X_Pos-Ship_X_Pos,2)+pow(Mine_Y_Pos-Ship_Y_Pos,2));
   } while(a < 0.5*MaxX );  /* repeat until distance exceeds min. */
 
   Reset_Mine_Headings();
 
 //  Draw_Mine(cr,Mine_X_Pos,Mine_Y_Pos,MINE_SIZE_FACTOR*MaxX);  /* draw mine first time */
-	Mine_Should_Clean = 1;
+//	Mine_Should_Clean = 1;
 
   if(randrange(0,1)) Mine_Type=FRIEND; // was random(2)
   else
     {
       Mine_Type=FOE;
-			// I'm not sure if this line does anything
-			gettimeofday(&t0, NULL);
+//			gettimeofday(&t0, NULL);
+			t0 = Loop_Counter;
 //      t0=clock(); /* when "a mine is born .."? */  // Why and how does it access this?
     }
 
@@ -346,15 +308,16 @@ void Generate_Mine(cairo_t *cr)
 	{
 		Mine_Indicator = (char*)Foe_Menu[randrange(0,2)];
 	}
-	Show_Mine_Type(cr, Mine_Indicator);
+	Mine_Char = Mine_Indicator;
+//	Show_Mine_Type(Mine_Indicator);
 }
 
-void Move_Mine(cairo_t *cr)
+void Move_Mine()
 {
 //		stroke_in_clip(cr);
 		// Do something with cairo_save() if approiate 
 //    Draw_Mine(cr, Mine_X_Pos,Mine_Y_Pos,MINE_SIZE_FACTOR*MaxX); /* erase mine */
-		Mine_Should_Clean = 1;
+//		Mine_Should_Clean = 1;
 
 
 //		printf("Mine_X_Speed: %d \n", Mine_X_Speed);
@@ -363,48 +326,23 @@ void Move_Mine(cairo_t *cr)
 
 
 
-//    Draw_Mine(cr, Mine_X_Pos,Mine_Y_Pos,MINE_SIZE_FACTOR*MaxX);  /* redraw mine */
-//		stroke_in_clip(cr);
-
     if(--Mine_Course_Count<=0)  Reset_Mine_Headings();
     if(   (Mine_X_Pos<0) || (Mine_X_Pos>MaxX)
      || (Mine_Y_Pos<0) || (Mine_Y_Pos>MaxY) )
 		{
       Reset_Mine_Headings();
 		}
-
-//		if(Mine_X_Pos < 0)
-//		{
-//			Reset_Mine_Headings();
-//			Mine_X_Pos = MaxX;
-//		}
-//		else if(Mine_X_Pos > MaxX)
-//		{
-//			Reset_Mine_Headings();
-//			Mine_X_Pos = 0;
-//		}
-//		if(Mine_Y_Pos < 0)
-//		{
-//			Reset_Mine_Headings();
-//			Mine_Y_Pos = MaxY;
-//		}
-//		
-//		else if(Mine_Y_Pos > MaxY)
-//		{
-//			Reset_Mine_Headings();
-//			Mine_Y_Pos = 0;
-//		}
 }
 
-void Handle_Mine(cairo_t *cr)
+void Handle_Mine()
 {
  switch(Mine_Flag)
  {
   case KILL  : {
-		  Handle_Speed_Score(cr);
+		  Handle_Speed_Score();
 //		  Draw_Mine(cr, Mine_X_Pos,Mine_Y_Pos,MINE_SIZE_FACTOR*MaxX);
 //			clear_prev_path(cr, PrevMine);
-			Mine_Should_Clean = 1;
+//			Mine_Should_Clean = 1;
 							/* erase mine */
 		  Mine_Flag=DEAD;
 		  Mine_Dead_Counter=0;
@@ -412,21 +350,21 @@ void Handle_Mine(cairo_t *cr)
 		  Missile_Vs_Mine_Only=OFF;
 		  Timing_Flag=OFF;
 //		  Clear_Mine_Type(cr); /* clear mine type display */
-			Mine_Type_Should_Clean = 1;
+//			Mine_Type_Should_Clean = 1;
 //		  Clear_Interval(); // Double press checking  
 		  break;
 		}
   case DEAD   : {
-//		  if(Mine_Dead_Counter++ >= Mine_Wait_Loops)
-//		    {
-//		      Generate_Mine(cr);
-//		      Mine_Flag=ALIVE;
-//		      Mine_Alive_Counter=0;
-//		    }
+		  if(Mine_Dead_Counter++ >= Mine_Wait_Loops)
+		    {
+		      Generate_Mine();
+		      Mine_Flag=ALIVE;
+		      Mine_Alive_Counter=0;
+		    }
 		   break;
 		}
   case ALIVE  : {
-		  Move_Mine(cr);
+		  Move_Mine();
 		  if(Mine_Alive_Counter++ >= Mine_Live_Loops)
 			{
 		  	Mine_Flag=KILL;
@@ -439,7 +377,7 @@ void Handle_Mine(cairo_t *cr)
 }
 
 
-void Handle_Shell(cairo_t *cr)
+void Handle_Shell()
 {
  switch(Shell_Flag)
  {
@@ -447,7 +385,7 @@ void Handle_Shell(cairo_t *cr)
 //		  Draw_Shell(cr, Shell_X_Pos,Shell_Y_Pos,Shell_Headings,
 //			    SHELL_SIZE_FACTOR*MaxX); /* erase shell */
 //			clear_prev_path(cr, PrevMine);
-			Shell_Should_Clean = 1;
+//			Shell_Should_Clean = 1;
 //			Shell_Should_Update = 1;
 		  Shell_Flag=DEAD;
 		  break;
@@ -457,7 +395,7 @@ void Handle_Shell(cairo_t *cr)
 //		  Draw_Shell(cr, Shell_X_Pos,Shell_Y_Pos,Shell_Headings,
 //				       SHELL_SIZE_FACTOR*MaxX);
 //			clear_prev_path(cr, PrevMine);
-			Shell_Should_Clean = 1;
+//			Shell_Should_Clean = 1;
 		  Shell_X_Pos=Shell_X_Pos+Shell_X_Speed;
 		  Shell_Y_Pos=Shell_Y_Pos+Shell_Y_Speed;
 		  if( (Shell_X_Pos<0) || (Shell_X_Pos>MaxX)
@@ -470,14 +408,14 @@ void Handle_Shell(cairo_t *cr)
 }
 
 
-void Fire_Missile(cairo_t *cr, int Index)
+void Fire_Missile(int Index)
 {
 	Missile_Headings[Index]=Ship_Headings;
 	Missile_X_Pos[Index]=Ship_X_Pos;
 	Missile_Y_Pos[Index]=Ship_Y_Pos;
 	Missile_X_Speed[Index]= Missile_Speed*Fsin(Ship_Headings);
 	Missile_Y_Speed[Index]=-Missile_Speed*Fcos(Ship_Headings);
-	Missile_Should_Update[Index] = 1;
+//	Missile_Should_Update[Index] = 1;
 // Draw_Missile(cr,Missile_X_Pos[Index],Missile_Y_Pos[Index],
 //	      Missile_Headings[Index],MISSILE_SIZE_FACTOR*MaxX);
 //	stroke_in_clip(cr);
@@ -488,7 +426,7 @@ void Fire_Missile(cairo_t *cr, int Index)
 }
 
 // Use PrevMine etc. in these kinds of functions (the moves/handles and alike)
-void Handle_Missile(cairo_t *cr)
+void Handle_Missile()
 {
  int i;
 		/* update all existing missiles */
@@ -498,7 +436,7 @@ void Handle_Missile(cairo_t *cr)
       {
 	 case KILL  : {
 //			clear_prev_path(cr,PrevMissile);
-			Missile_Should_Clean[i] = 1;
+//			Missile_Should_Clean[i] = 1;
 //			Draw_Missile(cr, Missile_X_Pos[i],Missile_Y_Pos[i],
 //			     Missile_Headings[i],MISSILE_SIZE_FACTOR*MaxX);  /* erase missile */
 			Missile_Flag[i]=DEAD;
@@ -516,12 +454,12 @@ void Handle_Missile(cairo_t *cr)
 //			      Missile_Headings[i],MISSILE_SIZE_FACTOR*MaxX);
 //							/* erase old */
 //					clear_prev_path(cr,PrevMissile);
-					Missile_Should_Clean[i] = 1;
+//					Missile_Should_Clean[i] = 1;
 			    Missile_X_Pos[i]=Missile_X_Pos[i]+Missile_X_Speed[i];
 			    Missile_Y_Pos[i]=Missile_Y_Pos[i]+Missile_Y_Speed[i];
 //			    Draw_Missile(cr, Missile_X_Pos[i],Missile_Y_Pos[i],
 //			     Missile_Headings[i],MISSILE_SIZE_FACTOR*MaxX);
-					Missile_Should_Update[i] = 1;
+//					Missile_Should_Update[i] = 1;
 							  /* draw new */
 //					stroke_in_clip(cr);
 
@@ -535,7 +473,6 @@ void Handle_Missile(cairo_t *cr)
   do {
       New_Missile_Flag=OFF;
 
-      if(Game_Type==SPACE_FORTRESS)
 	if(Missile_Stock<=0)    /* stock control */
 	  if(Missile_Limit_Flag) break;  /* overdraft not allowed */
 	  else           Points=Points-3;   /* our low-low interest rates.. */
@@ -544,13 +481,10 @@ void Handle_Missile(cairo_t *cr)
       for(i=0;i<MAX_NO_OF_MISSILES;i++)
 	 			if(Missile_Flag[i]==DEAD) break; /* from for-loop */
       	Missile_Flag[i]=ALIVE;
-      	Fire_Missile(cr,i);
-      	if(Game_Type==SPACE_FORTRESS)
-				{
+      	Fire_Missile(i);
 	 	 			Missile_Stock--;
 //	  			Update_Shots(cr);
 
-				}
    } while(OFF); /* to enable the break command */
 }
 

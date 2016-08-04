@@ -4,15 +4,17 @@
 #define TEXT_HEIGHT 4 // The height of character "h" in pixels in Cairo (with monospace font)
 #define TEXT_WIDTH 8 // The width of character "z" in pixels (with monospace font)
 #else
-#define TEXT_HEIGHT 5
+#define TEXT_HEIGHT 10
 #define TEXT_WIDTH 8 
 #endif
-#define SF_YELLOW 1.0, 1.0, 0.33
-#define SF_GREEN 0.0, 0.66, 0.0
-#define SF_BLUE 0.33, 1.0, 1.0
-#define SF_ORANGE 1.0, 0.33, 0.33
-#define WINDOW_WIDTH 240
-#define WINDOW_HEIGHT 240 + (TEXT_HEIGHT*3)
+#define SF_YELLOW 0.0, 0.0, 0.0, 0.9516
+#define SF_GREEN 0.0, 0.0, 0.0, 0.4720
+#define SF_BLUE 0.0, 0.0, 0.0, 0.8575
+#define SF_ORANGE 0.0, 0.0, 0.0, 0.4724
+//#define WINDOW_WIDTH 240
+//#define WINDOW_HEIGHT 240 + (TEXT_HEIGHT*3)
+#define WINDOW_WIDTH 448 // The square width of the original game
+#define WINDOW_HEIGHT 448 +TEXT_HEIGHT*2
 
 float deg2rad(int deg);
 void Open_Graphics(void);
@@ -25,8 +27,8 @@ void Initialize_Graphics(cairo_t *cr);
 void Close_Graphics(cairo_t *cr);
 void Close_Graphics_SF();
 
-float Fcos(double Headings_Degs);
-float Fsin(double Headings_Degs);
+float Fcos(int Headings_Degs);
+float Fsin(int Headings_Degs);
 
 void snapCoords(cairo_t *canvas, int x, int y);
 void cairo_line(cairo_t *cr, int x1, int y1, int x2, int y2);
@@ -45,7 +47,7 @@ void Draw_Mine (cairo_t *cr, int x, int y, int size);
 void Draw_Missile (cairo_t *cr, int x, int y, int Headings, int size, int missile_idx);
 void Draw_Shell(cairo_t *cr, int x, int y, int Headings, int size);
 
-float Find_Headings(double x1, double y1, double x2, double y2);
+float Find_Headings(int x1, int y1, int x2, int y2);
 
 //void set_initial_vals(cairo_t *cr);
 void start_drawing();
@@ -57,16 +59,16 @@ void update_frame(cairo_t *cr);
 unsigned char* update_frame_SF();
 void stroke_in_clip(cairo_t *cr);
 
-void Show_Score(cairo_t *cr, int val, int x, int y, int erease);
+void Show_Score(cairo_t *cr, int val, int x, int y);
 
-void Update_Points(cairo_t *cr, int earese);
-void Update_Control(cairo_t *cr, int earese);
-void Update_Velocity(cairo_t *cr, int earese);
+void Update_Points(cairo_t *cr);
+void Update_Control(cairo_t *cr);
+void Update_Velocity(cairo_t *cr);
 
-void Update_Vulner(cairo_t *cr, int earese);
-void Update_Interval(cairo_t *cr, int earese);
-void Update_Speed(cairo_t *cr, int earese);
-void Update_Shots(cairo_t *cr, int earese);
+void Update_Vulner(cairo_t *cr);
+void Update_Interval(cairo_t *cr);
+void Update_Speed(cairo_t *cr);
+void Update_Shots(cairo_t *cr);
 
 void explosion_step1(cairo_t *cr, int X_Pos,int Y_Pos,int step);
 void explosion_step2(cairo_t *cr, int X_Pos,int Y_Pos,int step);

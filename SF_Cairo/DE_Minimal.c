@@ -38,17 +38,7 @@
 #include "HM.h"
 #include "RS.h"
 
-//#include <boost/python/module.hpp>
-//#include <boost/python/def.hpp>
-//#include <boost/python/list.hpp>
 
-/*									*/
-/*	OPEN GRAPHICS: Initializes the graphics system and reports 	*/
-/*	any errors which occured.					*/
-/*									*/
-
-
-// Maybe make an Initialize_Graphics just for SF? 
 void Initialize_Graphics(cairo_t *cr)
 {
 //	int Height,OldMaxX;
@@ -57,11 +47,14 @@ void Initialize_Graphics(cairo_t *cr)
 	int x,dx;
 
 	MaxX = WINDOW_WIDTH;
-	MaxY = WINDOW_HEIGHT - TEXT_HEIGHT*4;
+	MaxY = WINDOW_WIDTH;
 
-	cairo_set_antialias(cr, CAIRO_ANTIALIAS_NONE);
+	cairo_scale(cr, 1.0/SCALE_F, 1.0/SCALE_F);
+	cairo_set_antialias(cr, CAIRO_ANTIALIAS_BEST);
 	cairo_set_line_cap(cr, CAIRO_LINE_CAP_SQUARE);
 	cairo_set_line_join(cr, CAIRO_LINE_JOIN_ROUND);
+
+	cairo_set_operator (cr, CAIRO_OPERATOR_SOURCE);
 
 
 //	cairo_set_line_width(cr, 10); // Line width equal to one pixel
@@ -72,7 +65,7 @@ void Initialize_Graphics(cairo_t *cr)
 	}
 	else if(cairo_surface_get_type(cairo_get_target(cr)) == CAIRO_SURFACE_TYPE_IMAGE)
 	{
-			cairo_set_line_width(cr, (240.1 * 1) / ((double) MaxY * 1)); // Can be like 239.1
+			cairo_set_line_width(cr, (440.1+(10 * SCALE_F))/((double) MaxY * 1));
 	}
 	else // Mostly quartz?
 	{
@@ -86,6 +79,9 @@ void Initialize_Graphics(cairo_t *cr)
 	// Reflecting it however means that text will also be reflected. We therefore also use a
 	// reflection matrix for drawing fonts to reflect text back.
 //	cairo_matrix_t font_reflection_matrix;
+	
+	printf("WINDOW_HEIGHT %d WINDOW_HEIGHT %f WINDOW_WIDTH %f \n", WINDOW_HEIGHT, WINDOW_HEIGHT/SCALE_F ,WINDOW_WIDTH/SCALE_F);
+	
 	// We need the options to turn off font anti-aliasing
 	font_options = cairo_font_options_create();
 //	cairo_matrix_init_identity(&x_reflection_matrix);
@@ -110,10 +106,9 @@ void Initialize_Graphics(cairo_t *cr)
 
 	// Turning off anti-alaising
 	cairo_get_font_options(cr, font_options);
-	cairo_font_options_set_antialias(font_options, CAIRO_ANTIALIAS_NONE);
+	cairo_font_options_set_antialias(font_options, CAIRO_ANTIALIAS_BEST);
 	cairo_set_font_options(cr, font_options);
-	cairo_select_font_face(cr,"Arial",CAIRO_FONT_SLANT_NORMAL,CAIRO_FONT_WEIGHT_BOLD);
-
+	cairo_select_font_face(cr,"Arial",CAIRO_FONT_SLANT_NORMAL,CAIRO_FONT_WEIGHT_NORMAL);
 
 	// Sets all the values in the array to the empty path
 	// Gives a vague warning, probably because this only works for types with the size of an int
@@ -129,7 +124,7 @@ void Initialize_Graphics(cairo_t *cr)
 	//	The "textheight" function returns the height of a string in pixels.
 //	Height=textheight("H"); /* Get basic text height */
 //	Height = TEXT_HEIGHT;
-
+//
 // 	OldMaxX=MaxX;
 //  t1=4*Height;
 //
@@ -151,6 +146,7 @@ void Initialize_Graphics(cairo_t *cr)
 //		MaxX=MaxX-t1/AspectRatio;	/******** less two panel lines */
 //	}
 //	Xmargin=OldMaxX/2-MaxX/2;
+//	printf("Xmargin: %d", Xmargin);
 //	cairo_translate(cr, Xmargin, 0);
 	// -- void setviewport(int left, int top, int right, int bottom, int clip);
 	// setviewport function is used to restrict drawing to a particular portion on the screen. 	// For example "setviewport(100 , 100, 200, 200, 1)" will restrict our drawing activity
@@ -158,7 +154,6 @@ void Initialize_Graphics(cairo_t *cr)
 	//
 	// left, top, right, bottom are the coordinates of main diagonal of rectangle in which we wish to restrict our drawing. Also note that the point (left, top) becomes the new origin.
 //	setviewport( Xmargin, 0, Xmargin+MaxX, MaxY, 1);
-
 
 	dx=MaxX/8;
 	Points_X=x=2*TEXT_WIDTH;
@@ -184,14 +179,14 @@ void Close_Graphics_SF()
 }
 
 
-float Fcos(double Headings_Degs) /* compute cos of 0 - 359 degrees */
+float Fcos(int Headings_Degs) /* compute cos of 0 - 359 degrees */
 {
 		float arc;
 		arc=Headings_Degs*ARC_CONV;
 		return(cos(arc));
 }
 
-float Fsin(double Headings_Degs) /* compute sin of 0 - 359 degrees */
+float Fsin(int Headings_Degs) /* compute sin of 0 - 359 degrees */
 {
 	float arc;
 	arc=Headings_Degs*ARC_CONV; /* convert degrees to radians */
@@ -209,14 +204,10 @@ void snapCoords(cairo_t *canvas, int x, int y)
 //		printf("After [2]: %d %d\n", x, y);
 }
 
-void cairo_line(cairo_t *cr, int x_1, int y_1, int x_2, int y_2)
+void cairo_line(cairo_t *cr, int x1, int y1, int x2, int y2)
 {
 //	snapCoords(canvas, &x1, &y1 );
 //
-	double x1 = (double) x_1;
-	double y1 = (double) y_1;
-	double x2 = (double) x_2;
-	double y2 = (double) y_2;
 
 // This code generates straighter and sharper lines, but also drops parts of objects for 
 // some reason //	cairo_user_to_device(cr, &x1, &y1);
@@ -227,13 +218,12 @@ void cairo_line(cairo_t *cr, int x_1, int y_1, int x_2, int y_2)
 //	x2 = round(x2) + 0.5;
 //	y2 = round(y2) + 0.5;
 //	cairo_device_to_user(cr, &x2, &y2);
-	cairo_move_to(cr, x1+0.5, y1+0.5);
-	cairo_line_to(cr, x2+0.5, y2+0.5);
+	cairo_move_to(cr, x1, y1);
+	cairo_line_to(cr, x2, y2);
 //	cairo_move_to(cr, x1, y1);
 //	cairo_line_to(cr, x2, y2);
 
 }
-
 
 
 void cairo_text_at(cairo_t *cr, int x, int y, const char *string)
@@ -255,14 +245,13 @@ void clip_path_rect(cairo_t *cr)
 	cairo_new_path(cr);
 	// Create the bounding box
 	cairo_rectangle(cr, x1-1, y1-1, (x2-x1)+1, (y2-y1)+1);
-//	cairo_set_source_rgb(canvas, 1, 0, 0);
+//	cairo_set_source_rgba(canvas, 1, 0, 0);
 //	cairo_stroke_preserve(canvas);
 	cairo_clip(cr);
 	// Restore the old path
 
 	cairo_append_path(cr,ol_path);
 }
-
 
 void stroke_in_clip(cairo_t *cr)
 {
@@ -272,37 +261,41 @@ void stroke_in_clip(cairo_t *cr)
 }
 
 // Clears the pixels on the previous path, i.e. sets them to black
-void clear_prev_path(cairo_t *cr, cairo_path_t *prevPath)
-{
-	cairo_set_source_rgb(cr, 0, 0, 0);
-//	cairo_new_path(cr); // assume the context is empty
-	cairo_append_path(cr, prevPath);
-	clip_path_rect(cr);
-	cairo_stroke(cr);
-	cairo_reset_clip(cr);
-}
+//void clear_prev_path(cairo_t *cr, cairo_path_t *prevPath)
+//{
+//	cairo_set_source_rgba(cr, 0, 0, 0);
+////	cairo_new_path(cr); // assume the context is empty
+//	cairo_append_path(cr, prevPath);
+//	clip_path_rect(cr);
+//	cairo_stroke(cr);
+//	cairo_reset_clip(cr);
+//}
 
-void cairo_bounding_box(cairo_t *cr)
-{
-	double x1;
-	double y1;
-	double x2;
-	double y2;
-
-	cairo_path_extents(cr, &x1, &y1, &x2, &y2);
-	cairo_stroke(cr); // Draw the actual object, preserving it's shape information
-	cairo_path_t *ol_path = cairo_copy_path(cr);
-	cairo_new_path(cr);
-
-	cairo_set_source_rgb(cr, 1, 0, 0);
-	cairo_rectangle(cr, x1-1, y1-1, (x2-x1)+1, (y2-y1)+1);
-	cairo_stroke(cr);
-
-	cairo_append_path(cr,ol_path);
-}
+//void cairo_bounding_box(cairo_t *cr)
+//{
+//	double x1;
+//	double y1;
+//	double x2;
+//	double y2;
+//
+//	cairo_path_extents(cr, &x1, &y1, &x2, &y2);
+//	cairo_stroke(cr); // Draw the actual object, preserving it's shape information
+//	cairo_path_t *ol_path = cairo_copy_path(cr);
+//	cairo_new_path(cr);
+//
+//	cairo_set_source_rgba(cr, 1, 0, 0);
+//	cairo_rectangle(cr, x1-1, y1-1, (x2-x1)+1, (y2-y1)+1);
+//	cairo_stroke(cr);
+//
+//	cairo_append_path(cr,ol_path);
+//}
 
 void set_initial_vals(cairo_t *cr)
 {
+	Loop_Counter = 0;
+	intv_t1 = 0;
+	intv_t2 = 0;
+	t0 = 0;
 	Terminal_State = 0;
 	Select_Mine_Menus();
 	cairo_path_t *empty_path = cairo_copy_path(cr);
@@ -314,19 +307,19 @@ void set_initial_vals(cairo_t *cr)
 
 //	Set_Bonus_Chars();	// Probably not needed because we don't need to save them in memory
 	// first or whatver
-	Points_Should_Update = 1;
-	Velocity_Should_Update = 1;
-	Speed_Should_Update = 1;
-	Vulner_Should_Update = 1;
-	Interval_Should_Update = 1;
-	Shots_Should_Update = 1;
-	Control_Should_Update = 1;
+//	Points_Should_Update = 1;
+//	Velocity_Should_Update = 1;
+//	Speed_Should_Update = 1;
+//	Vulner_Should_Update = 1;
+//	Interval_Should_Update = 1;
+//	Shots_Should_Update = 1;
+//	Control_Should_Update = 1;
 	
 	PrevFort = empty_path;
 	PrevMine = empty_path;
 	PrevShell = empty_path; 
-	memset(Missile_Should_Update, 0, MAX_NO_OF_MISSILES);
-	memset(Missile_Should_Clean, 0, MAX_NO_OF_MISSILES);
+//	memset(Missile_Should_Update, 0, MAX_NO_OF_MISSILES);
+//	memset(Missile_Should_Clean, 0, MAX_NO_OF_MISSILES);
 	Reset_Screen(cr);
 	
 }
@@ -358,41 +351,48 @@ void reset_sf()
 {
 	Initialized_Graphics = 0;
 	set_initial_vals(SF_canvas);
-	Reset_Screen(SF_canvas);
+//	Reset_Screen(SF_canvas);
 }
 
 int get_terminal_state()
 {
-	return Terminal_State;
+	if(Terminal_State)
+	{
+		Terminal_State = 0;
+		return 1;
+	}
+	else
+	{
+		return 0;
+	}
+	
 }
 
 // W and H are the dimensions of the clipping rectangle
 void cairo_clip_text(cairo_t *cr, int x1, int y1, int w,  int h)
 {
 	cairo_rectangle(cr, x1, y1, w, h); // Not optimal
-	cairo_stroke_preserve(cr);
+//	cairo_stroke_preserve(cr);
 	cairo_clip(cr);
 }
 
-void Draw_Mine_Type(cairo_t *cr, int erease)
+void Draw_Mine_Type(cairo_t *cr)
 {
 	int x,y;
 //  svcolor=getcolor();
-  if(erease == 1) {
-		cairo_set_source_rgb(cr, 0, 0, 0);
-  } else if(Missile_Type==WASTED) {
-    cairo_set_source_rgb(cr, 1, 0, 0);
+  if(Missile_Type==WASTED) {
+    cairo_set_source_rgba(cr, 0.0, 0.0, 0.0, 0.2126);
 	} else if((Mine_Type==FRIEND && Missile_Type==VS_FRIEND) || (Mine_Type==FOE && Missile_Type==VS_FOE)) {
-    cairo_set_source_rgb(cr, 0, 1, 0);
+    cairo_set_source_rgba(cr, 0.0, 0.0, 0.0, 0.7152);
 	}
   else {
-			cairo_set_source_rgb(cr, 1.0, 102.0/255.0, 102.0/255.0); // Light red
+			cairo_set_source_rgba(cr, 0.0, 0.0, 0.0, 0.5275); // Light red
 //    setcolor(LIGHTRED);
   }
   x=IFF_X; 
 //	y=Data_Line;
-	y = WINDOW_HEIGHT-2;
-	cairo_clip_text(cr, x-2, WINDOW_HEIGHT-TEXT_HEIGHT-2, TEXT_WIDTH+2, TEXT_HEIGHT+2);
+	y = WINDOW_HEIGHT;
+	cairo_clip_text(cr, x-2, WINDOW_HEIGHT-TEXT_HEIGHT, TEXT_WIDTH+5, TEXT_HEIGHT+2);
 	// What does this viewport do in context?
 //	cairo_translate(cr, 0, Panel_Y_Start);
 //  setviewport( Xmargin, Panel_Y_Start, Xmargin+MaxX, Panel_Y_End, 1); // ?
@@ -410,7 +410,7 @@ void Draw_Mine_Type(cairo_t *cr, int erease)
 
 // 'erease' indicates wheter or not this is an ereasing operation
 // 
-void Draw_Bonus_Char(cairo_t *cr, int erease)
+void Draw_Bonus_Char(cairo_t *cr)
 {
 	int x,y;
 	
@@ -418,69 +418,65 @@ void Draw_Bonus_Char(cairo_t *cr, int erease)
 	x=MaxX/2 - 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
 	y=MaxY/2 + 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
 	// It was a 16 by 16 bitmap in the original apperently
-	cairo_clip_text(cr, x-1, y+6, 14, 14);
-	cairo_set_font_size(cr, 11);
-	if(erease)
-	{
-		cairo_set_source_rgb(cr, 0, 0, 0);
-	}
-	else
-	{
-		cairo_set_source_rgb(cr, SF_YELLOW);
-	}
-	cairo_text_at(cr, x-0, y+16, Bonus_Char_Vector[rn]);
+	cairo_clip_text(cr, x-1, y+6, 14, 20);
+	cairo_set_font_size(cr, 20);
+
+	cairo_set_source_rgba(cr, SF_YELLOW);
+	cairo_text_at(cr, x-0, y+22, Bonus_Char_Vector[rn]);
 	cairo_set_font_size(cr, POINTS_FONT_SIZE);
 }
 
 // Cleans all the previous paths from the context for the objects in need of an update
 void clean(cairo_t *cr)
 {
+	cairo_set_source_rgba(cr, 0.0, 0.0, 0.0, 0.0);
+	cairo_paint(cr);
 //	cairo_save(cr);
-	clear_prev_path(cr, PrevShip);
-	if (Mine_Should_Clean)
-	{
-		clear_prev_path(cr, PrevMine);
-		Mine_Should_Clean = 0;
-	}
-
-	clear_prev_path(cr, PrevFort);
-
-	for(int i=0;i<MAX_NO_OF_MISSILES;i++) 
-	{
-		if (Missile_Flag[i] == ALIVE)
-		{
-			clear_prev_path(cr, PrevMissile[i]);
-//			Missile_Should_Clean[i] = 0;
-		}
-	}
-	if(Shell_Should_Clean)
-	{
-		clear_prev_path(cr, PrevShell);
-		Shell_Should_Clean = 0;
-	}
-
-	Update_Points(cr, 1);
-	Update_Velocity(cr, 1);
-	Update_Speed(cr, 1);
-	Update_Vulner(cr, 1);
-	Update_Interval(cr, 1);
-	Update_Shots(cr, 1);
-	Update_Control(cr, 1);
-
-	if(Bonus_Char_Should_Clean) // Set to always update (i.e. change nothing)
-	{
-		// write black bonus char  over previous one
-		Draw_Bonus_Char(cr, 1);
-		cairo_reset_clip(cr);
-		Bonus_Char_Should_Clean = 0;
-		Bonus_Char_Should_Update = 0;
-	}
-	if(Mine_Type_Should_Clean)
-	{
-		Draw_Mine_Type(cr, 1);
-		Mine_Type_Should_Clean = 0;
-		Mine_Type_Should_Update = 0;
-	}
+//	clear_prev_path(cr, PrevShip);
+//	if (Mine_Should_Clean)
+//	{
+//		clear_prev_path(cr, PrevMine);
+//		Mine_Should_Clean = 0;
+//	}
+//
+//	clear_prev_path(cr, PrevFort);
+//
+//	for(int i=0;i<MAX_NO_OF_MISSILES;i++) 
+//	{
+//		if (Missile_Flag[i] == ALIVE)
+//		{
+//			clear_prev_path(cr, PrevMissile[i]);
+////			Missile_Should_Clean[i] = 0;
+//		}
+//	}
+//	if(Shell_Should_Clean)
+//	{
+//		clear_prev_path(cr, PrevShell);
+//		Shell_Should_Clean = 0;
+//	}
+//
+//	Update_Points(cr, 1);
+//	Update_Velocity(cr, 1);
+//	Update_Speed(cr, 1);
+//	Update_Vulner(cr, 1);
+//	Update_Interval(cr, 1);
+//	Update_Shots(cr, 1);
+//	Update_Control(cr, 1);
+//
+//	if(Bonus_Char_Should_Clean) // Set to always update (i.e. change nothing)
+//	{
+//		// write black bonus char  over previous one
+//		Draw_Bonus_Char(cr, 1);
+//		cairo_reset_clip(cr);
+//		Bonus_Char_Should_Clean = 0;
+//		Bonus_Char_Should_Update = 0;
+//	}
+//	if(Mine_Type_Should_Clean)
+//	{
+//		Draw_Mine_Type(cr, 1);
+//		Mine_Type_Should_Clean = 0;
+//		Mine_Type_Should_Update = 0;
+//	}
 
 //	cairo_restore(cr);
 //	cairo_new_path(cr);
@@ -521,23 +517,23 @@ void update_drawing(cairo_t *cr)
 		stroke_in_clip(cr);
 	}
 
-	Update_Points(cr, 0);
-	Update_Velocity(cr, 0);
-	Update_Speed(cr, 0);
-	Update_Vulner(cr, 0);
-	Update_Interval(cr, 0);
-	Update_Shots(cr, 0);
-	Update_Control(cr, 0);
+	Update_Points(cr);
+	Update_Velocity(cr);
+	Update_Speed(cr);
+	Update_Vulner(cr);
+	Update_Interval(cr);
+	Update_Shots(cr);
+	Update_Control(cr);
 
 	if(Mine_Flag==ALIVE)
 	{
 		
-		Draw_Mine_Type(cr, 0);
+		Draw_Mine_Type(cr);
 //		Mine_Type_Should_Update = 0;
 	}
 	if(Bonus_Char_Should_Update) // Set to always update (i.e. change nothing)
 	{
-		Draw_Bonus_Char(cr, 0);
+		Draw_Bonus_Char(cr);
 		cairo_reset_clip(cr);
 	}
 }
@@ -550,7 +546,6 @@ void Draw_Frame(cairo_t *cr)
 //	int x,y,dx;
 //
 //
-//	// See initialize_graphics for description
 ////	Height=textheight("H");		/* Get basic text height */
 //		Height = TEXT_HEIGHT;
 
@@ -558,17 +553,18 @@ void Draw_Frame(cairo_t *cr)
 //	cleardevice();
  	// FRAME_COLOR is the color of the green border
 //	setcolor(FRAME_COLOR);
-	cairo_rectangle(cr, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
-	cairo_set_source_rgb(cr, 0, 0, 0);
-	cairo_fill(cr);
-
-	cairo_set_source_rgb(cr, 0, 1, 0);
-	cairo_line(cr, 0, MaxY, MaxX, MaxY);
-	cairo_stroke(cr);
-	cairo_line(cr, 0, MaxY, 0, 0);
-	cairo_line(cr, MaxX, MaxY, MaxX, 0);
-	cairo_stroke(cr);
-//	cairo_set_source_rgb(cr, SF_GREEN);
+//	printf("Hey! \n");
+//	cairo_rectangle(cr, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+//	cairo_set_source_rgbaa(cr, 0, 0, 0, 1);
+//	cairo_fill(cr);
+//
+//	cairo_set_source_rgba(cr, 0, 1, 0);
+//	cairo_line(cr, 0, MaxY, MaxX, MaxY);
+//	cairo_stroke(cr);
+//	cairo_line(cr, 0, MaxY, 0, 0);
+//	cairo_line(cr, MaxX, MaxY, MaxX, 0);
+//	cairo_stroke(cr);
+//	cairo_set_source_rgba(cr, SF_GREEN);
 	/* handle panel */
 	// See init graphics for description of this function
 //	setviewport( Xmargin, Panel_Y_Start, Xmargin+MaxX, Panel_Y_End, 1);
@@ -660,7 +656,7 @@ void Draw_Hexagone(cairo_t *cr,int X_Center,int Y_Center,int Hex_Outer_Radius)
 
 //	svcolor=getcolor(); /* save present color */
 //	setcolor(HEX_COLOR);
-	cairo_set_source_rgb(cr, SF_GREEN);
+	cairo_set_source_rgba(cr, SF_GREEN);
 
 	Abs_Y=Hex_Outer_Radius*0.866;	/* sin(60)=0.866 */
 	cairo_move_to(cr, X_Center+Hex_Outer_Radius,Y_Center); /* right-hand tip */
@@ -695,7 +691,7 @@ void Draw_Ship(cairo_t *cr, int x, int y, int Headings, int size)
 
 //	svcolor=getcolor(); /* save present color */
 //	setcolor(SHIP_COLOR); // yellow
-	cairo_set_source_rgb(cr, SF_YELLOW);
+	cairo_set_source_rgba(cr, SF_YELLOW);
 
 	xc=x;
 	yc=y;
@@ -736,7 +732,7 @@ void Draw_Fort(cairo_t *cr, int x, int y, int Headings, int size )
 
 //	svcolor=getcolor(); /* save present color */
 //	setcolor(FORT_COLOR); // blueee
-	cairo_set_source_rgb(cr, SF_BLUE);
+	cairo_set_source_rgba(cr, SF_BLUE);
 	x1=x;
 	y1=y;
 	x2=x1+size*Fsin(Headings);
@@ -776,7 +772,7 @@ void Draw_Mine (cairo_t *cr, int x, int y, int size)	/* x,y is on screen center 
 
 //	svcolor=getcolor(); /* save present color */
 //	setcolor(MINE_COLOR); // maybe different than blue for easier recogniztion?
-	cairo_set_source_rgb(cr, SF_BLUE);
+	cairo_set_source_rgba(cr, SF_BLUE);
 
 	cairo_move_to(cr,x-size,y);
 	cairo_line_to(cr,x,y-1.18*  size);	 /* 1.3/1.1=1.18 */
@@ -804,7 +800,7 @@ void Draw_Missile (cairo_t *cr, int x, int y, int Headings, int size, int missil
 
 //	svcolor=getcolor(); /* save present color */
 //	setcolor(MISSILE_COLOR);
-	cairo_set_source_rgb(cr, 1, 0, 0);
+	cairo_set_source_rgba(cr, 0.0, 0.0, 0.0, 0.2126);
 	x1=x;
 	y1=y;
 	x2=x1+size*Fsin(Headings);
@@ -838,7 +834,7 @@ void Draw_Shell(cairo_t *cr, int x, int y, int Headings, int size)
 
 //	svcolor=getcolor(); /* save present color */
 //	setcolor(SHELL_COLOR);
-	cairo_set_source_rgb(cr, 1, 0, 0);
+	cairo_set_source_rgba(cr, 0.0, 0.0, 0.0, 0.2126);
 	x1=x;
 	y1=y;
 	x2=x1+size*Fsin(Headings);
@@ -860,13 +856,13 @@ void Draw_Shell(cairo_t *cr, int x, int y, int Headings, int size)
 //	setcolor(svcolor); /* restore previous color */
 }
 
-float Find_Headings(double x1, double y1, double x2, double y2)
+float Find_Headings(int x1, int y1, int x2, int y2)
 {
 //	int quadrant;	// Unused
 	double arcsinalfa;
 	double b;
 	double a;
-	arcsinalfa=fabs(x1-x2);
+	arcsinalfa=abs(x1-x2);
 	a=pow(x1-x2,2)+pow(y1-y2,2);
 	b=sqrt(a);
 	arcsinalfa=asin(arcsinalfa/b);
@@ -880,21 +876,15 @@ float Find_Headings(double x1, double y1, double x2, double y2)
 		/* quadrant=3 */ return(180.0+arcsinalfa*57.3+0.5);
 }
 
-void Show_Score(cairo_t *cr, int val, int x, int y, int erease)
+void Show_Score(cairo_t *cr, int val, int x, int y)
 {
 //    int svcolor;
 //    svcolor=getcolor();
 		char val_str[15];
 
 //    cairo_translate(cr, 0, Panel_Y_Start);
-		if(erease)
-		{
-    	cairo_set_source_rgb(cr, 0, 0, 0);
-		}
-		else
-		{
-			cairo_set_source_rgb(cr, SF_YELLOW);
-		}
+		cairo_set_source_rgba(cr, SF_YELLOW);
+
 		
     /* data panel in screen global coordinates */
 
@@ -918,68 +908,68 @@ void Show_Score(cairo_t *cr, int val, int x, int y, int erease)
 specifying a return type. I removed all of these return statements and modified the function 
 return type to void to surpress warnings. */ 
 // Magical 8's?
-void Update_Points(cairo_t *cr, int earese)
+void Update_Points(cairo_t *cr)
 {
 	// Data line is equal to Data_Line=2*Height+4;, with the panel ystart translated
 	// It is the middle line of the data panel, so that would be the clip rect height
-	cairo_clip_text(cr, Points_X-15, WINDOW_HEIGHT-TEXT_HEIGHT-2, 27, TEXT_HEIGHT+1);
-	Show_Score(cr, Points,Points_X-14,WINDOW_HEIGHT-2, earese);
+	cairo_clip_text(cr, Points_X-15, WINDOW_HEIGHT-TEXT_HEIGHT, TEXT_WIDTH*5.5, TEXT_HEIGHT+1);
+	Show_Score(cr, Points,Points_X-14,WINDOW_HEIGHT);
 	cairo_reset_clip(cr);
 }
 
-void Update_Control(cairo_t *cr, int earese)
+void Update_Control(cairo_t *cr)
 {
-	cairo_clip_text(cr, Control_X-11, WINDOW_HEIGHT-TEXT_HEIGHT-2, 20, TEXT_HEIGHT+1);
-	Show_Score(cr, Control,Control_X-10,WINDOW_HEIGHT-2, earese);
+	cairo_clip_text(cr, Control_X-11, WINDOW_HEIGHT-TEXT_HEIGHT, TEXT_WIDTH*3.5, TEXT_HEIGHT+1);
+	Show_Score(cr, Control,Control_X-10,WINDOW_HEIGHT);
 	cairo_reset_clip(cr);
 }
 
-void Update_Velocity(cairo_t *cr, int earese)
+void Update_Velocity(cairo_t *cr)
 {
-	cairo_clip_text(cr, Velocity_X-6, WINDOW_HEIGHT-TEXT_HEIGHT-2, 15, TEXT_HEIGHT+1);
-	Show_Score(cr, Velocity,Velocity_X-5,WINDOW_HEIGHT-2, earese);
+	cairo_clip_text(cr, Velocity_X-6, WINDOW_HEIGHT-TEXT_HEIGHT, TEXT_WIDTH*3, TEXT_HEIGHT+1);
+	Show_Score(cr, Velocity,Velocity_X-5,WINDOW_HEIGHT);
 	cairo_reset_clip(cr);
 }
 
-void Update_Vulner(cairo_t *cr, int earese)  /* for vulner only */
+void Update_Vulner(cairo_t *cr)  /* for vulner only */
 {
-	cairo_clip_text(cr, Vulner_X-7, WINDOW_HEIGHT-TEXT_HEIGHT-2, 17, TEXT_HEIGHT+1);
-	Show_Score(cr, Vulner_Counter,Vulner_X-6,WINDOW_HEIGHT-2, earese);
+	cairo_clip_text(cr, Vulner_X-7, WINDOW_HEIGHT-TEXT_HEIGHT, TEXT_WIDTH*3, TEXT_HEIGHT+1);
+	Show_Score(cr, Vulner_Counter,Vulner_X-6,WINDOW_HEIGHT);
 	cairo_reset_clip(cr);
 }
 
 /* IFF is missing here */
 
-void Update_Interval(cairo_t *cr, int earese)
+void Update_Interval(cairo_t *cr)
 {
-	cairo_clip_text(cr, Interval_X-8, WINDOW_HEIGHT-TEXT_HEIGHT-2, 17, TEXT_HEIGHT+1);
-	Show_Score(cr, Double_Press_Interval,Interval_X-7,WINDOW_HEIGHT-2, earese);
+	cairo_clip_text(cr, Interval_X-8, WINDOW_HEIGHT-TEXT_HEIGHT, TEXT_WIDTH*3, TEXT_HEIGHT+1);
+	Show_Score(cr, Double_Press_Interval,Interval_X-7,WINDOW_HEIGHT);
 	cairo_reset_clip(cr);
 }
 
-void Update_Speed(cairo_t *cr, int earese)
+void Update_Speed(cairo_t *cr)
 {
-	cairo_clip_text(cr, Speed_X-12, WINDOW_HEIGHT-TEXT_HEIGHT-2, 19, TEXT_HEIGHT+1);
-	Show_Score(cr, Speed,Speed_X-11,WINDOW_HEIGHT-2, earese);
+	cairo_clip_text(cr, Speed_X-12, WINDOW_HEIGHT-TEXT_HEIGHT, TEXT_WIDTH*4, TEXT_HEIGHT+1);
+	Show_Score(cr, Speed,Speed_X-11,WINDOW_HEIGHT);
 	cairo_reset_clip(cr);
 }
 
-void Update_Shots(cairo_t *cr, int earese)
+void Update_Shots(cairo_t *cr)
 {
-	cairo_clip_text(cr, Shots_X-12, WINDOW_HEIGHT-TEXT_HEIGHT-2, 20, TEXT_HEIGHT+1);
-	Show_Score(cr, Missile_Stock,Shots_X-12,WINDOW_HEIGHT-2, earese);
+	cairo_clip_text(cr, Shots_X-12, WINDOW_HEIGHT-TEXT_HEIGHT, TEXT_WIDTH*4, TEXT_HEIGHT+1);
+	Show_Score(cr, Missile_Stock,Shots_X-12,WINDOW_HEIGHT);
 	cairo_reset_clip(cr);
 }
 
 void start_drawing()
 {
-	surface = cairo_image_surface_create(CAIRO_FORMAT_RGB16_565, WINDOW_WIDTH, WINDOW_HEIGHT);
-printf("Stride: %d Height: %d Bytes: %d" , cairo_image_surface_get_stride(surface),  WINDOW_HEIGHT, WINDOW_HEIGHT * cairo_image_surface_get_stride(surface));	SF_canvas = cairo_create(surface);
+	surface = cairo_image_surface_create(CAIRO_FORMAT_A8, WINDOW_WIDTH/SCALE_F, WINDOW_HEIGHT/SCALE_F);
+	SF_canvas = cairo_create(surface);
 	Initialize_Graphics(SF_canvas);
 	reset_sf();
 	// restore the line width
 //	cairo_set_line_width(SF_canvas, (224.1 * 1) / ((double) MaxY * 1));
-	Draw_Frame(SF_canvas); // Draw the basis
+//	Draw_Frame(SF_canvas); // Draw the basis
 	// Done in reset_sf -> set_initial_vals -> reset_screen now.
 }
 
@@ -989,72 +979,6 @@ void stop_drawing()
 	Close_Graphics(SF_canvas);
 }
 
-int move_update()
-{
-//	return (int) ((rand() % (3)) - 1);
-	return 1;
-}
-
-// Maybe create a seperate SF version? also because returning does not make sense for GTK
-//unsigned char* update_frame(cairo_t *cr)
-
-
-void update_frame(cairo_t *cr)
-{
-
-//	if (rand() % 5)
-//	{
-//		Ship_Should_Clean = 0;	
-//		Ship_Should_Update = 0;
-//	}
-//	else
-//	{
-//		Ship_X_Pos = (Ship_X_Pos + move_update()) % MaxX;
-//		if (rand() % 2)
-//		{
-//			Ship_Y_Pos = (Ship_Y_Pos + rand() % 2) % MaxY;
-//		}
-//	}
-
-//	if (rand() % 2)
-//	{
-//		Ship_Headings = (Ship_Headings + move_update()) % 360;
-//	}
-//	int m = 0;
-//	if (rand() % 2)
-//	{
-//		
-//	}
-//	if (rand() % 2)
-//	{
-//		m = move_update();
-//		Mine_X_Pos = (Mine_X_Pos + m) % MaxX;
-//	}
-
-	
-//	Ship_X_Pos =  ((Ship_X_Pos + move_update()) % MaxX) + 1;
-//	Ship_Y_Pos = (Ship_Y_Pos + move_update()) % MaxY;
-//	Fort_Headings = (Fort_Headings + 1) % 360;
-//	Fort_Headings = 45;	
-//	Mine_Y_Pos = (Mine_Y_Pos + move_update()) % MaxY;
-//	Mine_X_Pos = (Mine_X_Pos + move_update()) % MaxX;
-//	Missile_X = (Missile_X + move_update()) % MaxX;
-//	if (Missile_Y == 0)
-//	{
-//		Missile_Y = MaxY;
-//	}
-//	Missile_Y = (Missile_Y - 1) % MaxY;
-//	Missile_Y_Pos[0] = Missile_Y;
-//	Missile_X_Pos[0] = Missile_X;
-//
-//	clean(cr);
-//	Draw_Hexagone(cr, MaxX/2,MaxY/2,SMALL_HEXAGONE_SIZE_FACTOR*MaxX);
-//	stroke_in_clip(cr);
-//	
-////	cairo_reset_clip(cr);
-//	update_drawing(cr);
-}
-
 unsigned char* update_frame_SF()
 {
 	// This should have the form clean -> sf_iter -> update, because bottom panel text will in 
@@ -1062,6 +986,17 @@ unsigned char* update_frame_SF()
 	clean(SF_canvas);
 	game_iteration(SF_canvas);
 	update_drawing(SF_canvas);
+//	cairo_line(SF_canvas, 0, MaxY, MaxX, MaxY );
+//	cairo_stroke(SF_canvas);
+//	cairo_surface_t *surface2 = cairo_image_surface_create(CAIRO_FORMAT_A8, WINDOW_WIDTH/SCALE_F, WINDOW_HEIGHT/SCALE_F);
+
+//	printf("Hey [1]\n");
+//	cairo_t *des = cairo_create (surface2);
+//	cairo_set_operator(des, CAIRO_OPERATOR_HSL_LUMINOSITY);
+//	cairo_set_source_surface (des, surface, 0, 0);
+//	printf("Hey [2]\n");
+//	cairo_paint(des);
+//	printf("Hey [3]\n");
 	return cairo_image_surface_get_data(surface);
 }
 
@@ -1076,7 +1011,7 @@ void jitter_step1(cairo_t *cr, int step)
   int Jitter_Headings;
   int Jitter_X_Pos,Jitter_Y_Pos;
 
-	clear_prev_path(cr, PrevShip);
+//	clear_prev_path(cr, PrevShip);
 	
 	Jitter_Headings=Ship_Headings+2*step;
 	Jitter_X_Pos=Ship_X_Old_Pos+step*Fcos(Jitter_Headings);
@@ -1090,7 +1025,7 @@ void jitter_step2(cairo_t *cr, int step)
 {
   int Jitter_Headings;
   int Jitter_X_Pos,Jitter_Y_Pos;
-	clear_prev_path(cr, PrevShip);
+//	clear_prev_path(cr, PrevShip);
 
  	Jitter_Headings=Ship_Headings-2*step;
   Jitter_X_Pos=Ship_X_Old_Pos+step*Fsin(Jitter_Headings);
@@ -1103,10 +1038,10 @@ void jitter_step2(cairo_t *cr, int step)
 //{
 //	int i,j, iarc;
 //	j=0;
-//	cairo_set_source_rgb(cr,0,0,0);
+//	cairo_set_source_rgba(cr,0,0,0);
 //  for(i=5;i<ExpRadius/2+5;i=i+5)
 //  {
-////		cairo_set_source_rgb(cr, 1.0, 102.0/255.0, 102.0/255.0);
+////		cairo_set_source_rgba(cr, 1.0, 102.0/255.0, 102.0/255.0);
 //		for(iarc=i/5;iarc<360+i/5;iarc=iarc+20)
 //	  {
 //			cairo_new_sub_path(cr);
@@ -1115,7 +1050,7 @@ void jitter_step2(cairo_t *cr, int step)
 //		stroke_in_clip(cr);
 //		if (j>0)
 //		{
-////			cairo_set_source_rgb(cr,1,1,52/255);
+////			cairo_set_source_rgba(cr,1,1,52/255);
 //	 		for(iarc=j/5;iarc<360+j/5;iarc=iarc+20)
 //			{
 //				cairo_new_sub_path(cr);
@@ -1129,12 +1064,12 @@ void jitter_step2(cairo_t *cr, int step)
 
 void explosion_step1(cairo_t *cr, int X_Pos,int Y_Pos, int step)
 {
-  int i = 5 * (step + 1);
+  int i = 10 * (step + 1);
   int iarc;
 	
 
-	cairo_set_source_rgb(cr, 1, 0, 0);
-//	cairo_set_source_rgb(cr, 0.0, 1, 0);
+	cairo_set_source_rgba(cr, 0, 0, 0, 0.2126);
+//	cairo_set_source_rgba(cr, 0.0, 1, 0);
 	for(iarc=i/5;iarc<360+i/5;iarc=iarc+20)
   {
 		cairo_new_sub_path(cr);
@@ -1147,12 +1082,12 @@ void explosion_step1(cairo_t *cr, int X_Pos,int Y_Pos, int step)
 
 void explosion_step2(cairo_t *cr, int X_Pos,int Y_Pos, int step)
 {
-	int j = step * 5;
+	int j = step * 10;
   int iarc;
 
 	if (j>0)
 	{
-		cairo_set_source_rgb(cr, 1, 1, 0);
+		cairo_set_source_rgba(cr, 0, 0, 0, 0.9278);
 		for(iarc=j/5;iarc<360+j/5;iarc=iarc+20)
 		{
 			cairo_new_sub_path(cr);
@@ -1196,7 +1131,7 @@ void Reset_Screen(cairo_t *cr)
     /* reset screen */
             /* reset panel */
 		// This is done in set_initial_vals now
-	Mine_Type_Should_Update = 0;
+//	Mine_Type_Should_Update = 0;
 //	Points_Should_Update = 1; // Show the first time around right?
 //	Velocity_Should_Update = 1;
 //	Speed_Should_Update = 1;
@@ -1205,8 +1140,8 @@ void Reset_Screen(cairo_t *cr)
 //	Shots_Should_Update = 1;
 //	Control_Should_Update = 1;
 
-	Mine_Type_Should_Clean = 0;
-	Draw_Frame(cr);
+//	Mine_Type_Should_Clean = 0;
+//	Draw_Frame(cr);
 //	Points_Should_Clean = 1; // Show the first time around right?
 //	Velocity_Should_Clean = 1;
 //	Speed_Should_Clean = 1;
@@ -1226,18 +1161,6 @@ void Reset_Screen(cairo_t *cr)
 	
 
 }  /* end reset screen */
-
-int main()
-{
-	start_drawing();
-	update_frame_SF();
-	printf("Stride: %d Height: %d Bytes: %d" , cairo_image_surface_get_stride(surface),  WINDOW_HEIGHT, WINDOW_HEIGHT * cairo_image_surface_get_stride(surface));
-	cairo_surface_write_to_png(surface, "min.png");
-}
-
-
-
-
 
 
 #endif

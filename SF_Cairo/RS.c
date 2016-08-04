@@ -24,7 +24,11 @@
 //#include "myconst.h"
 //#include "myvars.h"
 
+#ifdef GUI // Prefer Minimal shared libray when not using GUI
 #include "DE.h"
+#else
+#include "DE_Minimal.h"
+#endif
 #include "HM.h"
 #include "TCOL.h"
 #include "RS.h"
@@ -96,13 +100,15 @@ int timeval_subtract(struct timeval *result, struct timeval *t2, struct timeval 
 void handle_3()
 {
 	if((Key==KEY_3)&&(Lastkey!=KEY_3)&&(!(Timing_Flag))) { /* first I keypress */
-		gettimeofday(&intv_t1, NULL);
+//		gettimeofday(&intv_t1, NULL);
+		intv_t1 = Loop_Counter;
     Timing_Flag=ON;
     Check_Mine_Flag=ON; /* is used by Get_User_Input(cr) */
 	}
 
 	if((Key==KEY_3)&&(Lastkey==KEY_3)&&(Timing_Flag)) {   /* second I keypress */
-		gettimeofday(&intv_t2, NULL);
+//		gettimeofday(&intv_t2, NULL);
+		intv_t2 = Loop_Counter;
 		Timing_Flag=OFF;
 		Key=0;   /* to enable consecutive double_press */
 		/* where with next keypress Lastkey=0 */
@@ -110,12 +116,8 @@ void handle_3()
    }
 }
 
-void Check_Bonus_Input(cairo_t *cr) {
-    if((Bonus_Display_Flag==NOT_PRESENT)||(Bonus_Display_Flag==NON_BONUS)) 
-		{
-			;
-    } 
-		else if(Bonus_Display_Flag==FIRST_BONUS) {
+void Check_Bonus_Input() {
+		if(Bonus_Display_Flag==FIRST_BONUS) {
         Bonus_Wasted_Flag=ON;
     } 
 		else if(Bonus_Display_Flag==SECOND_BONUS) 
@@ -141,14 +143,14 @@ void Check_Bonus_Input(cairo_t *cr) {
         Bonus_Display_Flag=NOT_PRESENT;
         Bonus_Granted=ON;
 //        Xor_Bonus_Char(rn);    /* erase present $ char */
-				Bonus_Char_Should_Clean = 0;
+//				Bonus_Char_Should_Clean = 0;
 //        Write_Bonus_Message(cr); /*  Announce_Bonus  */
 				}
 		}
 }
 
 
-void Get_User_Input(cairo_t *cr)
+void Get_User_Input()
 {
     if (New_Input_Flag) /* new input occured */
     {
@@ -157,8 +159,8 @@ void Get_User_Input(cairo_t *cr)
       else if (Key==LEFT)  Rotate_Input=-1;      /*   LEFT  */
       else if (Key==RIGHT) Rotate_Input=1;       /*   RIGHT */ 
       else if (Key==SPACE)  New_Missile_Flag=ON;  /*   DOWN  */ // Used to be down
-      else if (Key==KEY_1)    Check_Bonus_Input(cr);        /*   P(oints) */
-      else if (Key==KEY_2)    Check_Bonus_Input(cr);        /*   M(issiles) */
+      else if (Key==KEY_1)    Check_Bonus_Input();        /*   P(oints) */
+      else if (Key==KEY_2)    Check_Bonus_Input();        /*   M(issiles) */
 		// probably not done right
   		else if (Key==KEY_3)   handle_3(); // was handled by kbd interrupt handler */ // hmm
 				// enter pauses the game 
@@ -171,7 +173,8 @@ void Get_User_Input(cairo_t *cr)
             if((Mine_Flag==ALIVE) && (Mine_Type==FRIEND))
 						{
     					Missile_Type=WASTED;
-        			Show_Mine_Type(cr, Mine_Indicator);
+//        			Show_Mine_Type(cr, Mine_Indicator);
+							Mine_Char = Mine_Indicator;
 						}
         }
 }
@@ -183,23 +186,6 @@ void ms_sleep(unsigned long miliseconds)
   tim.tv_sec = 0;
   tim.tv_nsec = miliseconds * 1000000L;
 	nanosleep(&tim , &tim2);
-}
-
-
-// Not sure what this does
-// I've assumed that this erases the text in the panel but idk why anymore
-void Set_Graphics_Eraser(cairo_t *cr)
-{
-
-//  size=imagesize(0,0,40,9);        /*length of 5 characters*/
-//  buffer1=malloc(size);
-//  getimage(100,100,140,109,buffer1);
-
-//	cairo_save(cr);
-//	cairo_set_source_rgb(cr, 0, 0, 0);
-//	cairo_rectangle(cr, 0, 0, TEXT_WIDTH, TEXT_HEIGHT);
-//	cairo_fill(cr);
-//	cairo_restore(cr);
 }
 
 
@@ -221,24 +207,25 @@ void Clear_Interval()   /* clear double-press interval */
 
 
 
-void Find_Interval(cairo_t *cr)   /* display double-press interval */
+void Find_Interval()   /* display double-press interval */
 {
 //    int svcolor;
 //    int x,y; // Unused
     int interval;
-		struct timeval tvDiff;
+//		struct timeval tvDiff;
 //    interval=Double_Press_Interval=round(((double)(intv_t2-intv_t1)/(double)CLOCKS_PER_SEC)*1000.0); /* in milliseconds */  
-		timeval_subtract(&tvDiff, &intv_t2, &intv_t1);
-		interval=Double_Press_Interval=round(tvDiff.tv_usec/1000.0);
-    if((interval<SF_DELAY*20)&&(interval>SF_DELAY)) /* only when interval makes sense */
+//		timeval_subtract(&tvDiff, &intv_t2, &intv_t2);
+		interval=intv_t2-intv_t1;
+//    if((interval<SF_DELAY*20)&&(interval>SF_DELAY)) /* only when interval makes sense */
+		if((interval < 20)&&(interval>1)) /* only when interval makes sense */
     {		
         if((interval>=Interval_Lower_Limit)&&(interval<=Interval_Upper_Limit)
              &&(Mine_Flag==ALIVE)&&(Mine_Type==FOE))
 				{
 					printf("Got interval. 👁 💯 💯 💯 \n");
    				 Missile_Type=VS_FOE;   /* rearm missile */
-       		Show_Mine_Type(cr, Mine_Char);
-
+//       		Mine_Char = Mine_Char;
+//				 Show_Mine_Type();
 //        Update_Interval(cr);
 				}
     }
@@ -290,58 +277,7 @@ void Init_Game()
     getch();*/
 }
 
-void Display_Bonus_Char(cairo_t *cr, char Bonus_Char)
-{
-//    int svcolor;
-//    int x,y;
-//    svcolor=getcolor();
-//    setcolor(TEXT_COLOR);
-//    settextstyle(DEFAULT_FONT,HORIZ_DIR,2);
-//    x=MaxX/2 - 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
-//    y=MaxY/2 + 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
-//    gprintf(&x,&y,"%c",Bonus_Char);
-//    settextstyle(DEFAULT_FONT,HORIZ_DIR,0);
-//    setcolor(svcolor); /* restore previous color */
-}
 
-// Sort of draws all the bonus characters to a location of the screen so to save them? 
-void Set_Bonus_Chars(cairo_t *cr)
-{
-//    int size,i,j;
-//    int x,y;
-//
-//    /* set character Size */
-//    size=imagesize(0,0,16,16);
-//    /* get right location */
-//    x=MaxX/2 - 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
-//    y=MaxY/2 + 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
-//
-// for (i=0;i<10;i++) // Save all the images with a 16x16 size
-//         {
-//        bc[i]=malloc(size);
-//        Display_Bonus_Char(cr, Bonus_Char_Vector[i][0]);
-//        getimage(x,y,x+16,y+16,bc[i]);
-//        putimage(x,y,bc[i],XOR_PUT);
-//         }
-}
-
-// Erease the currently displayed image set by getimage with an XOR operation (i.e. erase 
-// everything that previous image drawing operation has drawed)
-// The cairo interpretation of this function sucks
-void Xor_Bonus_Char(cairo_t *cr, int n)   /* write and erase bonus character */
-{
-//	int x,y;
-//	
-//	/* get right location */
-//	x=MaxX/2 - 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
-//	y=MaxY/2 + 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
-//	cairo_set_source_rgb(
-//	cairo_rectangle(cr, x, y, TEXT_WIDTH, TEXT_HEIGHT);
-//	cairo_fill(cr);
-
-//    putimage(x,y,bc[n],XOR_PUT);
-
-}
 
 // What does this even do in the game [2]
 // Tells the player about the bonuses before the game starts
@@ -364,16 +300,6 @@ void Xor_Bonus_Char(cairo_t *cr, int n)   /* write and erase bonus character */
 ////    putimage(x,y,buffer2,XOR_PUT);
 ////    setcolor(svcolor);
 //}
-
-// Write bonus messsage to the graphics bitmap memory
-void Write_Bonus_Message()
-{
-// int x,y;
-//
-// x=MaxX/2 - 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
-// y=MaxY/2 + 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
-// putimage(x,y,buffer2,XOR_PUT);
-}
 
 
 int Generate_Non_Bonus_Char()
@@ -456,7 +382,7 @@ void Handle_Bonus()
 		if(Resource_On_Counter>=Resource_Display_Interval)
 		{
 			Bonus_Char_Should_Update = 0;
-			Bonus_Char_Should_Clean = 1;
+//			Bonus_Char_Should_Clean = 1;
 			Resource_Flag=OFF;
 			Resource_Off_Counter=0;
 			Bonus_Display_Flag=NOT_PRESENT; /* in case bonus is pressed after  */
@@ -487,22 +413,22 @@ void SF_iteration(cairo_t *cr)
 // and then draw all in need of an update
 	Loop_Counter++;
 	// This was done by processor interupts, but is allowed automatically by GTK
-	Get_User_Input(cr);
+	Get_User_Input();
 	// Pauses the game (when the flag is set, continues this loop) 
-	while(Freeze_Flag) Get_User_Input(cr); 
-	Move_Ship(cr);
-	Handle_Missile(cr);
+//	while(Freeze_Flag) Get_User_Input(); 
+	Move_Ship();
+	Handle_Missile();
 	//            if(Sound_Flag>1) Sound_Flag--;
 	//            if(Sound_Flag==1) {Sound_Flag--; nosound();}
-	Handle_Mine(cr);
-	Test_Collisions(cr);
-	Handle_Shell(cr);
-	Handle_Fortress(cr);
+	Handle_Mine();
+	Test_Collisions();
+	Handle_Shell();
+	Handle_Fortress();
 	if(Display_Interval_Flag) {   /* of double press */
-	    if(Mine_Type==FOE) Find_Interval(cr);
+	    if(Mine_Type==FOE) Find_Interval();
 	    Display_Interval_Flag=OFF;
 	}
-	Accumulate_Data(cr);
+	Accumulate_Data();
 	Handle_Bonus();
 
 	Score=Points+Velocity+Control+Speed;
@@ -533,8 +459,8 @@ void game_iteration(cairo_t *cr)
 		explosion_step1(cr, ExpX, ExpY, Explosion_Step);
 		Explosion_Step++;
 
-		cairo_set_source_rgb(cr, SF_YELLOW);
-		cairo_append_path(cr, PrevShip);
+//		cairo_set_source_rgb(cr, SF_YELLOW);
+//		cairo_append_path(cr, PrevShip);
 //		stroke_in_clip(cr);
 
 		if((Explosion_Step * 10) >= ExpRadius)
@@ -566,7 +492,7 @@ void game_iteration(cairo_t *cr)
 			Jitter_Flag = 0;
 
 			// Restore Ship to it's previous position
-			clear_prev_path(cr, PrevShip);
+//			clear_prev_path(cr, PrevShip);
 //			Draw_Ship(cr,Ship_X_Pos,Ship_Y_Pos,Ship_Headings,SHIP_SIZE_FACTOR*MaxX);
 //			stroke_in_clip(cr);
 		}
@@ -600,14 +526,17 @@ static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data
 	// Main sf stuff
 
 
-	for(int m = 0; m < MAX_NO_OF_MISSILES; m++)
-	{ 
-		if (Missile_Flag[m]==ALIVE)
-		{
-			Missile_Should_Update[m] = 1;
-		}
-	}
-	printf("Ship Position: (%d, %d) Ship Headings: %d \n", Ship_X_Pos, Ship_Y_Pos, Ship_Headings);
+//	for(int m = 0; m < MAX_NO_OF_MISSILES; m++)
+//	{ 
+//		if (Missile_Flag[m]==ALIVE)
+//		{
+////			Missile_Should_Update[m] = 1;
+//		}
+//	}
+ 	FILE *log;
+  log = fopen("/tmp/SF_Log.txt", "a");
+	fprintf(log, "Ship Position: (%d, %d) Ship Headings: %d \n", Ship_X_Pos, Ship_Y_Pos, Ship_Headings);
+	fclose(log);
 	clean(cr);
 	Draw_Frame(cr);
 	game_iteration(cr);
@@ -670,6 +599,9 @@ gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
 
 void animation_loop(GtkWidget *darea)
 {
+ 	FILE *fp;
+  fp = fopen("/tmp/Desktop/SF_Log.txt", "w+");
+	fclose(fp);
 
 	Init_Session();
 	Game_Counter=0;

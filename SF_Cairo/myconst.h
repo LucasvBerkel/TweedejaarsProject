@@ -14,13 +14,13 @@
 #define JITTER_MODE 1
 #define EXPLOSION_MODE 2
 
+#define SCALE_F 1.0
+
 #ifdef GUI
-#define POINTS_FONT_SIZE 5.5
+#define POINTS_FONT_SIZE 9.5
 #else
-#define POINTS_FONT_SIZE 7.5
+#define POINTS_FONT_SIZE 12.0
 #endif
-
-
 
 
 #define UP 65362
@@ -50,7 +50,7 @@
 #define SHELL_SPEED 7 // was 7
 #define MAX_NO_OF_MISSILES 6
 //#define SF_DELAY 50.0
-#define SF_DELAY 45	// was 47
+#define SF_DELAY 50	// was 47
 #define ANIMATION_DELAY_EXP 60  // In Milliseconds
 #define ANIMATION_DELAY_JITTER 10
 // All the color values have been altered to be RGB tuples
@@ -81,7 +81,7 @@
 #define BIG_HEXAGONE_SIZE_FACTOR  0.416  /*  10/24=0.416 of MaxX */
 #define SMALL_HEXAGONE_SIZE_FACTOR 0.083 /*  2/24=0.0833 of MAxX */
 #define SHIP_SIZE_FACTOR 0.041           /*  1/24=0.041 of MaxX  */
-#define FORT_SIZE_FACTOR 0.05            /*  1.2/24=0.05 of MaxX */
+#define FORT_SIZE_FACTOR 0.05           /*  1.2/24=0.05 of MaxX */
 #define MINE_SIZE_FACTOR 0.023           /*  0.55/24=0.023 of MaxX */
 #define MISSILE_SIZE_FACTOR 0.03         /*  of MaxX */
 #define SHELL_SIZE_FACTOR 0.03		 /*  of MaxX */
