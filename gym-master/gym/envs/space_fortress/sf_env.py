@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 
 
 import gym
@@ -13,11 +13,11 @@ import cv2
 
 class SFEnv(gym.Env):
 	# Human renders a full RGB version of the game at the original size, while minimal only shows
-	# the data the network 
+	# the data the network
 	# Human_Sleep is the same as above, but with an added delay to approximately emulate the
 	# original game's speed
 	metadata = {'render.modes': ['rgb_array', 'human', 'human_sleep', 'minimal'], 'configure.required' : True}
-	# Open AI gym action space id and the keycode 
+	# Open AI gym action space id and the keycode
 
 	def __init__(self, game='SF'):
 		self.mode = 'rgb_array' # This gets overwritten by configure
@@ -25,7 +25,7 @@ class SFEnv(gym.Env):
 		self.prev_score = 0
 		self.screen_height = 448
 		self.screen_width = 448
-		self.scale = 2 # The amount of (down) scaling of the screen height and width 
+		self.scale = 2 # The amount of (down) scaling of the screen height and width
 		# Space, left, right, up, nothing
 		actions_SF = {0 : 32,  1 : 65361, 2 : 65363, 3 : 65362, 4 : 0}
 		self._seed()
@@ -41,10 +41,10 @@ class SFEnv(gym.Env):
 		self.action_space = gym.spaces.Discrete(len(self._action_set))
 
 
-	
+
 	@property
 	def _n_actions(self):
-		return len(self._action_set) 
+		return len(self._action_set)
 
 	def _seed(self, seed=None):
 		self.np_random, seed = seeding.np_random(seed)
@@ -63,9 +63,9 @@ class SFEnv(gym.Env):
 
 
 	# We ignore the mode parameter here because it's set in _configure
-	# Not entirely sure what close here does, although you probably have to implemented this 
+	# Not entirely sure what close here does, although you probably have to implemented this
 	# behaviour yourself
-	def _render(self, mode=None, close=False): 
+	def _render(self, mode=None, close=False):
 		if not self.mode == 'rgb_array':
 			zzz = 1
 			if self.mode=='minimal':
@@ -75,7 +75,7 @@ class SFEnv(gym.Env):
 			elif self.mode.startswith('human'):
 				new_frame = self.pretty_screen().contents
 				img = np.ctypeslib.as_array(new_frame)
-				if mode=='human_sleep':	
+				if mode=='human_sleep':
 					zzz = 57 # Sleep for about 50 ms, the original delay (more because it seemed fast)
 #					zzz = 0.048
 				img = np.reshape(img, (self.screen_height, self.screen_width, 2))
@@ -91,7 +91,7 @@ class SFEnv(gym.Env):
 		self.reset()
 		screen = self.screen().contents
 		obv = np.ctypeslib.as_array(screen)
-		return obv # For some reason should show the observation 	
+		return obv # For some reason should show the observation
 
 	def _close(self):
 		self.stop_drawing()
@@ -110,9 +110,9 @@ class SFEnv(gym.Env):
 			libname = "sf_frame_lib.so"
 
 		if os.startswith('linux'): # come up with something nicer for this:
-			libpath = 
+			libpath = "/home/wijnand/Documents/git/TweedejaarsProject/gym-master/gym/envs/space_fortress/linux2"
 		elif os.startswith('darwin'):
-			libpath = 
+			libpath =
 
 		self.update = ctypes.CDLL(libpath + '/'+libname).update_frame_SF
 		self.init = ctypes.CDLL('./'+os+'/'+libname).start_drawing
@@ -126,7 +126,7 @@ class SFEnv(gym.Env):
 
 		# Configure how many bytes to read in from the pointer
 		# c_ubyte is equal to unsigned char
-		self.update.restype = ctypes.POINTER(ctypes.c_ubyte * self.n_bytes) 
+		self.update.restype = ctypes.POINTER(ctypes.c_ubyte * self.n_bytes)
 		self.screen.restype = ctypes.POINTER(ctypes.c_ubyte * self.n_bytes)
 		# 468 * 448 * 2 (original size times something to do with 16 bit images)
 		sixteen_bit_img_bytes = self.screen_width * self.screen_height * 2
@@ -136,19 +136,6 @@ class SFEnv(gym.Env):
 		# Initialize the game's drawing context and it's variables
 		# I would rather that this be in the init method, but the OpenAI developer himself stated
 		# that if some functionality of an enviroment depends on the render mode, the only way
-		# to handle this is to write a configure method, a method that is only callable after the 
+		# to handle this is to write a configure method, a method that is only callable after the
 		# init
 		self.init()
-
-
-
-
-
-
-
-
-
-
-
-
-
