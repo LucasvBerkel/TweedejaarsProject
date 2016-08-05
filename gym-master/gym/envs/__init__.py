@@ -422,6 +422,16 @@ register(
     entry_point='gym.envs.parameter_tuning:CNNClassifierTraining',
 )
 
+# Space Forte
+# ----------------------------------------
+for game in ['AIM', 'SF', 'SFS']:
+	register(
+		id='{}-v0'.format(game),
+		entry_point='gym.envs.space_fortress:SFEnv',
+		kwargs={'game': game,}
+	)
+
+
 # Safety
 # ----------------------------------------
 
