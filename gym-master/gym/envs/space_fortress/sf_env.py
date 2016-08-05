@@ -20,12 +20,12 @@ class SFEnv(gym.Env):
 	# Open AI gym action space id and the keycode 
 
 	def __init__(self, game='SF'):
-		self.mode = 'rgb_array'
+		self.mode = 'rgb_array' # This gets overwritten by configure
 		self.game = game
 		self.prev_score = 0
-		self.screen_height = 468
+		self.screen_height = 448
 		self.screen_width = 448
-		self.scale = 5 # The amount of (down) scaling of the screen height and width 
+		self.scale = 2 # The amount of (down) scaling of the screen height and width 
 		# Space, left, right, up, nothing
 		actions_SF = {0 : 32,  1 : 65361, 2 : 65363, 3 : 65362, 4 : 0}
 		self._seed()
@@ -109,15 +109,20 @@ class SFEnv(gym.Env):
 		else:
 			libname = "sf_frame_lib.so"
 
-		self.update = ctypes.CDLL('./'+os+'/'+libname).update_frame_SF
-		self.init = ctypes.CDLL('./'+os+'/'+libname).start_drawing
-		self.act = ctypes.CDLL('./'+os+'/'+libname).set_key
-		self.reset = ctypes.CDLL('./'+os+'/'+libname).reset_sf
-		self.screen = ctypes.CDLL('./'+os+'/'+libname).get_screen
-		self.terminal_state = ctypes.CDLL('./'+os+'/'+libname).get_terminal_state
-		self.score = ctypes.CDLL('./'+os+'/'+libname).get_score
-		self.stop_drawing = ctypes.CDLL('./'+os+'/'+libname).stop_drawing
-		self.pretty_screen = ctypes.CDLL('./'+os+'/'+libname).get_original_screen
+		if os.startswith('linux'): # come up with something nicer for this:
+			libpath = 
+		elif os.startswith('darwin'):
+			libpath = 
+
+		self.update = ctypes.CDLL(libpath + '/'+libname).update_frame_SF
+		self.init = ctypes.CDLL(libpath + '/'+libname).start_drawing
+		self.act = ctypes.CDLL(libpath + '/'+libname).set_key
+		self.reset = ctypes.CDLL(libpath + '/'+libname).reset_sf
+		self.screen = ctypes.CDLL(libpath + '/'+libname).get_screen
+		self.terminal_state = ctypes.CDLL(libpath + '/'+libname).get_terminal_state
+		self.score = ctypes.CDLL(libpath + '/'+libname).get_score
+		self.stop_drawing = ctypes.CDLL(libpath + '/'+libname).stop_drawing
+		self.pretty_screen = ctypes.CDLL(libpath + '/'+libname).get_original_screen
 
 		# Configure how many bytes to read in from the pointer
 		# c_ubyte is equal to unsigned char
