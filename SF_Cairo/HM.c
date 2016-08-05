@@ -291,14 +291,15 @@ void Generate_Mine()
 //  Draw_Mine(cr,Mine_X_Pos,Mine_Y_Pos,MINE_SIZE_FACTOR*MaxX);  /* draw mine first time */
 //	Mine_Should_Clean = 1;
 
-  if(randrange(0,1)) Mine_Type=FRIEND; // was random(2)
-  else
-    {
-      Mine_Type=FOE;
-//			gettimeofday(&t0, NULL);
-			t0 = Loop_Counter;
-//      t0=clock(); /* when "a mine is born .."? */  // Why and how does it access this?
-    }
+		Mine_Type=FRIEND;
+//  if(randrange(0,1)) Mine_Type=FRIEND; // was random(2)
+//  else
+//    {
+//      Mine_Type=FOE;
+////			gettimeofday(&t0, NULL);
+//			t0 = Loop_Counter;
+////      t0=clock(); /* when "a mine is born .."? */  // Why and how does it access this?
+//    }
 
   if (Mine_Type==FRIEND) 
 	{

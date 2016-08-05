@@ -25,7 +25,7 @@ class SFEnv(gym.Env):
 		self.prev_score = 0
 		self.screen_height = 448
 		self.screen_width = 448
-		self.scale = 2 # The amount of (down) scaling of the screen height and width
+		self.scale = 5.6 # The amount of (down) scaling of the screen height and width
 		# Space, left, right, up, nothing
 		actions_SF = {0 : 32,  1 : 65361, 2 : 65363, 3 : 65362, 4 : 0}
 		self._seed()
@@ -35,7 +35,7 @@ class SFEnv(gym.Env):
 			pass
 
 		# The number of bytes to read in from the returned image pointer
-		self.n_bytes = ((self.screen_height//self.scale) * (self.screen_width//self.scale))
+		self.n_bytes = ((int(self.screen_height/self.scale)) * (int(self.screen_width/self.scale)))
 		# ... which happens to be equal to the amount of pixels in the image
 		self.observation_space = spaces.Box(low=0, high=255, shape=(1, self.n_bytes))
 		self.action_space = gym.spaces.Discrete(len(self._action_set))
@@ -71,7 +71,7 @@ class SFEnv(gym.Env):
 			if self.mode=='minimal':
 				new_frame = self.screen().contents
 				img = np.ctypeslib.as_array(new_frame)
-				img = np.reshape(img, (self.screen_height//self.scale, self.screen_width//self.scale))
+				img = np.reshape(img, (int(self.screen_height/self.scale), int(self.screen_width/self.scale)))
 			elif self.mode.startswith('human'):
 				new_frame = self.pretty_screen().contents
 				img = np.ctypeslib.as_array(new_frame)

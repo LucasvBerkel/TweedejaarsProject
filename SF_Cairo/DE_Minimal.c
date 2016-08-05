@@ -19,10 +19,7 @@
 // clang `pkg-config --cflags cairo` `pkg-config --libs cairo`  -Wall -g -fPIC -c  myvars.c DE_Minimal.c HM.c TCOL.c RS.c -Wno-dangling-else -Wno-switch -O3 -D GUI_INTERFACE
 // clang `pkg-config --cflags cairo` `pkg-config --libs cairo` -shared -o sf_frame_lib_FULL.so myvars.o HM.o RS.o TCOL.o DE_Minimal.o -O3 -D GUI_INTERFACE
 
-/* DISPLAY ELEMENTS	 6 Feb. 90 18:00
-			definitions */
-//#include <dos.h>
-//#include <graphics.h>
+
 #ifndef DE_H
 #define DE_H
 #include <math.h>
@@ -119,7 +116,7 @@ void Initialize_Graphics(cairo_t *cr)
 	cairo_get_font_options(cr, font_options);
 	cairo_font_options_set_antialias(font_options, CAIRO_ANTIALIAS_BEST);
 	cairo_set_font_options(cr, font_options);
-	cairo_select_font_face(cr,"Arial",CAIRO_FONT_SLANT_NORMAL,CAIRO_FONT_WEIGHT_NORMAL);
+	cairo_select_font_face(cr,"DriodSans",CAIRO_FONT_SLANT_NORMAL,CAIRO_FONT_WEIGHT_NORMAL);
 	cairo_font_options_destroy(font_options);
 
 
@@ -270,6 +267,7 @@ void set_initial_vals()
 	jitter_switch = 1;
 	Terminal_State = 0;
 	Select_Mine_Menus();
+
 //	cairo_path_t *empty_path = cairo_copy_path(cr);
 //	PrevShip = empty_path;
 //	for(int i = 0; i < MAX_NO_OF_MISSILES; i++)
@@ -522,25 +520,25 @@ void update_drawing(cairo_t *cr)
 		stroke_in_clip(cr);
 	}
 
-	Update_Points(cr);
-	Update_Velocity(cr);
-	Update_Speed(cr);
-	Update_Vulner(cr);
-	Update_Interval(cr);
-	Update_Shots(cr);
-	Update_Control(cr);
+//	Update_Points(cr);
+//	Update_Velocity(cr);
+//	Update_Speed(cr);
+//	Update_Vulner(cr);
+//	Update_Interval(cr);
+//	Update_Shots(cr);
+//	Update_Control(cr);
 
-	if(Mine_Flag==ALIVE)
-	{
-
-		Draw_Mine_Type(cr);
-//		Mine_Type_Should_Update = 0;
-	}
-	if(Bonus_Char_Should_Update) // Set to always update (i.e. change nothing)
-	{
-		Draw_Bonus_Char(cr);
-		cairo_reset_clip(cr);
-	}
+//	if(Mine_Flag==ALIVE)
+//	{
+//
+//		Draw_Mine_Type(cr);
+////		Mine_Type_Should_Update = 0;
+//	}
+//	if(Bonus_Char_Should_Update) // Set to always update (i.e. change nothing)
+//	{
+//		Draw_Bonus_Char(cr);
+//		cairo_reset_clip(cr);
+//	}
 
 	if(Explosion_Flag)
 	{
@@ -853,7 +851,6 @@ void Show_Score(cairo_t *cr, int val, int x, int y)
 		cairo_set_source_rgb(SF_rgb_context, 1.0, 1.0, 0.33);
 		#endif
 
-
 		sprintf(val_str, "%d", val);
 //		cairo_set_font_size(cr, 40);
     cairo_text_at(cr, x, y, val_str);
@@ -919,7 +916,12 @@ void Update_Shots(cairo_t *cr)
 
 void start_drawing()
 {
-	surface = cairo_image_surface_create(CAIRO_FORMAT_A8, WINDOW_WIDTH/SCALE_F, WINDOW_HEIGHT/SCALE_F);
+//	int win_width = (int) (((float) WINDOW_WIDTH)/(float)SCALE_F);
+//	int win_height = (int) (((float) WINDOW_HEIGHT)/(float)SCALE_F);
+	int win_width = 80;
+	int win_height = 80;
+	printf("win_width: %d win_height: %d \n ", win_width, win_height);
+	surface = cairo_image_surface_create(CAIRO_FORMAT_A8, win_width, win_height);
 	#ifdef GUI_INTERFACE
 	rgb_surface = cairo_image_surface_create(CAIRO_FORMAT_RGB16_565, WINDOW_WIDTH, WINDOW_HEIGHT);
 	SF_rgb_context = cairo_create(rgb_surface);
@@ -1120,6 +1122,11 @@ void Reset_Screen()
     Bonus_Display_Flag=NOT_PRESENT;   /* in case bonus is pressed after */
     Bonus_Granted=OFF;
     Fort_Lock_Counter=0;
+		Score=0;
+		Points=0;
+		Velocity=0;
+		Control=0;
+		Speed=0;
 
 }  /* end reset screen */
 

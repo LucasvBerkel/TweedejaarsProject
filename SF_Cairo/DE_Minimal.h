@@ -14,7 +14,8 @@
 //#define WINDOW_WIDTH 240
 //#define WINDOW_HEIGHT 240 + (TEXT_HEIGHT*3)
 #define WINDOW_WIDTH 448 // The square width of the original game
-#define WINDOW_HEIGHT 448 + TEXT_HEIGHT*2
+//#define WINDOW_HEIGHT 448 + TEXT_HEIGHT*2
+#define WINDOW_HEIGHT 448
 
 float deg2rad(int deg);
 void Open_Graphics(void);
