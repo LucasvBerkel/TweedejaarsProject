@@ -46,7 +46,7 @@ pretty_screen = ctypes.CDLL('./'+libname).get_original_screen
 
 
 
-scale = 1
+scale = 4
 # was 153600
 n_bytes = (448//scale)*(468//scale)*1 # The stride of the surface times the height of the image from DE.c 
 update.restype = ctypes.POINTER(ctypes.c_ubyte * n_bytes) # c_ubyte is equal to unsigned char
