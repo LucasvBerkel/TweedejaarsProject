@@ -93,8 +93,7 @@ void Initialize_Graphics(cairo_t *cr)
 //	x_reflection_matrix.yy = -1.0;
 //	cairo_set_matrix(cr, &x_reflection_matrix);
 
-	// Mirror font back
-	cairo_set_font_size(cr, POINTS_FONT_SIZE); // 15.4 maximizes visibility while minimizing size
+	cairo_set_font_size(cr, POINTS_FONT_SIZE);
 //	cairo_set_font_size(cr, 5.9);
 //	cairo_get_font_matrix(cr, &font_reflection_matrix);
 //	font_reflection_matrix.yy = font_reflection_matrix.yy * -1;
@@ -261,6 +260,7 @@ void set_initial_vals()
 	intv_t1 = 0;
 	intv_t2 = 0;
 	t0 = 0;
+	jitter_switch = 1;
 	Terminal_State = 0;
 	Select_Mine_Menus();
 //	cairo_path_t *empty_path = cairo_copy_path(cr);
@@ -409,7 +409,7 @@ void Draw_Bonus_Char(cairo_t *cr)
 	x=MaxX/2 - 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
 	y=MaxY/2 + 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
 	// It was a 16 by 16 bitmap in the original apperently
-	cairo_clip_text(cr, x-1, y+6, 14, 20);
+	cairo_clip_text(cr, x-1, y+6, 14, 24);
 	cairo_set_font_size(cr, 20);
 
 	cairo_set_source_rgba(cr, SF_YELLOW);
@@ -548,7 +548,6 @@ void update_drawing(cairo_t *cr)
 			explosion_step2(cr, ExpX, ExpY, i);
 		}
 		explosion_step1(cr, ExpX, ExpY, Explosion_Step);
-		Explosion_Step++;
 
 //		cairo_set_source_rgb(cr, SF_YELLOW);
 //		cairo_append_path(cr, PrevShip);
@@ -566,17 +565,16 @@ void update_drawing(cairo_t *cr)
 //		cairo_set_source_rgb(cr, 1, 0, 0);
 //		cairo_rectangle(cr, 0, 0, MaxX,  MaxY);
 //		cairo_fill(cr);
+
 		if(jitter_switch)
 		{
-			jitter_step1(cr, Jitter_Step);
-			jitter_switch = 0;
+				jitter_step1(cr, Jitter_Step);
 		}
 		else
 		{
 			jitter_step2(cr, Jitter_Step);
-			Jitter_Step--;
-			jitter_switch = 1;
 		}
+
 		if(Jitter_Step < 1)
 		{
 			Jitter_Step = 8;
@@ -840,8 +838,6 @@ float Find_Headings(int x1, int y1, int x2, int y2)
 
 void Show_Score(cairo_t *cr, int val, int x, int y)
 {
-//    int svcolor;
-//    svcolor=getcolor();
 		char val_str[15];
 
 //    cairo_translate(cr, 0, Panel_Y_Start);
@@ -850,22 +846,11 @@ void Show_Score(cairo_t *cr, int val, int x, int y)
 		cairo_set_source_rgb(SF_rgb_context, 1.0, 1.0, 0.33);
 		#endif
 		
-    /* data panel in screen global coordinates */
-
-//    putimage(x,y,buffer1,COPY_PUT); /* erase garbage */
-		// MaxX/8 is equal to 'xdif', the width of each score rectangle
-//		cairo_rectangle(cr,0,x,Panel_Y_Start,x+MaxX/8); // Not sure if this call is okay (Y_Panel?)
-//		clip_path_rect(cr);
-//		cairo_fill(cr);
 
 		sprintf(val_str, "%d", val);
 //		cairo_set_font_size(cr, 40);
     cairo_text_at(cr, x, y, val_str);
-//		cairo_reset_clip(cr);
-//    setviewport( Xmargin, 0, Xmargin+MaxX, MaxY, 1);   /* restore gaming area */
-//		cairo_translate(cr, 0 , -Panel_Y_Start);
 
-//    setcolor(svcolor); /* restore previous color */
 }
 
 /* Every update_X function here had a "return(0)" zero statement on it's last line, without  
@@ -890,7 +875,7 @@ void Update_Control(cairo_t *cr)
 
 void Update_Velocity(cairo_t *cr)
 {
-	cairo_clip_text(cr, Velocity_X-6, WINDOW_HEIGHT-TEXT_HEIGHT, TEXT_WIDTH*3, TEXT_HEIGHT+1);
+	cairo_clip_text(cr, Velocity_X-6, WINDOW_HEIGHT-TEXT_HEIGHT, TEXT_WIDTH*4, TEXT_HEIGHT+1);
 	Show_Score(cr, Velocity,Velocity_X-5,WINDOW_HEIGHT);
 	cairo_reset_clip(cr);
 }
@@ -959,11 +944,28 @@ unsigned char* update_frame_SF()
 	#ifdef GUI_INTERFACE
 	clean(SF_rgb_context);
 	#endif
-	game_iteration(SF_canvas);
+	game_iteration();
 	update_drawing(SF_canvas);
 	#ifdef GUI_INTERFACE
 	update_drawing(SF_rgb_context);
 	#endif
+	if(Explosion_Flag)
+	{
+		Explosion_Step++;
+	}
+	else if(Jitter_Flag)
+	{
+		if(jitter_switch)
+		{
+				jitter_switch = 0;
+		}
+		else
+		{
+			Jitter_Step--;
+			jitter_switch = 1;
+		}
+	}
+
 //	cairo_line(SF_canvas, 0, MaxY, MaxX, MaxY );
 //	cairo_stroke(SF_canvas);
 //	cairo_surface_t *surface2 = cairo_image_surface_create(CAIRO_FORMAT_A8, WINDOW_WIDTH/SCALE_F, WINDOW_HEIGHT/SCALE_F);
@@ -1111,38 +1113,6 @@ void Reset_Screen()
     Bonus_Display_Flag=NOT_PRESENT;   /* in case bonus is pressed after */
     Bonus_Granted=OFF;
     Fort_Lock_Counter=0;
-
-    /* reset screen */
-            /* reset panel */
-		// This is done in set_initial_vals now
-//	Mine_Type_Should_Update = 0;
-//	Points_Should_Update = 1; // Show the first time around right?
-//	Velocity_Should_Update = 1;
-//	Speed_Should_Update = 1;
-//	Vulner_Should_Update = 1;
-//	Interval_Should_Update = 1;
-//	Shots_Should_Update = 1;
-//	Control_Should_Update = 1;
-
-//	Mine_Type_Should_Clean = 0;
-//	Draw_Frame(cr);
-//	Points_Should_Clean = 1; // Show the first time around right?
-//	Velocity_Should_Clean = 1;
-//	Speed_Should_Clean = 1;
-//	Vulner_Should_Clean = 1;
-//	Interval_Should_Clean = 1;
-//	Shots_Should_Clean = 1;
-//	Control_Should_Clean = 1;	
-//	clean_up_explosion(cr, ExpX, ExpY);
-
-//    Update_Points(cr);
-//    Update_Vulner(cr);
-//    Update_Interval(cr);
-//    Update_Shots(cr);
-//    Update_Control(cr);
-//    Update_Velocity(cr);
-//    Update_Speed(cr);
-	
 
 }  /* end reset screen */
 

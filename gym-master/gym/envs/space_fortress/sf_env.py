@@ -24,7 +24,7 @@ class SFEnv(gym.Env):
 		self.prev_score = 0
 		self.screen_height = 468
 		self.screen_width = 448
-		self.scale = 1 # The amount of scaling of the screen height and width 
+		self.scale = 5 # The amount of (down) scaling of the screen height and width 
 		# Space, left, right, up, nothing
 		actions_SF = {0 : 32,  1 : 65361, 2 : 65363, 3 : 65362, 4 : 0}
 		self._seed()
@@ -39,9 +39,7 @@ class SFEnv(gym.Env):
 		self.observation_space = spaces.Box(low=0, high=255, shape=(1, self.n_bytes))
 		self.action_space = gym.spaces.Discrete(len(self._action_set))
 
-		cv2.namedWindow('Space Fortress')
-		# maybe remove this, but we need to be sure the cv2 window initialized
-		sleep(1)
+
 	
 	@property
 	def _n_actions(self):
@@ -77,13 +75,13 @@ class SFEnv(gym.Env):
 				new_frame = self.pretty_screen().contents
 				img = np.ctypeslib.as_array(new_frame)
 				if mode=='human_sleep':	
-					zzz = 48 # Sleep for about 50 ms, the original delay 
+					zzz = 57 # Sleep for about 50 ms, the original delay (more because it seemed fast)
 #					zzz = 0.048
-					sleep(zzz) 
 				img = np.reshape(img, (self.screen_height, self.screen_width, 2))
 				img = cv2.cvtColor(img, cv2.COLOR_BGR5652RGB)
 				img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-			cv2.imshow('Space Fortess', img)
+			cv2.imshow('Space Fortress', img)
+#			sleep(0.001)
 			cv2.waitKey(zzz)
 #		print('Done rendering')
 
@@ -98,8 +96,12 @@ class SFEnv(gym.Env):
 		self.stop_drawing()
 
 	def _configure(self, mode='rgb_array'):
-		os = platform
 		self.mode = mode
+		os = platform
+
+		# Init the opencv window
+		if self.mode != 'rgb_array':
+			cv2.namedWindow('Space Fortress')
 
 		if self.mode.startswith('human'):
 			libname = "sf_frame_lib_FULL.so"
@@ -117,7 +119,6 @@ class SFEnv(gym.Env):
 		self.pretty_screen = ctypes.CDLL('./'+os+'/'+libname).get_original_screen
 
 		# Configure how many bytes to read in from the pointer
-
 		# c_ubyte is equal to unsigned char
 		self.update.restype = ctypes.POINTER(ctypes.c_ubyte * self.n_bytes) 
 		self.screen.restype = ctypes.POINTER(ctypes.c_ubyte * self.n_bytes)
@@ -125,18 +126,13 @@ class SFEnv(gym.Env):
 		sixteen_bit_img_bytes = self.screen_width * self.screen_height * 2
 		self.pretty_screen.restype = ctypes.POINTER(ctypes.c_ubyte * sixteen_bit_img_bytes)
 
-		
+
 		# Initialize the game's drawing context and it's variables
 		# I would rather that this be in the init method, but the OpenAI developer himself stated
 		# that if some functionality of an enviroment depends on the render mode, the only way
 		# to handle this is to write a configure method, a method that is only callable after the 
 		# init
 		self.init()
-
-
-
-
-
 
 
 
