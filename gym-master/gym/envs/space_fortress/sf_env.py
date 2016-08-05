@@ -16,7 +16,7 @@ class SFEnv(gym.Env):
 	# the data the network
 	# Human_Sleep is the same as above, but with an added delay to approximately emulate the
 	# original game's speed
-	metadata = {'render.modes': ['rgb_array', 'human', 'human_sleep', 'minimal'], 'configure.required' : True}
+	metadata = {'render.modes': ['rgb_array', 'human', 'human_sleep', 'minimal', 'minimal_sleep'], 'configure.required' : True}
 	# Open AI gym action space id and the keycode
 
 	def __init__(self, game='SF'):
@@ -72,10 +72,12 @@ class SFEnv(gym.Env):
 				new_frame = self.screen().contents
 				img = np.ctypeslib.as_array(new_frame)
 				img = np.reshape(img, (int(self.screen_height/self.scale), int(self.screen_width/self.scale)))
+				if self.mode == 'minimal_sleep':
+					zzz = 57
 			elif self.mode.startswith('human'):
 				new_frame = self.pretty_screen().contents
 				img = np.ctypeslib.as_array(new_frame)
-				if mode=='human_sleep':
+				if self.mode=='human_sleep':
 					zzz = 57 # Sleep for about 50 ms, the original delay (more because it seemed fast)
 #					zzz = 0.048
 				img = np.reshape(img, (self.screen_height, self.screen_width, 2))
