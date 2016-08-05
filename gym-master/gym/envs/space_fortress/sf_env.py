@@ -20,6 +20,7 @@ class SFEnv(gym.Env):
 	# Open AI gym action space id and the keycode 
 
 	def __init__(self, game='SF'):
+		self.mode = 'rgb_array'
 		self.game = game
 		self.prev_score = 0
 		self.screen_height = 468
