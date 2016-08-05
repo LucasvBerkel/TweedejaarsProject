@@ -122,7 +122,8 @@ class SFEnv(gym.Env):
 		self.update.restype = ctypes.POINTER(ctypes.c_ubyte * self.n_bytes) 
 		self.screen.restype = ctypes.POINTER(ctypes.c_ubyte * self.n_bytes)
 		# 468 * 448 * 2 (original size times something to do with 16 bit images)
-		self.pretty_screen.restype = ctypes.POINTER(ctypes.c_ubyte * 419328)
+		sixteen_bit_img_bytes = self.screen_width * self.screen_height * 2
+		self.pretty_screen.restype = ctypes.POINTER(ctypes.c_ubyte * sixteen_bit_img_bytes)
 
 		
 		# Initialize the game's drawing context and it's variables
