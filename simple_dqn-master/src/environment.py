@@ -117,7 +117,10 @@ class GymEnvironment(Environment):
 
   def getScreen(self):
     assert self.obs is not None
-    return cv2.resize(cv2.cvtColor(self.obs, cv2.COLOR_RGB2GRAY), (self.screen_width, self.screen_height))
+		if self.gym.spec.id in [ "SF-v0", "AIM-v0", "SFS-v0"]:
+			return self.obs		
+		else:
+	    return cv2.resize(cv2.cvtColor(self.obs, cv2.COLOR_RGB2GRAY), (self.screen_width, self.screen_height))
 
   def isTerminal(self):
     assert self.terminal is not None
