@@ -561,6 +561,7 @@ void update_drawing(cairo_t *cr)
 
 		if((Explosion_Step * 10) >= ExpRadius)
 		{
+			Terminal_State = 1;
 			Explosion_Step = 0;
 			Explosion_Flag = 0;
 			Reset_Screen();

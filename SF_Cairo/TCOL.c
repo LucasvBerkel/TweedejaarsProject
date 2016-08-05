@@ -78,7 +78,6 @@ void Gen_Explosion(int X_Pos,int Y_Pos,int Radius)
   int X_dot,Y_dot;
   int svcolor;
   int Last_Pitch; */
-	Terminal_State = 1;
   Effect_Flag=ON;
 	Explosion_Flag=1;
 //  svccd olor=getcolor();
