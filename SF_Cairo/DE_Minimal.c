@@ -4,6 +4,7 @@
 // Linux compilation
 // clang -Wall -g myvars.c DE.c -lm `pkg-config --cflags cairo` `pkg-config --libs cairo` `pkg-config --cflags gtk+-3.0` `pkg-config --libs gtk+-3.0`  -o DE
 
+// OS X Compilation
 // To shared library: (without any GUI functionality)
 // clang -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo  -Wall -g -fPIC -c  myvars.c DE_Minimal.c HM.c TCOL.c RS.c -Wno-dangling-else -Wno-switch -O3
 // clang -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo -shared -o sf_frame_lib.so myvars.o HM.o RS.o TCOL.o DE_Minimal.o -O3
@@ -11,6 +12,12 @@
 // clang -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo  -Wall -g -fPIC -c  myvars.c DE_Minimal.c HM.c TCOL.c RS.c -Wno-dangling-else -Wno-switch -O3 -D GUI_INTERFACE
 // clang -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo -shared -o sf_frame_lib_FULL.so myvars.o HM.o RS.o TCOL.o DE_Minimal.o -O3 -D GUI_INTERFACE
 
+// Linux Compilation
+// clang `pkg-config --cflags cairo` `pkg-config --libs cairo` -Wall -g -fPIC -c  myvars.c DE_Minimal.c HM.c TCOL.c RS.c -Wno-dangling-else -Wno-switch -O3
+// clang `pkg-config --cflags cairo` `pkg-config --libs cairo` -shared -o sf_frame_lib.so myvars.o HM.o RS.o TCOL.o DE_Minimal.o -O3
+// ** Add -D GUI_INTERFACE to enable acces to full size, full color renders of the game **
+// clang `pkg-config --cflags cairo` `pkg-config --libs cairo`  -Wall -g -fPIC -c  myvars.c DE_Minimal.c HM.c TCOL.c RS.c -Wno-dangling-else -Wno-switch -O3 -D GUI_INTERFACE
+// clang `pkg-config --cflags cairo` `pkg-config --libs cairo` -shared -o sf_frame_lib_FULL.so myvars.o HM.o RS.o TCOL.o DE_Minimal.o -O3 -D GUI_INTERFACE
 
 /* DISPLAY ELEMENTS	 6 Feb. 90 18:00
 			definitions */
@@ -86,7 +93,7 @@ void Initialize_Graphics(cairo_t *cr)
 	// Reflecting it however means that text will also be reflected. We therefore also use a
 	// reflection matrix for drawing fonts to reflect text back.
 //	cairo_matrix_t font_reflection_matrix;
-		
+
 	// We need the options to turn off font anti-aliasing
 	cairo_font_options_t *font_options = cairo_font_options_create();
 //	cairo_matrix_init_identity(&x_reflection_matrix);
@@ -112,14 +119,14 @@ void Initialize_Graphics(cairo_t *cr)
 	cairo_get_font_options(cr, font_options);
 	cairo_font_options_set_antialias(font_options, CAIRO_ANTIALIAS_BEST);
 	cairo_set_font_options(cr, font_options);
-	cairo_select_font_face(cr,"Arial",CAIRO_FONT_SLANT_NORMAL,CAIRO_FONT_WEIGHT_NORMAL);	
+	cairo_select_font_face(cr,"Arial",CAIRO_FONT_SLANT_NORMAL,CAIRO_FONT_WEIGHT_NORMAL);
 	cairo_font_options_destroy(font_options);
 
 
 	// Sets all the values in the array to the empty path
 	// Gives a vague warning, probably because this only works for types with the size of an int
 	// (source: SO)
-//	memset(PrevMissile, empty_path, MAX_NO_OF_MISSILES);  
+//	memset(PrevMissile, empty_path, MAX_NO_OF_MISSILES);
 //	PrevMissile = {empty_path};
 	// Attemps above don't work, so we initialize manually
 
@@ -203,7 +210,7 @@ void cairo_line(cairo_t *cr, int x1, int y1, int x2, int y2)
 //	snapCoords(canvas, &x1, &y1 );
 //
 
-// This code generates straighter and sharper lines, but also drops parts of objects for 
+// This code generates straighter and sharper lines, but also drops parts of objects for
 // some reason //	cairo_user_to_device(cr, &x1, &y1);
 //	x1 = round(x1) + 0.5;
 //	y1 = round(y1) + 0.5;
@@ -279,14 +286,14 @@ void set_initial_vals()
 //	Interval_Should_Update = 1;
 //	Shots_Should_Update = 1;
 //	Control_Should_Update = 1;
-	
+
 //	PrevFort = empty_path;
 //	PrevMine = empty_path;
-//	PrevShell = empty_path; 
+//	PrevShell = empty_path;
 //	memset(Missile_Should_Update, 0, MAX_NO_OF_MISSILES);
 //	memset(Missile_Should_Clean, 0, MAX_NO_OF_MISSILES);
 	Reset_Screen();
-	
+
 }
 
 // Returns the screen as rendered by the minimal game renderer
@@ -312,12 +319,12 @@ void set_key(int key_value)
 	Key = key_value;
 	New_Input_Flag=ON;
 //  A list of GTK hex key values as decimals
-//	GDK_KEY_1 0xffbe 65470 
+//	GDK_KEY_1 0xffbe 65470
 //	GDK_KEY_2 0xffbf 65471
 //	GDK_KEY_3 0xffc0 65472
 //	GDK_KEY_Left 0xff51 65361
 //	GDK_KEY_Up 0xff52 65362
-//	GDK_KEY_space 0x020 32 
+//	GDK_KEY_space 0x020 32
 }
 
 // Placed here to center the whole interface in one file
@@ -347,7 +354,7 @@ int get_terminal_state()
 	{
 		return 0;
 	}
-	
+
 }
 
 // W and H are the dimensions of the clipping rectangle
@@ -380,7 +387,7 @@ void Draw_Mine_Type(cairo_t *cr)
 			#endif
 //    setcolor(LIGHTRED);
   }
-  x=IFF_X; 
+  x=IFF_X;
 //	y=Data_Line;
 	y = WINDOW_HEIGHT;
 	cairo_clip_text(cr, x-2, WINDOW_HEIGHT-TEXT_HEIGHT, TEXT_WIDTH+5, TEXT_HEIGHT+2);
@@ -400,11 +407,11 @@ void Draw_Mine_Type(cairo_t *cr)
 }
 
 // 'erease' indicates wheter or not this is an ereasing operation
-// 
+//
 void Draw_Bonus_Char(cairo_t *cr)
 {
 	int x,y;
-	
+
 	/* get right location */
 	x=MaxX/2 - 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
 	y=MaxY/2 + 1.2*SMALL_HEXAGONE_SIZE_FACTOR*MaxX;
@@ -438,7 +445,7 @@ void clean(cairo_t *cr)
 //
 //	clear_prev_path(cr, PrevFort);
 //
-//	for(int i=0;i<MAX_NO_OF_MISSILES;i++) 
+//	for(int i=0;i<MAX_NO_OF_MISSILES;i++)
 //	{
 //		if (Missile_Flag[i] == ALIVE)
 //		{
@@ -484,7 +491,7 @@ void clean(cairo_t *cr)
 void update_drawing(cairo_t *cr)
 {
 	// Effect Flag is first time around animation iteration
-	if ((!Jitter_Flag && !Explosion_Flag) || Effect_Flag) 
+	if ((!Jitter_Flag && !Explosion_Flag) || Effect_Flag)
 	{
 		Draw_Ship(cr, Ship_X_Pos,Ship_Y_Pos,Ship_Headings,SHIP_SIZE_FACTOR*MaxX);
 //		cairo_bounding_box(cr);
@@ -525,7 +532,7 @@ void update_drawing(cairo_t *cr)
 
 	if(Mine_Flag==ALIVE)
 	{
-		
+
 		Draw_Mine_Type(cr);
 //		Mine_Type_Should_Update = 0;
 	}
@@ -540,7 +547,7 @@ void update_drawing(cairo_t *cr)
 		// Handle drawing here, as otherwhise the ship will move to it's new location
 //		cairo_new_path(cr);
 
-	
+
 		// This actually does nothing the first time around
 		// explosion_step2 is sort of the inner, yellow circle, one step behind step1
 		for(int i = 0; i < Explosion_Step+1; i++)
@@ -845,7 +852,7 @@ void Show_Score(cairo_t *cr, int val, int x, int y)
 		#ifdef GUI_INTERFACE
 		cairo_set_source_rgb(SF_rgb_context, 1.0, 1.0, 0.33);
 		#endif
-		
+
 
 		sprintf(val_str, "%d", val);
 //		cairo_set_font_size(cr, 40);
@@ -853,9 +860,9 @@ void Show_Score(cairo_t *cr, int val, int x, int y)
 
 }
 
-/* Every update_X function here had a "return(0)" zero statement on it's last line, without  
-specifying a return type. I removed all of these return statements and modified the function 
-return type to void to surpress warnings. */ 
+/* Every update_X function here had a "return(0)" zero statement on it's last line, without
+specifying a return type. I removed all of these return statements and modified the function
+return type to void to surpress warnings. */
 // Magical 8's?
 void Update_Points(cairo_t *cr)
 {
@@ -938,7 +945,7 @@ void stop_drawing()
 
 unsigned char* update_frame_SF()
 {
-	// This should have the form clean -> sf_iter -> update, because bottom panel text will in 
+	// This should have the form clean -> sf_iter -> update, because bottom panel text will in
   // this  way be ereased, numerically updated, and then visually updated
 	clean(SF_canvas);
 	#ifdef GUI_INTERFACE
@@ -992,12 +999,12 @@ void jitter_step1(cairo_t *cr, int step)
   int Jitter_X_Pos,Jitter_Y_Pos;
 
 //	clear_prev_path(cr, PrevShip);
-	
+
 	Jitter_Headings=Ship_Headings+2*step;
 	Jitter_X_Pos=Ship_X_Old_Pos+step*Fcos(Jitter_Headings);
 	Jitter_Y_Pos=Ship_Y_Old_Pos+step*Fsin(Jitter_Headings);
-	
-	Draw_Ship(cr,Jitter_X_Pos,Jitter_Y_Pos,Jitter_Headings, SHIP_SIZE_FACTOR*MaxX); 
+
+	Draw_Ship(cr,Jitter_X_Pos,Jitter_Y_Pos,Jitter_Headings, SHIP_SIZE_FACTOR*MaxX);
 	stroke_in_clip(cr);
 }
 
@@ -1010,7 +1017,7 @@ void jitter_step2(cairo_t *cr, int step)
  	Jitter_Headings=Ship_Headings-2*step;
   Jitter_X_Pos=Ship_X_Old_Pos+step*Fsin(Jitter_Headings);
   Jitter_Y_Pos=Ship_Y_Old_Pos+step*Fcos(Jitter_Headings);
-	Draw_Ship(cr,Jitter_X_Pos,Jitter_Y_Pos,Jitter_Headings, SHIP_SIZE_FACTOR*MaxX); 
+	Draw_Ship(cr,Jitter_X_Pos,Jitter_Y_Pos,Jitter_Headings, SHIP_SIZE_FACTOR*MaxX);
 	stroke_in_clip(cr);
 }
 
@@ -1046,7 +1053,7 @@ void explosion_step1(cairo_t *cr, int X_Pos,int Y_Pos, int step)
 {
   int i = 10 * (step + 1);
   int iarc;
-	
+
 
 	cairo_set_source_rgba(cr, 0, 0, 0, 0.2126);
 	#ifdef GUI_INTERFACE
@@ -1118,13 +1125,3 @@ void Reset_Screen()
 
 
 #endif
-
-
-
-
-
-
-
-
-
-
