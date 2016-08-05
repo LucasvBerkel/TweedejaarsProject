@@ -13,9 +13,14 @@
 int Missile_X;
 int Missile_Y;
 
+#ifdef GUI_INTERFACE
+cairo_t *SF_rgb_context;
+cairo_surface_t *rgb_surface;
+#endif
+
 cairo_t *SF_canvas;
 cairo_surface_t *surface;
-cairo_font_options_t *font_options;
+//cairo_font_options_t *font_options;
 
 cairo_path_t *PrevShip;
 cairo_path_t *PrevMissile[MAX_NO_OF_MISSILES]; // Initialized in Initialize_Graphics

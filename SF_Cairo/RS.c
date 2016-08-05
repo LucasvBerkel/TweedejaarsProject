@@ -49,7 +49,6 @@
 //extern char *Mine_Indicator;
 extern mine_type Mine_Type;
 
-int jitter_switch = 1;
 
         /* Functions  */ // Done with the header
 //extern void Open_Graphics(void);
@@ -396,21 +395,8 @@ void Handle_Bonus()
 }
 
 
-void SF_iteration(cairo_t *cr)
+void SF_iteration()
 {
-
-
-//        Set_Kbd_Rate(0x8); /* to slow repeat rate 15Hz */
-//        Capture_Kbd(Get_Key); /* redirect KBD interrupts to Get_Key() */ // Uncomment
-// I think we don't need this initialization with clock()
-//        Time_Counter=0;
-
-//        Capture_Tik(Get_Tik);
-//        Set_Timer();
-
-// Do all the drawing in one go here, first clear all (using prev_paths) in need of 
-// an update, then optionally draw the hexagon (maybe only if it has been crossed)
-// and then draw all in need of an update
 	Loop_Counter++;
 	// This was done by processor interupts, but is allowed automatically by GTK
 	Get_User_Input();
@@ -438,64 +424,11 @@ void SF_iteration(cairo_t *cr)
 // Does one iteration of the game: either in animation modus or in game event modus.
 // The modus is checked by some global flags
 // Returns the mode of the iteration, which might unnused?
-void game_iteration(cairo_t *cr)
+void game_iteration()
 {
 	if(!Explosion_Flag && !Jitter_Flag)
 	{
-		SF_iteration(cr);
-	}
-	else if(Explosion_Flag)
-	{
-		// Handle drawing here, as otherwhise the ship will move to it's new location
-//		cairo_new_path(cr);
-
-	
-		// This actually does nothing the first time around
-		// explosion_step2 is sort of the inner, yellow circle, one step behind step1
-		for(int i = 0; i < Explosion_Step+1; i++)
-		{
-			explosion_step2(cr, ExpX, ExpY, i);
-		}
-		explosion_step1(cr, ExpX, ExpY, Explosion_Step);
-		Explosion_Step++;
-
-//		cairo_set_source_rgb(cr, SF_YELLOW);
-//		cairo_append_path(cr, PrevShip);
-//		stroke_in_clip(cr);
-
-		if((Explosion_Step * 10) >= ExpRadius)
-		{
-			Explosion_Step = 0;
-			Explosion_Flag = 0;
-			Reset_Screen(cr);
-		}
-	}
-	else if(Jitter_Flag)
-	{
-//		cairo_set_source_rgb(cr, 1, 0, 0);
-//		cairo_rectangle(cr, 0, 0, MaxX,  MaxY);
-//		cairo_fill(cr);
-		if(jitter_switch)
-		{
-			jitter_step1(cr, Jitter_Step);
-			jitter_switch = 0;
-		}
-		else
-		{
-			jitter_step2(cr, Jitter_Step);
-			Jitter_Step--;
-			jitter_switch = 1;
-		}
-		if(Jitter_Step < 1)
-		{
-			Jitter_Step = 8;
-			Jitter_Flag = 0;
-
-			// Restore Ship to it's previous position
-//			clear_prev_path(cr, PrevShip);
-//			Draw_Ship(cr,Ship_X_Pos,Ship_Y_Pos,Ship_Headings,SHIP_SIZE_FACTOR*MaxX);
-//			stroke_in_clip(cr);
-		}
+		SF_iteration();
 	}
 }
 
@@ -520,7 +453,7 @@ static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data
 
 	if(Initialized_Graphics == 0)
 	{
-	  set_initial_vals(cr);
+	  set_initial_vals();
 		Initialized_Graphics = 1;
 	}
 	// Main sf stuff
@@ -539,7 +472,7 @@ static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data
 	fclose(log);
 	clean(cr);
 	Draw_Frame(cr);
-	game_iteration(cr);
+	game_iteration();
 
 //	Fort_Should_Update = 1;
 //	Ship_Should_Update = 1;

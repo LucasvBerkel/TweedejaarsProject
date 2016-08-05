@@ -18,15 +18,44 @@ moves = [65361, 65362, 32, 65363]
 #moves = [65361, 32, 65363]
 
 # Maybe create a seperate SF update version?
-update = ctypes.CDLL('./sf_frame_lib.so').update_frame_SF
-init = ctypes.CDLL('./sf_frame_lib.so').start_drawing
-close = ctypes.CDLL('./sf_frame_lib.so').stop_drawing
-act = ctypes.CDLL('./sf_frame_lib.so').set_key
-reset = ctypes.CDLL('./sf_frame_lib.so').reset_sf
-# was 153600, should be extactly or around 120000
+#update = ctypes.CDLL('./sf_frame_lib.so').update_frame_SF
+#init = ctypes.CDLL('./sf_frame_lib.so').start_drawing
+#close = ctypes.CDLL('./sf_frame_lib.so').stop_drawing
+#act = ctypes.CDLL('./sf_frame_lib.so').set_key
+#reset = ctypes.CDLL('./sf_frame_lib.so').reset_sf
+
+libname = 'sf_frame_lib_FULL.so'
+update = ctypes.CDLL('./'+libname).update_frame_SF
+init = ctypes.CDLL('./'+libname).start_drawing
+close = ctypes.CDLL('./'+libname).stop_drawing
+act = ctypes.CDLL('./'+libname).set_key
+reset = ctypes.CDLL('./'+libname).reset_sf
+screen = ctypes.CDLL('./'+libname).get_screen
+terminal_state = ctypes.CDLL('./'+libname).get_terminal_state
+score = ctypes.CDLL('./'+libname).get_score
+stop_drawing = ctypes.CDLL('./'+libname).stop_drawing
+pretty_screen = ctypes.CDLL('./'+libname).get_original_screen
+
+# Configure how many bytes to read in from the pointer
+
+
+
+
+
+
+
+
+
 scale = 1
+# was 153600
 n_bytes = (448//scale)*(468//scale)*1 # The stride of the surface times the height of the image from DE.c 
 update.restype = ctypes.POINTER(ctypes.c_ubyte * n_bytes) # c_ubyte is equal to unsigned char
+# c_ubyte is equal to unsigned char
+update.restype = ctypes.POINTER(ctypes.c_ubyte * n_bytes) 
+screen.restype = ctypes.POINTER(ctypes.c_ubyte * n_bytes)
+# 468 * 448 * 2 (original size times something to do with 16 bit images)
+pretty_screen.restype = ctypes.POINTER(ctypes.c_ubyte * 419328)
+
 init()
 
 i = 0
@@ -53,4 +82,4 @@ print(i/seconds)
 #	img = np.delete(img, 3, 2) # Delete the alpha component 
 #	cv2.imwrite('./test_images/test' + str(i) + '.png', img)
 
-close()
+#close()

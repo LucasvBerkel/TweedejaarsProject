@@ -1060,8 +1060,8 @@ unsigned char* update_frame_SF()
 	// This should have the form clean -> sf_iter -> update, because bottom panel text will in 
   // this  way be ereased, numerically updated, and then visually updated
 	clean(SF_canvas);
-	game_iteration(SF_canvas);
-	update_drawing(SF_canvas);
+	game_iteration();
+	update_drawing();
 	return cairo_image_surface_get_data(surface);
 }
 

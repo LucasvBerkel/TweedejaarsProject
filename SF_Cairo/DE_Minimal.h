@@ -20,7 +20,7 @@ float deg2rad(int deg);
 void Open_Graphics(void);
 void jitter_step1(cairo_t *cr, int step);
 void jitter_step2(cairo_t *cr, int step);
-void Reset_Screen(cairo_t *cr);
+void Reset_Screen();
 
 void Initialize_Graphics(cairo_t *cr);
 

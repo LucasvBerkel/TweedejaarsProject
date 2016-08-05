@@ -30,9 +30,13 @@ extern int Missile_Y;
 
 extern char *Mine_Char;
 
+#ifdef GUI_INTERFACE
+extern cairo_t *SF_rgb_context;
+extern cairo_surface_t *rgb_surface;
+#endif
 extern cairo_t *SF_canvas;
 extern cairo_surface_t *surface;
-extern cairo_font_options_t *font_options;
+//extern cairo_font_options_t *font_options;
 
 extern char Initialized_Graphics;
 
