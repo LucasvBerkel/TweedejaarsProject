@@ -68,7 +68,7 @@ class SFEnv(gym.Env):
 	def _render(self, mode=None, close=False):
 		if not self.mode == 'rgb_array':
 			zzz = 1
-			if self.mode=='minimal':
+			if self.mode.startswith('minimal'):
 				new_frame = self.screen().contents
 				img = np.ctypeslib.as_array(new_frame)
 				img = np.reshape(img, (int(self.screen_height/self.scale), int(self.screen_width/self.scale)))
