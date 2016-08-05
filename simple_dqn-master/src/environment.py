@@ -2,6 +2,7 @@ import sys
 import os
 import logging
 import cv2
+import numpy as np
 logger = logging.getLogger(__name__)
 
 class Environment:
@@ -122,9 +123,9 @@ class GymEnvironment(Environment):
     assert self.obs is not None
     if self.gym.spec.id in [ "SF-v0", "AIM-v0", "SFS-v0"]:
       obs = np.reshape(self.obs, (self.screen_height, self.screen_width))
-      cv2.imshow(obs)
-      cv2.waitKey(0)
-      return np.reshape(self.obs, (self.screen_height))
+    #   cv2.imshow("crap", obs)
+    #   cv2.waitKey(0)
+      return obs
     else:
       return cv2.resize(cv2.cvtColor(self.obs, cv2.COLOR_RGB2GRAY), (self.screen_width, self.screen_height))
 
