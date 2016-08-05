@@ -112,7 +112,7 @@ class SFEnv(gym.Env):
 		if os.startswith('linux'): # come up with something nicer for this:
 			libpath = "/home/wijnand/Documents/git/TweedejaarsProject/gym-master/gym/envs/space_fortress/linux2"
 		elif os.startswith('darwin'):
-			libpath =
+			libpath = "/Users/rijnderwever/Desktop/NLR/NLR/TweedejaarsProject/gym-master/gym/envs/space_fortress/darwin"
 
 		self.update = ctypes.CDLL(libpath + '/'+libname).update_frame_SF
 		self.init = ctypes.CDLL('./'+os+'/'+libname).start_drawing
