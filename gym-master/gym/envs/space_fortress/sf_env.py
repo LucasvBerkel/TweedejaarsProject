@@ -51,15 +51,16 @@ class SFEnv(gym.Env):
 		return [seed]
 
 	def _step(self, a):
-		action = self._action_set[a]
+		action = self._action_set[a] # Select the action from the action dict
 		self.act(action)
-#		print('Bef as array')
-		new_frame = self.update().contents
-		ob = np.ctypeslib.as_array(new_frame)
+		ob = np.ctypeslib.as_array(self.update().contents)
 		reward = self.score() - self.prev_score
+
+		if self.terminal_state():
+			self.prev_score = 0
+			return ob, 0, True, {} # no reward in terminal state
 		self.prev_score = self.score()
-#		print('After as array')
-		return ob, reward, self.terminal_state(), {}
+		return ob, reward, False, {}
 
 
 	# We ignore the mode parameter here because it's set in _configure
@@ -73,12 +74,12 @@ class SFEnv(gym.Env):
 				img = np.ctypeslib.as_array(new_frame)
 				img = np.reshape(img, (int(self.screen_height/self.scale), int(self.screen_width/self.scale)))
 				if self.mode == 'minimal_sleep':
-					zzz = 57
+					zzz = 44
 			elif self.mode.startswith('human'):
 				new_frame = self.pretty_screen().contents
 				img = np.ctypeslib.as_array(new_frame)
 				if self.mode=='human_sleep':
-					zzz = 57 # Sleep for about 50 ms, the original delay (more because it seemed fast)
+					zzz = 44 # Sleep for about 50 ms, the original delay (more because it seemed fast)
 #					zzz = 0.048
 				img = np.reshape(img, (self.screen_height, self.screen_width, 2))
 				img = cv2.cvtColor(img, cv2.COLOR_BGR5652RGB)
@@ -91,6 +92,7 @@ class SFEnv(gym.Env):
 	# return: (states, observations)
 	def _reset(self):
 		self.reset()
+		self.prev_score = 0
 		screen = self.screen().contents
 		obv = np.ctypeslib.as_array(screen)
 		return obv # For some reason should show the observation
