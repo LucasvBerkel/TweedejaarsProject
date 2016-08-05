@@ -98,7 +98,7 @@ class GymEnvironment(Environment):
     self.gym = gym.make(env_id)
     if self.gym.spec.id in [ "SF-v0", "AIM-v0", "SFS-v0"]:
       # Change this to a variable rendering mode
-      self.gym.configure('rgb_array')
+      self.gym.configure(mode='rgb_array')
     self.obs = None
     self.terminal = None
 
