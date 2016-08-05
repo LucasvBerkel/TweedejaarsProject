@@ -121,7 +121,10 @@ class GymEnvironment(Environment):
   def getScreen(self):
     assert self.obs is not None
     if self.gym.spec.id in [ "SF-v0", "AIM-v0", "SFS-v0"]:
-      return self.obs    
+			obs = np.reshape(self.obs, (self.screen_height, self.screen_width))
+			cv2.imshow(obs)
+			cv2.waitKey(0)
+      return np.reshape(self.obs, (self.screen_height)
     else:
       return cv2.resize(cv2.cvtColor(self.obs, cv2.COLOR_RGB2GRAY), (self.screen_width, self.screen_height))
 
