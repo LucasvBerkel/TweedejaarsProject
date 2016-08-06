@@ -8,6 +8,7 @@ from gym import spaces
 import ctypes
 from time import sleep
 from sys import platform
+import datetime
 import numpy as np
 import cv2
 
@@ -19,7 +20,18 @@ class SFEnv(gym.Env):
 	metadata = {'render.modes': ['rgb_array', 'human', 'human_sleep', 'minimal', 'minimal_sleep'], 'configure.required' : True}
 	# Open AI gym action space id and the keycode
 
-	def __init__(self, game='SF'):
+	def __init__(self, game='SFS'):
+
+		if game=="SFS":
+			self.game_name = "Simple Space Fortress V2"
+		elif game=="SF":
+			self.game_name = "Space Fortress"
+		elif game=="AIM":
+			self.game_name = "Aiming Task"
+		else:
+			import sys
+			print("Invalid game name")
+
 		self.mode = 'rgb_array' # This gets overwritten by configure
 		self.game = game
 		self.prev_score = 0
@@ -27,10 +39,10 @@ class SFEnv(gym.Env):
 		self.screen_width = 448
 		self.scale = 5.6 # The amount of (down) scaling of the screen height and width
 		# Space, left, right, up, nothing
-		actions_SF = {0 : 32,  1 : 65361, 2 : 65363, 3 : 65362, 4 : 0}
+		actions_SFS = {0 : 32,  1 : 65361, 2 : 65363, 3 : 65362, 4 : 0}
 		self._seed()
-		if game.lower().startswith("sf"):
-			self._action_set = actions_SF
+		if game.lower().startswith("sfs"):
+			self._action_set = actions_SFS
 		else:
 			pass
 
@@ -79,13 +91,15 @@ class SFEnv(gym.Env):
 				new_frame = self.pretty_screen().contents
 				img = np.ctypeslib.as_array(new_frame)
 				if self.mode=='human_sleep':
-					zzz = 44 # Sleep for about 50 ms, the original delay (more because it seemed fast)
+					zzz = 43 # Sleep for about 50 ms, the original delay (more because it seemed fast)
 #					zzz = 0.048
 				img = np.reshape(img, (self.screen_height, self.screen_width, 2))
 				img = cv2.cvtColor(img, cv2.COLOR_BGR5652RGB)
 				img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-			cv2.imshow('Space Fortress', img)
-#			sleep(0.001)
+			if self.record_path is not None:
+				current_time = str(datetime.datetime.now().time().isoformat()).replace("/", ":")
+				cv2.imwrite(self.record_path + "/sf" + current_time + ".png", img)
+			cv2.imshow(self.game_name, img)
 			cv2.waitKey(zzz)
 #		print('Done rendering')
 
@@ -100,13 +114,13 @@ class SFEnv(gym.Env):
 	def _close(self):
 		self.stop_drawing()
 
-	def _configure(self, mode='rgb_array'):
+	def _configure(self, mode='rgb_array', record_path=None ):
 		self.mode = mode
 		os = platform
 
 		# Init the opencv window
 		if self.mode != 'rgb_array':
-			cv2.namedWindow('Space Fortress')
+			cv2.namedWindow(self.game_name)
 
 		if self.mode.startswith('human'):
 			libname = "sf_frame_lib_FULL.so"
@@ -143,3 +157,7 @@ class SFEnv(gym.Env):
 		# to handle this is to write a configure method, a method that is only callable after the
 		# init
 		self.init()
+		self.record_path = record_path
+
+
+

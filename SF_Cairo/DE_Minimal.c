@@ -266,7 +266,7 @@ void set_initial_vals()
 	intv_t2 = 0;
 	t0 = 0;
 	jitter_switch = 1;
-	Terminal_State = 0;
+//	Terminal_State = 0;
 	Select_Mine_Menus();
 
 //	cairo_path_t *empty_path = cairo_copy_path(cr);
@@ -564,7 +564,7 @@ void update_drawing(cairo_t *cr)
 			Terminal_State = 1;
 			Explosion_Step = 0;
 			Explosion_Flag = 0;
-			Reset_Screen();
+			set_initial_vals();
 		}
 	}
 	else if(Jitter_Flag)
@@ -960,11 +960,8 @@ unsigned char* update_frame_SF()
 	#ifdef GUI_INTERFACE
 	update_drawing(SF_rgb_context);
 	#endif
-	if(Explosion_Flag)
-	{
-		Explosion_Step++;
-	}
-	else if(Jitter_Flag)
+
+	if(Jitter_Flag)
 	{
 		if(jitter_switch)
 		{
@@ -975,6 +972,10 @@ unsigned char* update_frame_SF()
 			Jitter_Step--;
 			jitter_switch = 1;
 		}
+	}
+	else if(Explosion_Flag)
+	{
+		Explosion_Step++;
 	}
 
 //	cairo_line(SF_canvas, 0, MaxY, MaxX, MaxY );

@@ -377,7 +377,6 @@ void Handle_Mine()
  } /* end switch */
 }
 
-
 void Handle_Shell()
 {
  switch(Shell_Flag)
@@ -445,7 +444,7 @@ void Handle_Missile()
 			break;
 		      }
 
-	 case ALIVE  : {
+	 case ALIVE : {
 			 if((Missile_X_Pos[i]<0) || (Missile_X_Pos[i]>MaxX)
 			 || (Missile_Y_Pos[i]<0) || (Missile_Y_Pos[i]>MaxY))
 			    Missile_Flag[i]=KILL;
