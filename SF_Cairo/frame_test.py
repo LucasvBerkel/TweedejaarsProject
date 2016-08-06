@@ -24,7 +24,7 @@ moves = [65361, 65362, 32, 65363]
 #act = ctypes.CDLL('./sf_frame_lib.so').set_key
 #reset = ctypes.CDLL('./sf_frame_lib.so').reset_sf
 
-libname = 'sf_frame_lib_FULL.so'
+libname = 'sf_frame_lib.so'
 update = ctypes.CDLL('./'+libname).update_frame_SF
 init = ctypes.CDLL('./'+libname).start_drawing
 close = ctypes.CDLL('./'+libname).stop_drawing
@@ -60,7 +60,7 @@ pretty_screen.restype = ctypes.POINTER(ctypes.c_ubyte * 419328)
 init()
 
 i = 0
-seconds = 1
+seconds = 5
 t_end = time.time() + seconds
 while time.time() < t_end:
 	new_frame = update().contents
@@ -74,7 +74,7 @@ while time.time() < t_end:
 #	gray_image = cv2.cvtColor(img, cv2.COLOR_BGR5552GRAY) # use this for 16 bit RGB
 #	img  = cv2.cvtColor(img, cv2.COLOR_BGR5652RGB)
 #	img  = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-	cv2.imwrite('./test_images/test' + str(i) + '.png', img)
+#	cv2.imwrite('./test_images/test' + str(i) + '.png', img)
 	i += 1
 print(i/seconds) 
 
