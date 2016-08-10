@@ -21,3 +21,5 @@ else
 fi
 
 python src/main.py --save_weights_prefix $snapshots --csv_file $results $file $*
+
+

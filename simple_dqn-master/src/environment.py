@@ -106,17 +106,16 @@ class GymEnvironment(Environment):
 				self.gym.configure(mode="rgb_array")
 			else:
 
-				if args.display_screen == True:
+				if args.display_screen == True or args.display_screen == 'true' or args.display_screen == 'True':
 					mode = "human_sleep"					
 				else:
 					mode = args.display_screen
-
 				if args.record_screen_path:
 					record_path = args.record_screen_path
 				else:
 
 					record_path = None
- 
+ 				print("Mode:", mode)
 				self.gym.configure(mode=mode, record_path=record_path)				
 
 		self.obs = None

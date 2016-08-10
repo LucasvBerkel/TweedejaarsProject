@@ -1,7 +1,7 @@
 import gym
 env = gym.make('SFS-v0')
 # setting the render mode does not actually	work
-env.configure(mode='rgb_array')
+env.configure(mode='human_sleep')
 env.render()
 #observation, reward, done, info = env.step(action)
 for i_episode in range(1):
