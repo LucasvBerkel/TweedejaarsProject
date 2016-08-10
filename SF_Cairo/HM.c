@@ -356,12 +356,12 @@ void Handle_Mine()
 		  break;
 		}
   case DEAD   : {
-		  if(Mine_Dead_Counter++ >= Mine_Wait_Loops)
-		    {
-		      Generate_Mine();
-		      Mine_Flag=ALIVE;
-		      Mine_Alive_Counter=0;
-		    }
+//		  if(Mine_Dead_Counter++ >= Mine_Wait_Loops)
+//		    {
+//		      Generate_Mine();
+//		      Mine_Flag=ALIVE;
+//		      Mine_Alive_Counter=0;
+//		    }
 		   break;
 		}
   case ALIVE  : {
