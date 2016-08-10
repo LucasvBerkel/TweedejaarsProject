@@ -361,7 +361,7 @@ void Test_Collisions()
 	     if(Loop_Counter-Last_Missile_Hit<6)  /* 6 loops ...*/
 	      {
 				Fortress_Destroyed++;
-				Points=Points+104; /* including the last missile */
+				Points=Points+10004; /* including the last missile */ // was 104
 				Vulner_Counter=0;
          if(Bonus_Granted)
 		     {
@@ -377,7 +377,7 @@ void Test_Collisions()
 	      }
 	     else /*  >=6 you're too slow my friend.. */
 	      {
-		Points=Points+4; /* is this correct */
+		Points=Points+50; /* is this correct */ // was 4
 		Vulner_Counter++;
 //		Update_Vulner(cr);
 		Last_Missile_Hit=Loop_Counter;
