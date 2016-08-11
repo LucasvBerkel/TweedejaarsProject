@@ -11,6 +11,10 @@ from sys import platform
 import datetime
 import numpy as np
 import cv2
+#import atexit
+import os
+import csv
+
 
 class SFEnv(gym.Env):
 	# Human renders a full RGB version of the game at the original size, while minimal only shows
@@ -40,11 +44,18 @@ class SFEnv(gym.Env):
 		self.scale = 5.6 # The amount of (down) scaling of the screen height and width
 		# Space, left, right, up, nothing
 		actions_SFS = {0 : 32,  1 : 65361, 2 : 65363, 3 : 65362, 4 : 0}
+
+		# stat collectors
+		self.terminal_states = []
+
+
 		self._seed()
 		if game.lower().startswith("sfs"):
 			self._action_set = actions_SFS
 		else:
 			pass
+
+#		atexit.register(exit_handler)
 
 		# The number of bytes to read in from the returned image pointer
 		self.n_bytes = ((int(self.screen_height/self.scale)) * (int(self.screen_width/self.scale)))
@@ -67,8 +78,10 @@ class SFEnv(gym.Env):
 		self.act(action)
 		ob = np.ctypeslib.as_array(self.update().contents)
 		reward = self.score() - self.prev_score
-
-		if self.terminal_state():
+		ending = self.terminal_state()
+#		if self.write_stats:  	# maybe write out the stats here?
+		if ending:
+			self.terminal_states += [ending]
 			self.prev_score = 0
 			return ob, 0, True, {} # no reward in terminal state
 		self.prev_score = self.score()
@@ -111,10 +124,35 @@ class SFEnv(gym.Env):
 		obv = np.ctypeslib.as_array(screen)
 		return obv # For some reason should show the observation
 
+
+
+	def write_out_stats(self , file_id=None):
+		current_time = str(datetime.datetime.now().time().isoformat()).replace("/", ":")
+		id = file_id if file_id else current_time
+		SHIP_WON = 1 # some constant from the c interface 
+		with open(os.path.join('gym_stats', self.game_name+id+'.csv'), 'wb') as csvfile:
+			writer = csv.DictWriter(csvfile, fieldnames = ["Won"], delimiter = ';')
+			writer.writerow({ "Won" : (np.ma.masked_equal(np.array(self.terminal_states), SHIP_WON).mask)})
+			# ...
+			# Add more rows here
+
+		csvfile.close()
+#		pass
+
+
+#	def exit_handler(self):
+#		print("Writing stats...")
+#		self._close()
+
+
 	def _close(self):
+#		if self.write_stats:
+#			self.write_out_stats()
+		# maybe condition the stats?
+		self.write_out_stats()
 		self.stop_drawing()
 
-	def _configure(self, mode='rgb_array', record_path=None ):
+	def _configure(self, mode='rgb_array', record_path=None, write_stats=True):
 		self.mode = mode
 		os = platform
 

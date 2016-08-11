@@ -22,13 +22,14 @@ cairo_t *SF_canvas;
 cairo_surface_t *surface;
 //cairo_font_options_t *font_options;
 
-cairo_path_t *PrevShip;
-cairo_path_t *PrevMissile[MAX_NO_OF_MISSILES]; // Initialized in Initialize_Graphics
-cairo_path_t *PrevFort;
-cairo_path_t *PrevMine;
-cairo_path_t *PrevShell;
+//cairo_path_t *PrevShip;
+//cairo_path_t *PrevMissile[MAX_NO_OF_MISSILES]; // Initialized in Initialize_Graphics
+//cairo_path_t *PrevFort;
+//cairo_path_t *PrevMine;
+//cairo_path_t *PrevShell;
 
 int Terminal_State;
+int Terminal_State_Flag;
 
 //int Ship_Should_Update = 0;
 //int Mine_Should_Update = 0;

@@ -23,6 +23,10 @@
 #endif
 
 
+#define SHIP_WON 1
+#define FORT_WON 2
+
+
 #define UP 65362
 #define SPACE 32
 #define LEFT 65361

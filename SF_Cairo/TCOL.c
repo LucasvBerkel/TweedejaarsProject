@@ -256,6 +256,7 @@ void Test_Collisions()
 	     Points=Points-100;
 	     Gen_Explosion(Ship_X_Pos,Ship_Y_Pos,80);
 //			 Terminal_State = 1;
+				Terminal_State_Flag = FORT_WON;
 	     Ship_Killings_Counter=0;
 //	     Reset_Screen(cr);
 	   }
@@ -290,6 +291,7 @@ void Test_Collisions()
 		 Points=Points-100;
 		 Gen_Explosion(Ship_X_Pos,Ship_Y_Pos,80);
 //			Terminal_State = 1;
+			Terminal_State_Flag = FORT_WON;
 		 Ship_Killings_Counter=0;
 //		 Reset_Screen();
 	       }
@@ -369,6 +371,7 @@ void Test_Collisions()
 					Bonus_Granted=OFF;
 		     }
 		Gen_Explosion(Missile_X_Pos[i],Missile_Y_Pos[i],120);
+		Terminal_State_Flag = SHIP_WON;
 //		Terminal_State = 1;
 //		Reset_Screen(cr)
 		Handle_Missile_Flag=OFF;

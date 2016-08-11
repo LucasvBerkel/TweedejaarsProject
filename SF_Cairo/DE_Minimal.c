@@ -347,7 +347,7 @@ int get_terminal_state()
 	if(Terminal_State)
 	{
 		Terminal_State = 0;
-		return 1;
+		return Terminal_State_Flag;
 	}
 	else
 	{
@@ -561,7 +561,7 @@ void update_drawing(cairo_t *cr)
 
 		if((Explosion_Step * 10) >= ExpRadius)
 		{
-			Terminal_State = 1;
+			Terminal_State = Terminal_State_Flag;
 			Explosion_Step = 0;
 			Explosion_Flag = 0;
 			set_initial_vals();

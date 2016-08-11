@@ -14,10 +14,11 @@ cairo_path_t *PrevMissile;
 cairo_path_t *PrevFort;
 cairo_path_t *PrevMine;
 
-int Ship_Should_Update;
-int Mine_Should_Update;
-int Fort_Should_Update;
-int Missile_Should_Update;
+//int Ship_Should_Update;
+//int Mine_Should_Update;
+//int Fort_Should_Update;
+//int Missile_Should_Update;
+
 
 char Initialized_Graphics;
 

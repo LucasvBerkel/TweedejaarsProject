@@ -35,18 +35,19 @@ extern cairo_t *SF_rgb_context;
 extern cairo_surface_t *rgb_surface;
 #endif
 extern cairo_t *SF_canvas;
+extern int Terminal_State_Flag;
 extern cairo_surface_t *surface;
 //extern cairo_font_options_t *font_options;
 
 extern char Initialized_Graphics;
 
-extern cairo_path_t *PrevShip;
-extern cairo_path_t *PrevMissile[MAX_NO_OF_MISSILES];
-extern cairo_path_t *PrevFort;
-extern cairo_path_t *PrevMine;
-extern cairo_path_t *PrevShell;
+//extern cairo_path_t *PrevShip;
+//extern cairo_path_t *PrevMissile[MAX_NO_OF_MISSILES];
+//extern cairo_path_t *PrevFort;
+//extern cairo_path_t *PrevMine;
+//extern cairo_path_t *PrevShell;
 
-extern int Terminal_State;;
+extern int Terminal_State;
 
 //extern int Ship_Should_Update;
 extern int Bonus_Char_Should_Update;
