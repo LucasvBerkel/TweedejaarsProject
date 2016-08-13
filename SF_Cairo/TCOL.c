@@ -391,7 +391,7 @@ void Test_Collisions()
 				{
 				  Vulner_Counter++;
 //					Update_Vulner(cr);
-				  Points=Points+4;
+				  Points=Points+50;
 				  Last_Missile_Hit=Loop_Counter;
 				}
 				else /* double strike before it's OK */

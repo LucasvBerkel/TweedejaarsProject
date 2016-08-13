@@ -1,5 +1,5 @@
 # A Dockerfile that sets up a full Gym install
-FROM ubuntu:14.04
+FROM quay.io/openai/gym:base
 
 RUN apt-get update \
     && apt-get install -y libav-tools \
@@ -19,6 +19,7 @@ RUN apt-get update \
     unzip \
     git \
     xpra \
+    python3-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && easy_install pip
@@ -28,10 +29,14 @@ RUN mkdir -p gym && touch gym/__init__.py
 COPY ./gym/version.py ./gym
 COPY ./requirements.txt .
 COPY ./setup.py .
-RUN pip install -e .[all]
+COPY ./tox.ini .
+
+RUN pip install tox
+# Install the relevant dependencies. Keep printing so Travis knows we're alive.
+RUN ["bash", "-c", "( while true; do echo '.'; sleep 60; done ) & tox --notest"]
 
 # Finally, upload our actual code!
 COPY . /usr/local/gym
 
-WORKDIR /root
 ENTRYPOINT ["/usr/local/gym/bin/docker_entrypoint"]
+CMD ["tox"]

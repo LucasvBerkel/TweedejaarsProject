@@ -417,7 +417,8 @@ void SF_iteration()
 	Accumulate_Data();
 	Handle_Bonus();
 
-	Score=Points+Velocity+Control+Speed;
+//	Score=Points+Velocity+Control+Speed;
+		Score=Points;
 }
 
 

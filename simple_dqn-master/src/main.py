@@ -161,10 +161,11 @@ for epoch in xrange(args.start_epoch, args.epochs):
 		stats.write(epoch + 1, "test")
 		# Write gym stats
 		try:
-			env.gym.write_out_stats()
-		except Exception:
+			env.gym.write_out_stats(file_id=str(epoch))
+		except Exception as e:
+			print(str(Exception.message))
+			print(e)
 			print("Could not write gym stats ❌")
-
 
 
 stats.close()

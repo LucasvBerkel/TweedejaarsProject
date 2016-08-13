@@ -447,7 +447,10 @@ void Handle_Missile()
 	 case ALIVE : {
 			 if((Missile_X_Pos[i]<0) || (Missile_X_Pos[i]>MaxX)
 			 || (Missile_Y_Pos[i]<0) || (Missile_Y_Pos[i]>MaxY))
+				{
 			    Missile_Flag[i]=KILL;
+					Points=Points-1;
+				}
 			 else
 			  {
 //			    Draw_Missile(cr, Missile_X_Pos[i],Missile_Y_Pos[i],
@@ -475,7 +478,7 @@ void Handle_Missile()
 
 	if(Missile_Stock<=0)    /* stock control */
 	  if(Missile_Limit_Flag) break;  /* overdraft not allowed */
-	  else           Points=Points-3;   /* our low-low interest rates.. */
+	  else           Points=Points-0;   /* our low-low interest rates.. */ // POINTS_TAG was -3
 
       Missiles_Counter++;
       for(i=0;i<MAX_NO_OF_MISSILES;i++)
