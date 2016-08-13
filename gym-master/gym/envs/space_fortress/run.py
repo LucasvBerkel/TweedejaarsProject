@@ -4,7 +4,7 @@ import sys
 env = gym.make('SFS-v0')
 # setting the render mode does not actually	work
 #env.configure(mode='human_sleep')
-env.configure(mode='minimal')
+env.configure(mode='human')
 #env.render()
 #observation, reward, done, info = env.step(action)
 for i_episode in range(100):

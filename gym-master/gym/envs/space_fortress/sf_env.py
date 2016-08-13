@@ -124,13 +124,6 @@ class SFEnv(gym.Env):
 		return obv # For some reason should show the observation
 
 
-	# Helper method
-	def write_dicts_to_csv(self, output_file, dict_list):
-		keys = dict_list[0].keys()
-		dict_writer = csv.DictWriter(output_file, keys)
-		dict_writer.writeheader()
-		dict_writer.writerows(dict_list)
-
 	def write_out_stats(self , file_id=None):
 		current_time = str(datetime.datetime.now().time().isoformat()).replace("/", ":")
 		id = file_id if file_id else current_time
@@ -142,6 +135,7 @@ class SFEnv(gym.Env):
 			for t in self.terminal_states:
 				dict_writer.writerow({"Won" : t == 1})
 
+		self.terminal_states = []
 
 			# ...
 			# Add more rows here
