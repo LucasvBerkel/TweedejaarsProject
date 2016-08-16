@@ -15,6 +15,7 @@ import cv2
 import os
 import csv
 
+import sys
 
 class SFEnv(gym.Env):
 	# Human renders a full RGB version of the game at the original size, while minimal only shows
@@ -42,7 +43,7 @@ class SFEnv(gym.Env):
 		self.screen_width = 448
 		self.scale = 5.6 # The amount of (down) scaling of the screen height and width
 		# Space, left, right, up, nothing
-		actions_SFS = {0 : 0, 1 : 32,  2 : 65363, 3 : 65362, 4 : 65361}
+		actions_SFS = {0 : 32,  1 : 65363, 2 : 65362, 3 : 65361}
 
 		# stat collectors
 		self.terminal_states = []
@@ -73,6 +74,7 @@ class SFEnv(gym.Env):
 		return [seed]
 
 	def _step(self, a):
+		# print(a)
 		action = self._action_set[a] # Select the action from the action dict
 		self.act(action)
 		ob = np.ctypeslib.as_array(self.update().contents)
@@ -127,7 +129,7 @@ class SFEnv(gym.Env):
 	def write_out_stats(self , file_id=None):
 		current_time = str(datetime.datetime.now().time().isoformat()).replace("/", ":")
 		id = file_id if file_id else current_time
-		SHIP_WON = 1 # some constant from the c interface 
+		SHIP_WON = 1 # some constant from the c interface
 		keys = ["Won"]
 		with open(os.path.join('gym_stats', self.game_name+"-"+id+'.csv'), 'wb') as csvfile:
 			dict_writer = csv.DictWriter(csvfile, fieldnames=keys)
@@ -155,7 +157,7 @@ class SFEnv(gym.Env):
 #			self.write_out_stats()
 		# maybe condition the stats?
 #		self.write_out_stats()
-		self.stop_drawing()  
+		self.stop_drawing()
 
 	def _configure(self, mode='rgb_array', record_path=None, write_stats=True):
 		self.mode = mode
@@ -200,6 +202,3 @@ class SFEnv(gym.Env):
 		# init
 		self.init()
 		self.record_path = record_path
-
-
-

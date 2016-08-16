@@ -52,7 +52,7 @@ extern void Handle_Fortress(); */
 //extern Update_Points();
 //extern Reset_Screen();
 //extern Mydelay(unsigned Timedelay);
-// --------------------------------- // 
+// --------------------------------- //
 
 
 // Added in header
@@ -65,7 +65,7 @@ extern void Handle_Fortress(); */
 /*int Ship_Killings_Counter=0; */
 
 
-// Okay to drop animation? 
+// Okay to drop animation?
 void Gen_Explosion(int X_Pos,int Y_Pos,int Radius)
 {
 //  int i,j;
@@ -74,18 +74,18 @@ void Gen_Explosion(int X_Pos,int Y_Pos,int Radius)
 //	cairo_reset_clip(cr);
 //	cairo_rectangle(cr, 0, 0, 320, 240);
 //	cairo_paint(cr);
-/* -- unused -- 
+/* -- unused --
   int X_dot,Y_dot;
   int svcolor;
   int Last_Pitch; */
   Effect_Flag=ON;
 	Explosion_Flag=1;
 //  svccd olor=getcolor();
-	
+
 	ExpRadius = Radius;
 	ExpX = X_Pos;
 	ExpY = Y_Pos;
-	
+
 //  j=0;
 //  for(i=10;i<Radius;i=i+10)
 //  {
@@ -95,7 +95,7 @@ void Gen_Explosion(int X_Pos,int Y_Pos,int Radius)
 //		for(iarc=i/5;iarc<360+i/5;iarc=iarc+20)
 //	  {
 ////		 	void arc(int x, int y, int stangle, int endangle, int radius);
-//// 			arc function is used to draw an arc with center (x,y) and stangle specifies starting 
+//// 			arc function is used to draw an arc with center (x,y) and stangle specifies starting
 ////			angle, endangle specifies the end angle and last parameter specifies the radius of the arc
 ////			void cairo_arc (cairo_t *cr, double xc, double yc, double radius, double angle1, double angle2);
 //			cairo_new_sub_path(cr);
@@ -110,7 +110,7 @@ void Gen_Explosion(int X_Pos,int Y_Pos,int Radius)
 ////		}
 //
 //		cairo_stroke(cr);
-//		// -- DELAY HERE -- 
+//		// -- DELAY HERE --
 //		ms_sleep(250.0/(double long)i);/* 100/i*5 */ // I guess a delay only makes sense when drawing on a window
 ////		ms_sleep(100000);
 ////	sound(200+15*i);
@@ -144,7 +144,7 @@ void Gen_Explosion(int X_Pos,int Y_Pos,int Radius)
 void Gen_Snap_Effect()
 {
 
-// ---- Don't forget to add the delays back in if needed  ----- 
+// ---- Don't forget to add the delays back in if needed  -----
 
 //  int Last_Pitch,i;
 //	int i;
@@ -153,7 +153,7 @@ void Gen_Snap_Effect()
 //  Last_Pitch=3000;
 //  for (i=0;i<30;i++)  /* final audio effect */
 //  {
-//		Mydelay(5); 
+//		Mydelay(5);
 //		Last_Pitch=Last_Pitch-100;
 //		sound(Last_Pitch);
 //  }
@@ -168,8 +168,8 @@ void Zero_Vulner_Sound()
 //  return(0);
 }
 
-// -- These kind of animation functions maybe should get some sort of special treatment 
-// within the step function as they redraw the ship with a delay multiple times -- 
+// -- These kind of animation functions maybe should get some sort of special treatment
+// within the step function as they redraw the ship with a delay multiple times --
 void Jitter_Ship()
 {
 //  int Jitter_Headings;
@@ -178,18 +178,18 @@ void Jitter_Ship()
 
   Effect_Flag=ON;
 	Jitter_Flag=1;
-	// Call clean() with only ship update on? 
+	// Call clean() with only ship update on?
 //  Draw_Ship(cr,Ship_X_Pos,Ship_Y_Pos,Ship_Headings,SHIP_SIZE_FACTOR*MaxX); /*erase ship */
 //	stroke_in_clip(cr);
-	
+
 //  for (i=8;i>0;i--)
 //  {
 //    Jitter_Headings=Ship_Headings+2*i;
 //    Jitter_X_Pos=Ship_X_Pos+i*Fcos(Jitter_Headings);
 //    Jitter_Y_Pos=Ship_Y_Pos+i*Fsin(Jitter_Headings);
-////		Call update with only ship update on? 
+////		Call update with only ship update on?
 ////		clear_prev_path(cr, PrevShip);
-////    Draw_Ship(cr,Jitter_X_Pos,Jitter_Y_Pos,Jitter_Headings, SHIP_SIZE_FACTOR*MaxX); 
+////    Draw_Ship(cr,Jitter_X_Pos,Jitter_Y_Pos,Jitter_Headings, SHIP_SIZE_FACTOR*MaxX);
 ////		stroke_in_clip(cr);
 //    ms_sleep(((double long)i)*5L);
 ////		clear_prev_path(cr, PrevShip);
@@ -268,7 +268,7 @@ void Test_Collisions()
 	     if(Shell_Flag==ALIVE)
 	     {
 		  	Shell_Flag=KILL;      /* kill shell */
-		  	Handle_Shell(); 
+		  	Handle_Shell();
 	     }
 	     Reset_All_Missiles();    	/* kill all missiles */
 //	     Gen_Snap_Effect();
@@ -363,7 +363,7 @@ void Test_Collisions()
 	     if(Loop_Counter-Last_Missile_Hit<6)  /* 6 loops ...*/
 	      {
 				Fortress_Destroyed++;
-				Points=Points+10004; /* including the last missile */ // was 104
+				Points=Points+204; /* including the last missile */ // was 104
 				Vulner_Counter=0;
          if(Bonus_Granted)
 		     {
@@ -421,7 +421,7 @@ void Accumulate_Data()
 		if(shipvel<SHIP_GOOD_VELOCITY)
 		{
  			Velocity=Velocity+7;
-//			Update_Velocity(cr); // --- UNCOMMENT --- // 
+//			Update_Velocity(cr); // --- UNCOMMENT --- //
 		}
 
 	/* update Control */
@@ -472,7 +472,3 @@ void Accumulate_Data()
 ////	start_drawing(); ////	Gen_Explosion(SF_canvas, MaxX/2, MaxY/2, 120);
 ////	stop_drawing();
 //}
-
-
-
-
