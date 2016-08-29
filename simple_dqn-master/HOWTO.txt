@@ -1,0 +1,1 @@
+./train.sh AIM-v0 --environment gym --random_steps 250000 --backend cpu --history_length 5 --display_screen human_sleep --screen_height 84 --screen_width 84 #cat HOWTO.txt | pbcopy
