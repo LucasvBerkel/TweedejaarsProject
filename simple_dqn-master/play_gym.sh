@@ -13,4 +13,24 @@ fi
 shift;shift
 
 
-python src/main.py  $game --environment gym --play_games 1 --display_screen true --load_weights $snapshot  $*
+python src/main.py  $game --environment gym --play_games 1 --display_screen human --load_weights $snapshot  $*
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+

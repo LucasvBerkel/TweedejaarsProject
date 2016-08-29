@@ -38,7 +38,6 @@ void Select_Mine_Menus()
 		Foe_Menu[i] = Char_Set[ri];
 		ri=randrange(0, 9);
 		Friend_Menu[i] = Char_Set[ri];
-
 	}
 }
 
@@ -288,34 +287,35 @@ void Handle_Mine()
 
 
 
-int Generate_Aim_Mine()
+void Generate_Aim_Mine()
 {
     float radius;
     float mine_distance;
     float mine_angle;
-
-    radius=MaxX/2.2;
-    mine_angle=randrange(0, 16)*22.5;
+		
+    radius=((float)MaxX)/2.2;
+    mine_angle=((float)randrange(0, 15))*22.5;
     if(mine_angle>338.0) mine_angle=0.0;
-    mine_distance=radius/2+randrange(0, 2)*radius/2;
+    mine_distance=radius/2.0+ ((float)randrange(0, 1))*radius/2.0;
 
-    Mine_X_Pos=MaxX/2 + mine_distance*Fsin(mine_angle);
-    if(AspectRatio==1.0)
-       Mine_Y_Pos=MaxY/2 - mine_distance*Fcos(mine_angle);
-    else Mine_Y_Pos=MaxY/2 - mine_distance*Fcos(mine_angle)/GraphSqrFact;
+    Mine_X_Pos=((float)MaxX)/2.0 + mine_distance*Fsin(mine_angle);
+    Mine_Y_Pos=((float)MaxY)/2.0 - mine_distance*Fcos(mine_angle);
+//    else Mine_Y_Pos=MaxY/2 - mine_distance*Fcos(mine_angle)/GraphSqrFact;
 		     /* Y/X square ratio */
 
 //    Draw_Mine(Mine_X_Pos,Mine_Y_Pos,MINE_SIZE_FACTOR*MaxX);
 	     /* draw mine */
-   return(0);
 }
 
 void Handle_Aim_Mine()
 {
+
  switch(Mine_Flag)
  {
+
   case KILL  : {
-		  Handle_Speed_Score();
+//			printf("KILL");
+			  Handle_Speed_Score();
 //		  Draw_Mine(Mine_X_Pos,Mine_Y_Pos,MINE_SIZE_FACTOR*MaxX);
 							/* erase mine */
 		  Mine_Flag=DEAD;
@@ -323,6 +323,7 @@ void Handle_Aim_Mine()
 		  break;
 		}
   case DEAD   : {
+//			printf("Dead -- Mine_dead_counter: %d Mine_Wait_Loops: %d", Mine_Dead_Counter, Mine_Wait_Loops);
 		  if(Mine_Dead_Counter++ >= Mine_Wait_Loops)
 		    {
 		      Generate_Aim_Mine();
@@ -335,7 +336,6 @@ void Handle_Aim_Mine()
 		  if(Mine_Alive_Counter++ >= Mine_Live_Loops)
 		  Mine_Flag=KILL;
 		}
-
  } /* end switch */
 }
 

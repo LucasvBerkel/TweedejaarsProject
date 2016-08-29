@@ -7,9 +7,9 @@
 #define TEXT_HEIGHT 10
 #define TEXT_WIDTH 8 
 #endif
-#define SF_YELLOW 0.0, 0.0, 0.0, 0.9516
+#define SF_YELLOW 0.0, 0.0, 0.0, 1
 #define SF_GREEN 0.0, 0.0, 0.0, 0.4720
-#define SF_BLUE 0.0, 0.0, 0.0, 0.8575
+#define SF_BLUE 0.0, 0.0, 0.0, 0.66
 #define SF_ORANGE 0.0, 0.0, 0.0, 0.4724
 //#define WINDOW_WIDTH 240
 //#define WINDOW_HEIGHT 240 + (TEXT_HEIGHT*3)
@@ -56,8 +56,7 @@ void set_key(int key_value);
 void stop_drawing();
 
 int move_update();
-void update_frame(cairo_t *cr);
-unsigned char* update_frame_AIM();
+unsigned char* update_frame();
 void stroke_in_clip(cairo_t *cr);
 
 void Show_Score(cairo_t *cr, int val, int x, int y);

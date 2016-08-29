@@ -143,8 +143,9 @@ class GymEnvironment(Environment):
 		if self.gym.spec.id in ["SFS-v0", "SF-v0", "AIM-v0"]:
 			obs = np.reshape(self.obs, (self.screen_height, self.screen_width))
 		#	 cv2.imshow("crap", obs)
+
 		#	 cv2.waitKey(0)
-			return obs
+			return cv2.resize(obs, (self.screen_width, self.screen_height), interpolation=cv2.INTER_AREA);
 		else:
 			return cv2.resize(cv2.cvtColor(self.obs, cv2.COLOR_RGB2GRAY), (self.screen_width, self.screen_height))
 

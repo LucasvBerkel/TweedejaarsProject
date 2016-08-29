@@ -39,7 +39,7 @@ specifying a return type. I removed all of these return statements and modified 
 return type to void to surpress warnings. */ 
 
 
-
+void Init_Aim_Session();
 void Clear_Interval();
 
 void Find_Interval();

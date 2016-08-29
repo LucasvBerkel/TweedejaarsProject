@@ -35,26 +35,26 @@ class SFEnv(gym.Env):
 		else:
 			import sys
 			print("Invalid game name")
-
 		self.mode = 'rgb_array' # This gets overwritten by configure
 		self.game = game
 		self.prev_score = 0
 		self.screen_height = 448
 		self.screen_width = 448
-		self.scale = 5.6 # The amount of (down) scaling of the screen height and width
+		self.scale = 3.2 # The amount of (down) scaling of the screen height and width
 		# Space, left, right, up, nothing
 		actions_SFS = {0 : 32,  1 : 65363, 2 : 65362, 3 : 65361}
+		actions_AIM = {0 : 32,  1 : 65363, 2 : 65361}
 
 		# stat collectors
 		self.terminal_states = []
 
-
 		self._seed()
 		if game.lower().startswith("sfs"):
 			self._action_set = actions_SFS
+		elif game.lower().startswith("aim"):
+			self._action_set = actions_AIM
 		else:
 			pass
-
 #		atexit.register(exit_handler)
 
 		# The number of bytes to read in from the returned image pointer
@@ -78,6 +78,7 @@ class SFEnv(gym.Env):
 		action = self._action_set[a] # Select the action from the action dict
 		self.act(action)
 		ob = np.ctypeslib.as_array(self.update().contents)
+
 		reward = self.score() - self.prev_score
 		ending = self.terminal_state()
 #		if self.write_stats:  	# maybe write out the stats here?
@@ -90,7 +91,7 @@ class SFEnv(gym.Env):
 
 
 	# We ignore the mode parameter here because it's set in _configure
-	# Not entirely sure what close here does, although you probably have to implemented this
+	# Not entirely sure what close here does, although you probably have to implement this
 	# behaviour yourself
 	def _render(self, mode=None, close=False):
 		if not self.mode == 'rgb_array':
@@ -162,21 +163,20 @@ class SFEnv(gym.Env):
 	def _configure(self, mode='rgb_array', record_path=None, write_stats=True):
 		self.mode = mode
 		os = platform
-		# Init the opencv window
+		libname = "sf" if self.game.lower().startswith("sf") else "aim"
+
 		if self.mode != 'rgb_array':
 			cv2.namedWindow(self.game_name)
 
 		if self.mode.startswith('human'):
-			libname = "sf_frame_lib_FULL.so"
+			libname += "_frame_lib_FULL.so"
 		else:
-			libname = "sf_frame_lib.so"
-
+			libname += "_frame_lib.so"
 		if os.startswith('linux'): # come up with something nicer for this:
 			libpath = "/home/wijnand/Documents/git/TweedejaarsProject/gym-master/gym/envs/space_fortress/linux2"
 		elif os.startswith('darwin'):
 			libpath = "/Users/rijnderwever/Desktop/NLR/NLR/TweedejaarsProject/gym-master/gym/envs/space_fortress/darwin"
-
-		self.update = ctypes.CDLL(libpath + '/'+libname).update_frame_SF
+		self.update = ctypes.CDLL(libpath + '/'+libname).update_frame
 		self.init = ctypes.CDLL(libpath +'/'+libname).start_drawing
 		self.act = ctypes.CDLL(libpath +'/'+libname).set_key
 		self.reset_sf = ctypes.CDLL(libpath +'/'+libname).reset_sf
@@ -185,7 +185,6 @@ class SFEnv(gym.Env):
 		self.score = ctypes.CDLL(libpath +'/'+libname).get_score
 		self.stop_drawing = ctypes.CDLL(libpath +'/'+libname).stop_drawing
 		self.pretty_screen = ctypes.CDLL(libpath +'/'+libname).get_original_screen
-
 		# Configure how many bytes to read in from the pointer
 		# c_ubyte is equal to unsigned char
 		self.update.restype = ctypes.POINTER(ctypes.c_ubyte * self.n_bytes)
@@ -193,7 +192,6 @@ class SFEnv(gym.Env):
 		# 468 * 448 * 2 (original size times something to do with 16 bit images)
 		sixteen_bit_img_bytes = self.screen_width * self.screen_height * 2
 		self.pretty_screen.restype = ctypes.POINTER(ctypes.c_ubyte * sixteen_bit_img_bytes)
-
 
 		# Initialize the game's drawing context and it's variables
 		# I would rather that this be in the init method, but the OpenAI developer himself stated

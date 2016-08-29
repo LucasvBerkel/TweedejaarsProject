@@ -57,7 +57,7 @@ void Initialize_Graphics(cairo_t *cr)
 	#ifdef GUI_INTERFACE
 	cairo_scale(SF_rgb_context, 1, 1);
 	#endif
-	cairo_set_antialias(cr, CAIRO_ANTIALIAS_BEST);
+	cairo_set_antialias(cr, CAIRO_ANTIALIAS_GRAY);
 	cairo_set_line_cap(cr, CAIRO_LINE_CAP_SQUARE);
 	cairo_set_line_join(cr, CAIRO_LINE_JOIN_ROUND);
 
@@ -71,11 +71,11 @@ void Initialize_Graphics(cairo_t *cr)
 	}
 	else if(cairo_surface_get_type(cairo_get_target(cr)) == CAIRO_SURFACE_TYPE_IMAGE)
 	{
-			cairo_set_line_width(cr, (440.1+(10 * SCALE_F))/((double) MaxY * 1));
+			cairo_set_line_width(cr, (800+(10 * SCALE_F))/((double) MaxY * 1));
 	}
 	else // Mostly quartz?
 	{
-		cairo_set_line_width(cr, (90.1 * 1) / ((double) MaxY * 1)); // for image_surf use 239
+		cairo_set_line_width(cr, (95.1 * 1) / ((double) MaxY * 1)); // for image_surf use 239
 	}
 //	cairo_set_line_width(cr, (90.1 * 1) / ((double) MaxY * 1));
 
@@ -262,6 +262,7 @@ void set_initial_vals()
 	jitter_switch = 1;
 //	Terminal_State = 0;
 	Select_Mine_Menus();
+	Init_Aim_Session();
 
 //	cairo_path_t *empty_path = cairo_copy_path(cr);
 //	PrevShip = empty_path;
@@ -341,13 +342,12 @@ int get_terminal_state()
 	if(Terminal_State)
 	{
 		Terminal_State = 0;
-		return Terminal_State_Flag;
+		return 1;
 	}
 	else
 	{
 		return 0;
 	}
-
 }
 
 // W and H are the dimensions of the clipping rectangle
@@ -703,7 +703,7 @@ void Draw_Missile (cairo_t *cr, int x, int y, int Headings, int size, int missil
 
 //	svcolor=getcolor(); /* save present color */
 //	setcolor(MISSILE_COLOR);
-	cairo_set_source_rgba(cr, 0.0, 0.0, 0.0, 0.2126);
+	cairo_set_source_rgba(cr, 0.0, 0.0, 0.0, 0.2);
 	#ifdef GUI_INTERFACE
 	cairo_set_source_rgb(SF_rgb_context, 1.0, 0.0, 0.0);
 	#endif
@@ -740,7 +740,7 @@ void Draw_Shell(cairo_t *cr, int x, int y, int Headings, int size)
 
 //	svcolor=getcolor(); /* save present color */
 //	setcolor(SHELL_COLOR);
-	cairo_set_source_rgba(cr, 0.0, 0.0, 0.0, 0.2126);
+	cairo_set_source_rgba(cr, 0.0, 0.0, 0.0, 0.2);
 	#ifdef GUI_INTERFACE
 	cairo_set_source_rgb(SF_rgb_context, 1.0, 0.0, 0.0);
 	#endif
@@ -859,8 +859,8 @@ void start_drawing()
 {
 //	int win_width = (int) (((float) WINDOW_WIDTH)/(float)SCALE_F);
 //	int win_height = (int) (((float) WINDOW_HEIGHT)/(float)SCALE_F);
-	int win_height = 224;
-		int win_width = 224;
+	int win_height = 140;
+	int win_width = 140;
 	surface = cairo_image_surface_create(CAIRO_FORMAT_A8, win_width, win_height);
 	#ifdef GUI_INTERFACE
 	rgb_surface = cairo_image_surface_create(CAIRO_FORMAT_RGB16_565, WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -885,7 +885,7 @@ void stop_drawing()
 	#endif
 }
 
-unsigned char* update_frame_AIM()
+unsigned char* update_frame()
 {
 	// This should have the form clean -> sf_iter -> update, because bottom panel text will in
   // this  way be ereased, numerically updated, and then visually updated
@@ -1068,6 +1068,18 @@ void Reset_Screen()
 		Velocity=0;
 		Control=0;
 		Speed=0;
+        /*  reset variables */
+    Ship_X_Pos=0.5*MaxX; /* on a 640 x 480 screen VGA-HI */
+    Ship_Y_Pos=0.5*MaxY; /* same as above */
+    Ship_X_Speed=0.0;
+    Ship_Y_Speed=0.0;
+    Ship_Headings=0;
+    Mine_Flag=DEAD;
+    for(int i=1;i<6;i++) Missile_Flag[i]=DEAD;
+    Missile_Type=VS_FRIEND;
+    Missile_Vs_Mine_Only=OFF;
+    Missiles_Counter=0;
+    Shell_Flag=DEAD;
 
 }  /* end reset screen */
 

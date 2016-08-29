@@ -14,7 +14,7 @@ from random import randint
 #	GDK_KEY_space  32 
 # RIGHT 				65362
 
-moves = [65361, 65362, 32, 65363]
+moves = [65361, 32, 65363]
 #moves = [65361, 32, 65363]
 
 # Maybe create a seperate SF update version?
@@ -25,7 +25,7 @@ moves = [65361, 65362, 32, 65363]
 #reset = ctypes.CDLL('./sf_frame_lib.so').reset_sf
 
 libname = 'aim_frame_lib.so'
-update = ctypes.CDLL('./'+libname).update_frame_SF
+update = ctypes.CDLL('./'+libname).update_frame
 init = ctypes.CDLL('./'+libname).start_drawing
 close = ctypes.CDLL('./'+libname).stop_drawing
 act = ctypes.CDLL('./'+libname).set_key
@@ -43,33 +43,54 @@ pretty_screen = ctypes.CDLL('./'+libname).get_original_screen
 screen_width = 448
 screen_height = 448
 
-scale = 2.0
+scale = 3.2
 # was 153600
-n_bytes = ((int(screen_height/scale)) * (int(screen_width/scale)))
+n_bytes = int(screen_height/scale) * int(screen_width/scale)
 update.restype = ctypes.POINTER(ctypes.c_ubyte * n_bytes) # c_ubyte is equal to unsigned char
 # c_ubyte is equal to unsigned char
 update.restype = ctypes.POINTER(ctypes.c_ubyte * n_bytes) 
 screen.restype = ctypes.POINTER(ctypes.c_ubyte * n_bytes)
-# 468 * 448 * 2 (original size times something to do with 16 bit images)
-pretty_screen.restype = ctypes.POINTER(ctypes.c_ubyte * 419328)
+# 448 * 448 * 2 (original size times something to do with 16 bit images)
+pretty_screen.restype = ctypes.POINTER(ctypes.c_ubyte * screen_width*screen_height*2)
+
 
 init()
-
+print( int(screen_width/scale))
 i = 0
-seconds = 5
+seconds = 1.0
 t_end = time.time() + seconds
 while time.time() < t_end:
-	new_frame = pretty_screen().contents
+	new_frame = update().contents
 	act(choice(moves)) # Get a random move
 	img = np.ctypeslib.as_array(new_frame)
+#	img = np.reshape(img, (screen_height, screen_width))
 #	img.flatten()
 	# Only needed for saving as an image, providing a 1d vector to the network is also okay
 	img = np.reshape(img, (int(screen_height/scale), int(screen_width/scale))) # Don't ask me why this works, has to do with 16bit RGB
+	img = cv2.resize(img, (84, 84), interpolation=cv2.INTER_AREA);
+	
 #	print(img)	
 #	img = np.delete(img, 3, 2) # Don't do this, really slow and not needed for the grayscale conv
 #	gray_image = cv2.cvtColor(img, cv2.COLOR_BGR5552GRAY) # use this for 16 bit RGB
 #	img  = cv2.cvtColor(img, cv2.COLOR_BGR5652RGB)
 #	img  = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+#	img = cv2.cvtColor(img, cv2.COLOR_BGR5652RGB)
+#	img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+#	output = cv2.connectedComponentsWithStats(img, 4, cv2.CV_16S)
+##	img = output[1]*64
+#	stats = output[2]
+#	labels = output[1]
+#	for label in range(1, output[0]): # skip the blackness
+#		area = stats[label][4]
+#		if area < 10: # Missile
+#			img[labels==label] = 85
+#		elif area < 20: # Ship
+#			img[labels==label] = 170
+#		elif area < 30:  # Mine
+#			img[labels==label] = 255
+#		elif area  < 100: # Other? (mine/missile collision?)
+#			img[labels==label] = 170
+	
 	cv2.imwrite('./test_images/test' + str(i) + '.png', img)
 	i += 1
 print(i/seconds) 

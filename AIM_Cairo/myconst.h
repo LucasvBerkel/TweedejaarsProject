@@ -5,7 +5,7 @@
 	This file contains all the constants as defined by the
 
 			Space Fortress Game
-
+	
 	Use: It is included in the source files as
 	#include "myconst.h"
 	and must be present in the current directory!
@@ -14,7 +14,7 @@
 #define JITTER_MODE 1
 #define EXPLOSION_MODE 2
 
-#define SCALE_F 2.0
+#define SCALE_F 3.2
 
 #ifdef GUI
 #define POINTS_FONT_SIZE 9.5

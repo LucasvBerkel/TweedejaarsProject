@@ -419,7 +419,12 @@ void AIM_iteration()
 	Handle_Bonus();
 
 //	Score=Points+Velocity+Control+Speed;
-		Score=Mines+Speed;;
+	Score=Mines+Speed;
+	if(Loop_Counter >= 2400) 
+	{
+		Loop_Counter = 0;
+		Terminal_State = 1;
+	}
 }
 
 
