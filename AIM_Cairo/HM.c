@@ -112,35 +112,56 @@ void Handle_Speed_Score()
 
  
 	/* mine bonus for any type */
+	if(Mine_Alive_Counter>=Mine_Live_Loops)
+	{
+		dts=-100;	
+	}
+	else 
+	{
 
-   dts=0;
-   if(Mine_Alive_Counter>=Mine_Live_Loops) dts=-100;
-   else
-   if(Mine_Alive_Counter<=20) dts=80;
-   else
-   if(Mine_Alive_Counter<=40) dts=60;
-   else
-   if(Mine_Alive_Counter<=60) dts=40;
-   else
-   if(Mine_Alive_Counter<=80) dts=20;
-   else
-   if(Mine_Alive_Counter<=100) dts=0;
-   else
-   if(Mine_Alive_Counter<=120) dts=-10;
-   else
-   if(Mine_Alive_Counter<=140) dts=-40;
-   else
-   if(Mine_Alive_Counter<=160) dts=-60;
-   else
-   if(Mine_Alive_Counter<=180) dts=-80;
-   else
-   if(Mine_Alive_Counter<=200) dts=-100;
+		if(Mine_Alive_Counter<=20)
+		{
+			 dts=80;
+		}
+		else if(Mine_Alive_Counter<=40)	
+		{
+			dts=60;
+		}
+		else if(Mine_Alive_Counter<=60)
+		{
+			dts=40;
+		}
+		else if(Mine_Alive_Counter<=80) 
+		{
+			dts=20;
+		}
+		else if(Mine_Alive_Counter<=100)
+		{ 
+			dts=0;
+		}
+		else if(Mine_Alive_Counter<=120)
+		{
+			dts=-10;
+		}
+		else if(Mine_Alive_Counter<=140)
+		{
+			dts=-40;
+		}
+		else if(Mine_Alive_Counter<=160) 
+		{
+			dts=-60;
+		}
+		else if(Mine_Alive_Counter<=180)
+		{ 
+			dts=-80;
+		}
+		else // if(Mine_Alive_Counter<=200)
+		{ 
+			dts=-100;
+		}
+	}
 
-    Score=Mines+Speed;
-//    Update_Score();
-
-//  Update_Speed(cr);
-
+  Speed=Speed+dts;
 }
 
 // 
