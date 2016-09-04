@@ -105,7 +105,6 @@ class GymEnvironment(Environment):
 			if args.display_screen == False:
 				self.gym.configure(mode="rgb_array")
 			else:
-
 				if args.display_screen == True or args.display_screen == 'true' or args.display_screen == 'True':
 					mode = "human_sleep"					
 				else:
@@ -143,12 +142,10 @@ class GymEnvironment(Environment):
 		if self.gym.spec.id in ["SFS-v0", "SF-v0", "AIM-v0"]:
 #			print(self.obs.shape)
 #			print((self.screen_height, self.screen_width))
-#			obs = np.reshape(self.obs, (self.screen_height, self.screen_width))
-
-		#	 cv2.imshow("crap", obs)
-
-		#	 cv2.waitKey(0)
-			return cv2.resize(self.obs, (self.screen_width, self.screen_height), interpolation=cv2.INTER_AREA);
+#		
+			obs = np.reshape(self.obs, (140, 140))
+			obs = cv2.resize(obs, (self.screen_width, self.screen_height), interpolation=cv2.INTER_AREA)
+			return obs
 		else:
 			return cv2.resize(cv2.cvtColor(self.obs, cv2.COLOR_RGB2GRAY), (self.screen_width, self.screen_height))
 
