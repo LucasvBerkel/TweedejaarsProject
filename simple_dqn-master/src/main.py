@@ -7,7 +7,7 @@ logging.basicConfig(format='%(asctime)s %(message)s')
 from environment import ALEEnvironment, GymEnvironment
 from replay_memory import ReplayMemory
 from deepqnetwork import DeepQNetwork
-from agent import Agent
+from agent import Agent, PerfectAgent
 from statistics import Statistics
 import random
 import argparse
@@ -17,8 +17,8 @@ def str2bool(v):
 	return v.lower() in ("yes", "true", "t", "1")
 
 def str2display(v):
-	# retain python backwards compatibility 
-	return v if v in ("yes", "true", "t", "1", "minimal", "minimal_sleep", "rgb_array", "human", "human_sleep") else False
+	# retain python backwards compatibility
+	return v if v in ("yes", "true", "t", "1", "minimal", "minimal_sleep", "rgb_array", "human", "human_sleep", "human_debug", "minimal_debug") else False
 
 parser = argparse.ArgumentParser()
 
@@ -69,6 +69,7 @@ antarg.add_argument("--exploration_rate_test", type=float, default=0.05, help="E
 antarg.add_argument("--train_frequency", type=int, default=4, help="Perform training after this many game steps.")
 antarg.add_argument("--train_repeat", type=int, default=1, help="Number of times to sample minibatch during training.")
 antarg.add_argument("--random_starts", type=int, default=30, help="Perform max this number of dummy actions after game restart, to produce more random game dynamics.")
+antarg.add_argument("--perfect_play", type=str2bool, default=False, help="Play the game perfect most of the time (see the agent class for more info).")
 
 nvisarg = parser.add_argument_group('Visualization')
 nvisarg.add_argument("--visualization_filters", type=int, default=4, help="Number of filters to visualize from each convolutional layer.")
@@ -96,6 +97,7 @@ logger.setLevel(args.log_level)
 if args.random_seed:
 	random.seed(args.random_seed)
 
+print("Started training!")
 # instantiate classes
 if args.environment == 'ale':
 	env = ALEEnvironment(args.game, args)
@@ -109,7 +111,11 @@ else:
 
 mem = ReplayMemory(args.replay_size, args)
 net = DeepQNetwork(env.numActions(), args)
-agent = Agent(env, mem, net, args)
+if args.perfect_play:
+	agent = PerfectAgent(env, mem, net, args)
+else:
+	agent = Agent(env, mem, net, args)
+
 stats = Statistics(agent, net, mem, env, args)
 
 if args.load_weights:
@@ -136,6 +142,7 @@ if args.random_steps:
 	# populate replay memory with random steps
 	logger.info("Populating replay memory with %d random moves" % args.random_steps)
 	stats.reset()
+
 	agent.play_random(args.random_steps)
 	stats.write(0, "random")
 
@@ -159,20 +166,14 @@ for epoch in xrange(args.start_epoch, args.epochs):
 		stats.reset()
 		agent.test(args.test_steps, epoch)
 		stats.write(epoch + 1, "test")
-		# Write gym stats
-		try:
-			env.gym.write_out_stats(file_id=str(epoch))
-		except Exception as e:
-			print(str(Exception.message))
-			print(e)
-			print("Could not write gym stats ❌")
+#		# Write gym stats
+#		try:
+#			env.gym.write_out_stats(file_id=str(epoch))
+#		except Exception as e:
+#			print(str(Exception.message))
+#			print(e)
+#			print("Could not write gym stats ❌")
 
 
 stats.close()
 logger.info("All done")
-
-
-
-
-
-

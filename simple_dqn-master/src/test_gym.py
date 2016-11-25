@@ -11,13 +11,19 @@ from agent import Agent
 def str2bool(v):
   return v.lower() in ("yes", "true", "t", "1")
 
+
+def str2display(v):
+    # retain python backwards compatibility
+    return v if v in ("yes", "true", "t", "1", "minimal", "minimal_sleep", "rgb_array", "human", "human_sleep", "human_debug", "minimal_debug") else False
+
+
 parser = argparse.ArgumentParser()
 
 envarg = parser.add_argument_group('Environment')
 envarg.add_argument("env_id", help="Which atari game to test such as Breakout-v0")
 envarg.add_argument("--screen_width", type=int, default=84, help="Screen width after resize.")
 envarg.add_argument("--screen_height", type=int, default=84, help="Screen height after resize.")
-envarg.add_argument("--display", type=str2bool, default=False, help="Display screen during testing.")
+envarg.add_argument("--display_screen", type=str2display, default=False, help="The modus of the screen during gameplay. (backwards compatible)")
 
 memarg = parser.add_argument_group('Replay memory')
 memarg.add_argument("--replay_size", type=int, default=1000000, help="Maximum size of replay memory.")

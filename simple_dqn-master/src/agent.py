@@ -35,13 +35,14 @@ class Agent:
 					reward = self.env.act(0)
 					screen = self.env.getScreen()
 					terminal = self.env.isTerminal()
-					assert not terminal, "terminal state occurred during random initialization"
+					# assert not terminal, "terminal state occurred during random initialization"
 					# add dummy states to buffer
 					tries = 0
 					self.buf.add(screen)
-			except:
+			except Exception, e:
+				print(e)
 				tries -= 1
-				if tries == 0:
+				if tries <= -1:
 					assert not terminal, "terminal state occurred during random initialization"
 #					pass
 
@@ -57,6 +58,7 @@ class Agent:
 		# exploration rate determines the probability of random moves
 		if random.random() < exploration_rate:
 			action = random.randrange(self.num_actions)
+#			print("Random action = %d" % action)
 			logger.debug("Random action = %d" % action)
 		else:
 			# otherwise choose action with highest Q-value
@@ -67,6 +69,7 @@ class Agent:
 			assert len(qvalues[0]) == self.num_actions
 			# choose highest Q-value of first state
 			action = np.argmax(qvalues[0])
+			# print(qvalues[0])
 			logger.debug("Predicted action = %d" % action)
 
 		# perform the action
@@ -112,6 +115,24 @@ class Agent:
 				for j in xrange(self.train_repeat):
 					# sample minibatch
 					minibatch = self.mem.getMinibatch()
+#					a1 = minibatch[0][0][0]
+#					a2 = minibatch[3][0][0]
+#					a3 = minibatch[0][0][1]
+#					a4 = minibatch[3][0][1]
+#					print(minibatch[0].shape)
+#					print(minibatch[3].shape)
+#					import cv2
+#					cv2.imshow("1",a1)
+##					print(zip(minibatch[1], minibatch[2], minibatch[4]))
+#					cv2.waitKey(0)
+#					cv2.imshow("1",a2)
+#					cv2.waitKey(0)
+#					cv2.imshow("1",a3)
+#					cv2.waitKey(0)
+#					cv2.imshow("1",a4)
+#					cv2.waitKey(0)
+#					import sys
+#					sys.exit(0)
 					# train the network
 					self.net.train(minibatch, epoch)
 			# increase number of training steps for epsilon decay
@@ -135,3 +156,80 @@ class Agent:
 				action, reward, screen, terminal = self.step(self.exploration_rate_test)
 				# add experiences to replay memory for visualization
 				self.mem.add(action, reward, screen, terminal)
+
+class PerfectAgent(Agent):
+
+	def __init__(self, environment, replay_memory, deep_q_network, args):
+		Agent.__init__(self, environment, replay_memory, deep_q_network, args)
+		self.randomGameInterval = 12
+		self.performMax = self.randomGameInterval
+		self.randomPlaysMax = 70
+		self.randomPlays = self.randomPlaysMax # How many random steps to take every random interval
+		self.escapeRate = 0.06;
+
+	def _restartRandom(self):
+		self.env.restart()
+
+	def play_random(self, random_steps):
+		# play given number of steps
+		for i in xrange(random_steps):
+			# use exploration rate 1 = completely random
+			Agent.step(self,1)
+
+	def step(self, exploration_rate):
+		# exploration rate determines the probability of random moves
+		if random.random() < exploration_rate:
+			# Secretly, the agent will not perform a random move,
+			# but approx. the best move possible
+			if self.performMax > 0:
+				# Don't let the agent get stuck
+				if random.random() > self.escapeRate:
+					action = self.env.gym.best_action()
+				else:
+					action = random.randrange(self.num_actions)
+			elif self.performMax == 0:
+				action = random.randrange(self.num_actions)
+			else: # vary between perfect and random
+				if self.randomPlays:
+					self.randomPlays -= 1
+					action = random.randrange(self.num_actions)
+				else:
+					action = self.env.gym.best_action()
+		else:
+			# otherwise choose action with highest Q-value
+			state = self.buf.getStateMinibatch()
+			# for convenience getStateMinibatch() returns minibatch
+			# where first item is the current state
+			qvalues = self.net.predict(state)
+			assert len(qvalues[0]) == self.num_actions
+			# choose highest Q-value of first state
+			action = np.argmax(qvalues[0])
+			logger.debug("Predicted action = %d" % action)
+
+		# perform the action
+		reward = self.env.act(action)
+		screen = self.env.getScreen()
+		terminal = self.env.isTerminal()
+
+
+		# print reward
+		if reward <> 0:
+			logger.debug("Reward: %d" % reward)
+
+		# add screen to buffer
+		self.buf.add(screen)
+
+		# restart the game if over
+		if terminal:
+			self.performMax -= 1
+			if self.performMax <= -2:
+				self.randomPlays = self.randomPlaysMax
+				self.performMax = self.randomGameInterval
+			logger.debug("Terminal state, restarting")
+			self._restartRandom()
+
+		# call callback to record statistics
+		if self.callback:
+			self.callback.on_step(action, reward, terminal, screen, exploration_rate)
+
+		return action, reward, screen, terminal
