@@ -57,7 +57,7 @@ env = gym.make('SFC-v0')
 
 #-------------------------------
 # ❗️👁❗️NOTE THE NO_DIR PARAM
-env.configure(mode=render_mode, record_path=None, no_direction=True)
+env.configure(mode=render_mode, record_path=None, no_direction=False)
 
 # env.step = env._step2
 
@@ -65,7 +65,7 @@ env.configure(mode=render_mode, record_path=None, no_direction=True)
 count = 0
 with Listener(on_press=on_press, on_release=on_release) as listener:
 	for game in range(5):
-		env.reset()	
+		env.reset()
 		for t in range(250000):
 			env.render()
 			if render_mode.endswith('debug'):
@@ -73,8 +73,8 @@ with Listener(on_press=on_press, on_release=on_release) as listener:
 			else:
 				action = env.action_space.sample()
 
-	
-			# Uncomment this for perfect play 👌		
+
+			# Uncomment this for perfect play 👌
 	#           ==============================
 	#			if 0.7 < random():
 	#				action = env.best_action()
@@ -82,9 +82,9 @@ with Listener(on_press=on_press, on_release=on_release) as listener:
 	#				env.best_waction()
 	#			==============================
 			observation, reward, done, info = env.step(action)
-	
+
 #			print(reward)
-	
+
 			if done:
 				print("terminal")
 				break

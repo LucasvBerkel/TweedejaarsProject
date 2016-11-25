@@ -94,7 +94,7 @@ class SFEnv(gym.Env):
 	def best_action(self):
 		return self.best()
 
-	def _step(self, a):
+	def _step2(self, a):
 		action = self._action_set[a] # Select the action from the action dict
 		self.act(action)
 		ob = np.ctypeslib.as_array(self.update().contents)
@@ -102,7 +102,7 @@ class SFEnv(gym.Env):
 		ending = self.terminal_state()
 		return ob, reward, ending, {}
 
-	def _step2(self, a):
+	def _step(self, a):
 		action = self._action_set[a] # Select the action from the action dictq
 		reward = 0.0
 		done = False
@@ -279,14 +279,7 @@ class SFEnv(gym.Env):
 			else:
 				self._action_set[3] = 0
 		self.record_path = record_path
-		
+
 		# add down movement when in no_direction mode
 		if no_direction:
 			self._action_set[3] = 65364
-		
-		
-		
-		
-		
-		
-	
