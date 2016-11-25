@@ -243,7 +243,7 @@ void Test_Collisions()
   Handle_Missile_Flag=OFF;
   breakflag=OFF;
 
-  for(i=1;i<6;i++)   /* for all  possible missiles */
+  for(i=0;i<6;i++)   /* for all  possible missiles */
     {                  /* check against mine only */
   if(Mine_Flag==ALIVE)
     if(Missile_Flag[i]==ALIVE)
@@ -252,12 +252,10 @@ void Test_Collisions()
         {
     Missile_Flag[i]=KILL;
     Handle_Missile_Flag=ON;
-    Gen_Snap_Effect();
     Mine_Flag=KILL;
+    Score=1.0;
     Handle_Mine();
-    Mines=Mines+20;
 //    Update_Mines();
-    Score=Mines+Speed;
 //    Update_Score();
       } /* end missile vs. mine for aiming test */
     }

@@ -1,84 +1,41 @@
+// Don't import, not needed 'n stuff
+
+
 #ifndef MYVARS_H
 #define MYVARS_H
 #include <cairo.h>
 #include "myconst.h"
 #include "myext.h"
 #include "myenums.h"
-#include <sys/time.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
-
-// Addded for backwards compability
-int Missile_X;
-int Missile_Y;
-
-#ifdef GUI_INTERFACE
-cairo_t *SF_rgb_context;
-cairo_surface_t *rgb_surface;
-#endif
 
 cairo_t *SF_canvas;
 cairo_surface_t *surface;
-//cairo_font_options_t *font_options;
+cairo_font_options_t *font_options;
 
-//cairo_path_t *PrevShip;
-//cairo_path_t *PrevMissile[MAX_NO_OF_MISSILES]; // Initialized in Initialize_Graphics
-//cairo_path_t *PrevFort;
-//cairo_path_t *PrevMine;
-//cairo_path_t *PrevShell;
+cairo_path_t *PrevShip;
+cairo_path_t *PrevMissile[MAX_NO_OF_MISSILES]; // Initialized in Initialize_Graphics
+cairo_path_t *PrevFort;
+cairo_path_t *PrevMine;
+cairo_path_t *PrevShell;
 
-int Terminal_State;
-int Terminal_State_Flag;
+int Ship_Should_Update;
+int Mine_Should_Update;
+int Fort_Should_Update;
+int Missile_Should_Update[MAX_NO_OF_MISSILES] = {0};
+int Shell_Should_Update;
 
-//int Ship_Should_Update = 0;
-//int Mine_Should_Update = 0;
-//int Fort_Should_Update = 0;
-//int Missile_Should_Update[MAX_NO_OF_MISSILES] = {0};
-//int Shell_Should_Update = 0;
-int Bonus_Char_Should_Update = 0;
-//int Mine_Type_Should_Update = 0;
-//int Points_Should_Update = 0; // Show the first time around right?
-//int Velocity_Should_Update = 0;
-//int Speed_Should_Update = 0;
-//int Vulner_Should_Update = 0;
-//int Interval_Should_Update = 0;
-//int Shots_Should_Update = 0;
-//int Control_Should_Update = 0;
+int Ship_Should_Clean;
+int Mine_Should_Clean;
+int Fort_Should_Clean;
+int Missile_Should_Clean[MAX_NO_OF_MISSILES] = {0};
+int Shell_Should_Clean;
 
-//int Bonus_Char_Should_Clean = 0;
-//int Ship_Should_Clean = 0;
-//int Mine_Should_Clean = 0;
-//int Fort_Should_Clean;
-//int Missile_Should_Clean[MAX_NO_OF_MISSILES] = {0};
-//int Shell_Should_Clean;
-//int Mine_Type_Should_Clean = 0;
-//int Points_Should_Clean = 0;
-//int Velocity_Should_Clean = 0;
-//int Speed_Should_Clean = 0;
-//int Vulner_Should_Clean = 0;
-//int Interval_Should_Clean = 0;
-//int Shots_Should_Clean = 0;
-//int Control_Should_Clean = 0;
+char Initialized_Graphics;
 
-char Initialized_Graphics = 0;
-
-const char *Char_Set[]={"Y","M","P","B","Q","K","C","W","R","Z"};
-char Tmp_Char_Set[10][1];
-
-const char *Foe_Menu[3];
-const char *Friend_Menu[3];
-char *Mine_Indicator;
-
-
-int Explosion_Flag = 0;
-int Explosion_Step = 0;
-int ExpRadius;
-int ExpX;
-int ExpY;
-
-int Jitter_Flag = 0;
-int Jitter_Step = 8;
+/* Not that good maybe because for example multiple missile can exist */
+int Missile_X;
+int Missile_Y;
+int Missile_Heading;
 
 struct jstk_pos{
   int x_center;
@@ -98,42 +55,37 @@ struct aim_sess_results{
 	int score;
 };
 
+//typedef enum { ALIVE, DEAD, KILL } status;
+//typedef enum { FRIEND, FOE } mine_type;
+//typedef enum { VS_FRIEND, VS_FOE, WASTED } missile_type;
+//typedef enum { NOT_PRESENT, NON_BONUS, FIRST_BONUS, SECOND_BONUS } bonus_character;
+//typedef enum { LEFT_BUTTON,CENTER_BUTTON,RIGHT_BUTTON,NONE } mouse_button_type;
+//typedef enum { SPACE_FORTRESS, AIMING_TEST } game_type;
 
-//clock_t t0;  /* time when FOE mine is born */
-//clock_t t1;  /* double press interval start */
-//clock_t t2;  /* double press interval end */
-//int t0;
-//int intv_t1;
-//int intv_t2;
-
-int t0;
-int intv_t1;
-int intv_t2;
-
+unsigned long t0;  /* time when FOE mine is born */
+unsigned long t1;  /* double press interval start */
+unsigned long t2;  /* double press interval end */
 
 
-char *Mine_Char;
 
 		/* PRAMATERS */
 int One_Game_Duration=3; 	/****** in minutes 1-6 allowed */
 int No_Of_Games=1;  /******** varies 1-9 */
 int Resource_Display_Interval=RESOURCE_DISPLAY_INTERVAL;
 int No_Resource_Display_Interval=NO_RESOURCE_DISPLAY_INTERVAL;
-//int Interval_Upper_Limit=SF_DELAY*20;
-//int Interval_Lower_Limit=SF_DELAY*5;
-int Interval_Upper_Limit=20;
-int Interval_Lower_Limit=5;
-int Ship_Angular_Step=10;   /* Display increment in degrees */ // was 10
-int Ship_Max_Speed=5;        /* dots per loop */ // was 5
-int Ship_Accel=1;            /* dots/(loop*loop) */ // was 1 // was was 0.6
-int Mine_Speed=4;	   /* in screen dots per loop */ // was 4
+int Interval_Upper_Limit=SF_DELAY*20;
+int Interval_Lower_Limit=SF_DELAY*5;
+int Ship_Angular_Step=10;   /* Display increment in degrees */
+int Ship_Max_Speed=5;        /* dots per loop */
+int Ship_Accel=1;            /* dots/(loop*loop) */
+int Mine_Speed=4;	   /* in screen dots per loop */
 int Mine_Wait_Loops=80;
 int Mine_Live_Loops=200;     /* new parameter */
 int Missile_Speed=30;		/* new parameter */
 int Missile_Limit_Flag=OFF; /******** missile borrowing is allowed */
 int Shell_Speed=SHELL_SPEED; /* in dots/loop */
 int Fort_Lock_Interval=FORT_LOCK_INTERVAL; /* in loops */
-float Collision_Distance=COLLISION_DIST; /*********** in screen dots */
+int Collision_Distance=COLLISION_DIST; /*********** in screen dots */
 
 		/* VARIABLES */
 mine_type Mine_Type;
@@ -195,7 +147,7 @@ int Display_Interval_Flag=OFF;
 int Check_Mine_Flag=OFF;
 int Missile_Stock=100;
 int Resource_Flag=OFF;
-const char *Bonus_Char_Vector[]={"$","[","?","%","&","!","#","@",">","/"};
+char Bonus_Char_Vector[10][1]={"$","[","?","%","&","!","#","@",">","/"};
 bonus_character Bonus_Display_Flag=NOT_PRESENT;
 int Bonus_Wasted_Flag=OFF;
 int sax,sbx,scx,sdx; /* storage to save _AX,_BX,_CX,_DX */
@@ -231,7 +183,7 @@ int Score_X;            /* Score value location within data line	*/
 
 int One_Game_Loops=3600; /*  number of loops in one game  3*60*20	*/
 int Game_Counter=0;
-float Score=0.0;
+int Score=0;
 int Points=0;
 int Velocity=0;
 int Control=0;

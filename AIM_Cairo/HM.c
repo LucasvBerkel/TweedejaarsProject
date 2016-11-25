@@ -363,38 +363,6 @@ void Handle_Aim_Mine()
 
 
 
-
-void Handle_Shell()
-{
- switch(Shell_Flag)
- {
-  case KILL  : {
-//		  Draw_Shell(cr, Shell_X_Pos,Shell_Y_Pos,Shell_Headings,
-//			    SHELL_SIZE_FACTOR*MaxX); /* erase shell */
-//			clear_prev_path(cr, PrevMine);
-//			Shell_Should_Clean = 1;
-//			Shell_Should_Update = 1;
-		  Shell_Flag=DEAD;
-		  break;
-		}
-
-  case ALIVE  : {
-//		  Draw_Shell(cr, Shell_X_Pos,Shell_Y_Pos,Shell_Headings,
-//				       SHELL_SIZE_FACTOR*MaxX);
-//			clear_prev_path(cr, PrevMine);
-//			Shell_Should_Clean = 1;
-		  Shell_X_Pos=Shell_X_Pos+Shell_X_Speed;
-		  Shell_Y_Pos=Shell_Y_Pos+Shell_Y_Speed;
-		  if( (Shell_X_Pos<0) || (Shell_X_Pos>MaxX)
-		      || (Shell_Y_Pos<0) || (Shell_Y_Pos>MaxY) )
-			{
-		    Shell_Flag=KILL;  /* kill shell */
-			}
-		}
- } /* end switch */
-}
-
-
 void Fire_Missile(int Index)
 {
 	Missile_Headings[Index]=Ship_Headings;
@@ -435,8 +403,8 @@ void Handle_Missile()
 			 if((Missile_X_Pos[i]<0) || (Missile_X_Pos[i]>MaxX)
 			 || (Missile_Y_Pos[i]<0) || (Missile_Y_Pos[i]>MaxY))
 				{
-			    Missile_Flag[i]=KILL;
-					Points=Points-1;
+			    	Missile_Flag[i]=KILL;
+					Score = -0.1;
 				}
 			 else
 			  {

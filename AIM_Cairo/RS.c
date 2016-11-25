@@ -238,7 +238,7 @@ void Init_Session() {
 
 void Init_Game()
 {
-    Score=0;
+    Score=0.0;
     Points=0;
     Velocity=0;
     Control=0;
@@ -409,17 +409,15 @@ void AIM_iteration()
 	//            if(Sound_Flag==1) {Sound_Flag--; nosound();}
 	Handle_Aim_Mine();
 	Test_Collisions();
-	Handle_Shell();
 //	Handle_Fortress();
 //	if(Display_Interval_Flag) {   /* of double press */
 //	    if(Mine_Type==FOE) Find_Interval();
 //	    Display_Interval_Flag=OFF;
 //	}
-	Accumulate_Data();
-	Handle_Bonus();
+//	Accumulate_Data();
+//	Handle_Bonus();
 
 //	Score=Points+Velocity+Control+Speed;
-	Score=Mines+Speed;
 	if(Loop_Counter >= 2400) 
 	{
 		Loop_Counter = 0;

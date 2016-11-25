@@ -24,9 +24,13 @@
 //	int score;
 //};
 
-// Addded for backwards compability 
+// Addded for backwards compability
 extern int Missile_X;
 extern int Missile_Y;
+
+extern float Prev_Square_Dist;
+extern float Prev_Ship_Square_Dist;
+extern float Prev_Ship_Square_Dist_Ratio;
 
 extern char *Mine_Char;
 
@@ -46,6 +50,12 @@ extern char Initialized_Graphics;
 //extern cairo_path_t *PrevFort;
 //extern cairo_path_t *PrevMine;
 //extern cairo_path_t *PrevShell;
+
+extern int Square_X;
+extern int Square_Y;
+extern int Square_Step;
+extern int Square_Flag;
+extern int N_Squares;
 
 extern int Terminal_State;
 
@@ -94,6 +104,7 @@ extern int ExpX;
 extern int ExpY;
 
 extern int Jitter_Flag;
+extern int Jitter_Switch;
 extern int Jitter_Step;
 
 /* Not that good maybe because for example multiple missile can exist */

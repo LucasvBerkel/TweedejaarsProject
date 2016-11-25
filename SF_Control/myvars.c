@@ -31,6 +31,16 @@ cairo_surface_t *surface;
 int Terminal_State;
 int Terminal_State_Flag;
 
+float Prev_Square_Dist;
+float Prev_Ship_Square_Dist = 0;
+float Prev_Ship_Square_Dist_Ratio = 1;
+
+int Square_X = 0;
+int Square_Y = 0;
+int Square_Step;
+int Square_Flag = KILL;
+int N_Squares = 0;
+
 //int Ship_Should_Update = 0;
 //int Mine_Should_Update = 0;
 //int Fort_Should_Update = 0;
@@ -79,6 +89,8 @@ int ExpY;
 
 int Jitter_Flag = 0;
 int Jitter_Step = 8;
+int Jitter_Switch = 1;
+
 
 struct jstk_pos{
   int x_center;
@@ -301,4 +313,4 @@ int No_Of_Bonus_Windows=0;
 int Fort_Lock_Counter=0;
 int Effect_Flag=OFF;
 
-#endif                      
+#endif
