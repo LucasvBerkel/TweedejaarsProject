@@ -1,3 +1,5 @@
+/****************************************** COMPILE THINGY **************************************
+
 // Probably add in myvars.c somewhere
 // OS X compilation
 // clang -Wall -g myvars.c TCOL.c RS.c HM.c DE_Minimal.c -I/usr/local/include/cairo -L/usr/local/lib/ -lcairo  -o DE_Minimal
@@ -20,6 +22,11 @@
 // clang `pkg-config --cflags cairo` `pkg-config --libs cairo` -shared -o sf_frame_lib_FULL.so myvars.o HM.o RS.o TCOL.o DE_Minimal.o -O3 -D GUI_INTERFACE
 
 // clang `pkg-config --cflags cairo` `pkg-config --libs cairo` -Wall -g -fPIC -c  myvars.c DE_Minimal.c HM.c TCOL.c RS.c -Wno-dangling-else -Wno-switch -O3; clang `pkg-config --cflags cairo` `pkg-config --libs cairo` -shared -o sf_frame_lib.so myvars.o HM.o RS.o TCOL.o DE_Minimal.o -O3; clang `pkg-config --cflags cairo` `pkg-config --libs cairo`  -Wall -g -fPIC -c  myvars.c DE_Minimal.c HM.c TCOL.c RS.c -Wno-dangling-else -Wno-switch -O3 -D GUI_INTERFACE; clang `pkg-config --cflags cairo` `pkg-config --libs cairo` -shared -o sf_frame_lib_FULL.so myvars.o HM.o RS.o TCOL.o DE_Minimal.o -O3 -D GUI_INTERFACE; cp sf_frame_lib_FULL.so /home/wijnand/Documents/git/TweedejaarsProject/gym-master/gym/envs/space_fortress/linux2/sf_frame_lib_FULL.so; cp sf_frame_lib.so /home/wijnand/Documents/git/TweedejaarsProject/gym-master/gym/envs/space_fortress/linux2/sf_frame_lib.so
+
+-- Full command:
+eval "$(cat DE_Minimal.c | grep -m 4 "\-\-cflags cairo")"; cp *.so ../gym-master/gym/envs/space_fortress/linux2
+
+***************************** -------------------------------------- ******************************/
 
 #ifndef DE_H
 #define DE_H

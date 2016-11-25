@@ -19,6 +19,9 @@ clang -Wall -g -fPIC myvars.c TCOL.c DE_Minimal.c HM.c RS.c `pkg-config --cflags
 -D NO_DIRECTION ** Turns off movement based on the ships nose direction **
 -D DEBUG ** Sounds Effects/Printing messages on soundless linux **
 
+-- Full command:
+eval "$(cat DE_Minimal.c | grep -m 4 "\-\-cflags cairo")"; cp *.so ../gym-master/gym/envs/space_fortress/linux2
+
 ***************************** -------------------------------------- ******************************/
 
 #ifndef DE_H
