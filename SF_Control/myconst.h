@@ -31,7 +31,7 @@
 
 #define SQUARE_HEIGHT 35
 #define SQUARE_WIDTH 35
-#define MAX_SQUARES 5
+#define MAX_SQUARES 3
 
 
 #define UP 65362
