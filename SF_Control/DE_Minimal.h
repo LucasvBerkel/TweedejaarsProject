@@ -7,9 +7,10 @@
 #define TEXT_HEIGHT 10
 #define TEXT_WIDTH 8
 #endif
-#define SF_YELLOW 0.0, 0.0, 0.0, 0.90
-#define SF_GREEN 0.0, 0.0, 0.0, 0.65
-#define SF_BLUE 0.0, 0.0, 0.0, 0.8575
+
+#define SF_YELLOW 0.0, 0.0, 0.0, 1
+#define SF_GREEN 0.0, 0.0, 0.0, 0.4720
+#define SF_BLUE 0.0, 0.0, 0.0, 0.66
 #define SF_ORANGE 0.0, 0.0, 0.0, 0.4724
 //#define WINDOW_WIDTH 240
 //#define WINDOW_HEIGHT 240 + (TEXT_HEIGHT*3)

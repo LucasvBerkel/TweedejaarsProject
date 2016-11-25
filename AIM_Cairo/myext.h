@@ -24,7 +24,7 @@
 //	int score;
 //};
 
-// Addded for backwards compability 
+// Addded for backwards compability
 extern int Missile_X;
 extern int Missile_Y;
 

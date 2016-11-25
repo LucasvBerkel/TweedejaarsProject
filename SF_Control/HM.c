@@ -22,18 +22,11 @@
 #include "HM.h"
 #include "RS.h"
 
-mine_type Mine_Type;
-int Mine_Alive_Counter=0;
-int Mine_Dead_Counter=0;
-int Missile_Delay_Counter=0;
-
-
 #ifdef NO_DIRECTION
 void Move_Ship()
 {
 	Ship_X_Old_Pos=Ship_X_Pos;
 	Ship_Y_Old_Pos=Ship_Y_Pos;
-	printf("Rotate: %d Accel: %d \n", Rotate_Input, Accel_Input);
 	if (Rotate_Input!=0) {      // Ship moves left/right
 		Ship_X_Pos = SHIP_MAX_SPEED * Rotate_Input + Ship_X_Pos;
 		Rotate_Input = 0;
@@ -71,7 +64,6 @@ void Move_Ship()
 	}
 	#endif
 
-	
 }
 #else
 void Move_Ship()
@@ -100,12 +92,15 @@ void Move_Ship()
 		// Round because this is rounded down by integer casting, which makes diagonal movement
 		// a lot slower compared to vertical or horizontal movement
 
+
 	    Ship_Y_Speed=round(-4.4*Fcos(Ship_Headings));
    		Ship_X_Speed=round(4.4*Fsin(Ship_Headings));
+
 		#else
-    Ship_X_Speed=Ship_X_Speed+0.65*Ship_Accel*Fsin(Ship_Headings);
-    Ship_Y_Speed=Ship_Y_Speed-0.65*Ship_Accel*Fcos(Ship_Headings);
-    /* assure it does not exceed MAXspeed */
+	    Ship_X_Speed=Ship_X_Speed+0.65*Ship_Accel*Fsin(Ship_Headings);
+	    Ship_Y_Speed=Ship_Y_Speed-0.65*Ship_Accel*Fcos(Ship_Headings);
+    	
+    	/* assure it does not exceed MAXspeed */
 
 		if(fabsf(Ship_X_Speed)>Ship_Max_Speed)
 		{
@@ -186,6 +181,7 @@ void Move_Ship()
 }
 #endif
 
+
 void Handle_Square()
 {
 	switch(Square_Flag)
@@ -194,18 +190,18 @@ void Handle_Square()
 			Generate_Square();
 			Square_Flag = ALIVE;
 			N_Squares++;
-//		      if (N_Squares >= MAX_SQUARES)
-//		      {
-//		        Terminal_State = 1;
-//		      }
+
+			if (N_Squares >= MAX_SQUARES)
+			{
+			 Terminal_State = 1;
+			 N_Squares = 0;
+			}
 			break;
 		case ALIVE:
 			Square_Step--;
 			if(Square_Step < 0)
 			{
-//				Square_Flag = KILL;
-				Score = -0.22; // There is no observation connected to this atm
-        Terminal_State = 1;
+				Score = -1.0; // There is no observation connected to this atm
 				Square_Flag = KILL;
 			}
 			break;
@@ -213,74 +209,6 @@ void Handle_Square()
 }
 
 
-void Handle_Speed_Score()
-{
-//  struct timeval tDiff;
-	int interval;
-  int dts;
-
-  dts=0;
-  if(Mine_Type==FOE)
-    if(Missile_Type==VS_FOE) /* successful double press */
-      {
-//			timeval_subtract(&tDiff, &intv_t2, &t0);
-			interval= intv_t2-t0; /* time interval from missile */
-			/* appearance to end of successful */
-			/* double press interval      */
-	if(interval<=20) dts=40;
-	else
-	if(interval<=40) dts=30;
-	else
-	if(interval<=60) dts=20;
-	else
-	if(interval<=80) dts=10;
-	else
-	if(interval<=100) dts=0;
-	else
-	if(interval<=120) dts=-10;
-	else
-	if(interval<=140) dts=-20;
-	else
-	if(interval<=160) dts=-30;
-	else
-	if(interval<=180) dts=-40;
-	else
-	dts=-50;
-     }
-     else /* no successful double-press */
-	dts=-50; /* this is "unfair" */
-   Speed=Speed+dts;
-
-	/* mine bonus for any type */
-
-   dts=0;
-   if(Mine_Alive_Counter>=Mine_Live_Loops) dts=-100;
-   else
-   if(Mine_Alive_Counter<=20) dts=80;
-   else
-   if(Mine_Alive_Counter<=40) dts=60;
-   else
-   if(Mine_Alive_Counter<=60) dts=40;
-   else
-   if(Mine_Alive_Counter<=80) dts=20;
-   else
-   if(Mine_Alive_Counter<=100) dts=0;
-   else
-   if(Mine_Alive_Counter<=120) dts=-10;
-   else
-   if(Mine_Alive_Counter<=140) dts=-40;
-   else
-   if(Mine_Alive_Counter<=160) dts=-60;
-   else
-   if(Mine_Alive_Counter<=180) dts=-80;
-   else
-   if(Mine_Alive_Counter<=200) dts=-100;
-
-  Speed=Speed+dts;
-
-//  Update_Speed(cr);
-
-}
 
 int randrange(int min, int max)
 {

@@ -5,7 +5,7 @@
 	This file contains all the constants as defined by the
 
 			Space Fortress Game
-	
+
 	Use: It is included in the source files as
 	#include "myconst.h"
 	and must be present in the current directory!

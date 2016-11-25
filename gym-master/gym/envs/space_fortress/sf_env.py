@@ -43,10 +43,9 @@ class SFEnv(gym.Env):
 		# self.prev_score = 0.0 # prev_score was removed in favor of reward
 		self.screen_height = 448
 		self.screen_width = 448
-		if game == "AIM":
-			self.scale = 3.2 # The amount of (down) scaling of the screen height and width
-		else:
-			self.scale = 5.3
+
+		self.scale = 5.3 # The amount of (down) scaling of the screen height and width
+
 		# Space, left, right, up, nothing
 
 
@@ -54,6 +53,7 @@ class SFEnv(gym.Env):
 		#		UP = 1
 		#		RIGHT = 2
 		#		SHOOT = 3
+
 
 		actions_SFS = {0: 65361, 1 : 65362, 2 : 65363, 3 : 32}
 		actions_AIM = {0 : 32,  1 : 65363, 2 : 65361}
@@ -207,6 +207,7 @@ class SFEnv(gym.Env):
 #		self.write_out_stats()
 		self.stop_drawing()
 
+
 	def _configure(self, mode='rgb_array', debug=False, record_path=None, write_stats=True, no_direction=False):
 		self.mode = mode
 		os = platform
@@ -288,5 +289,4 @@ class SFEnv(gym.Env):
 		
 		
 		
-		
-		
+	

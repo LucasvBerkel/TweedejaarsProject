@@ -293,18 +293,7 @@ void Test_Collisions()
 			#endif
 		#endif
 		Square_Flag = KILL;
-    Terminal_State = 1;
-		// Score += Square_Step;
-		if(Square_Step < 0)
-		{
-//				Square_Flag = KILL;
-			Score += 0.022;
-		}
-		else
-		{
-			Score += (score_function() / 420.0); // normalize score
-		}
-		// more meaningfull compared to intermediate rewards
+		Score = 1;
 	}
 }
 

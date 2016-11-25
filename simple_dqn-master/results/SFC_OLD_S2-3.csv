@@ -1,0 +1,1 @@
+epoch,phase,steps,nr_games,average_reward,min_game_reward,max_game_reward,last_exploration_rate,total_train_steps,replay_memory_count,meanq,meancost,weight_updates,total_time,epoch_time,steps_per_second

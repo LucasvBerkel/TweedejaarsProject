@@ -31,21 +31,20 @@
 
 #define SQUARE_HEIGHT 35
 #define SQUARE_WIDTH 35
-#define MAX_SQUARES 100
+#define MAX_SQUARES 5
+
 
 #define UP 65362
 #define SPACE 32
 #define LEFT 65361
 #define RIGHT 65363
 #define DOWN 65364
-#define KEY_1 49
-#define KEY_2 50
-#define KEY_3 51
-#define ENTER 13
-#define REGULAR_CRAP 1
-#define EXTENDED_CRAP 2
+#define RIGHT 65363
+#define ESC -1
+
 #define NO_INPUT 0
 #define SHIP_MAX_SPEED 5 // Used to be a variable for some reason
+#define NO_INPUT 0
 #define ON 1
 #define OFF 0
 #define NIL 0

@@ -3,7 +3,7 @@
 // To disable the gui and compile as a library, leave out the GUI switch above. (i.e. remove
 // the -u option)
 // To run without GTK warnings: (actually running without any error logging to the terminal)
-// ./RS 2>/dev/null 
+// ./RS 2>/dev/null
 
 /* test graphics 21.2.90 18:00
             definitions */
@@ -83,7 +83,7 @@ extern mine_type Mine_Type;
 
 // Something to do with double presses or something
 // intv_t2 - intv_t1 should give some value in milliseconds, if that is above some threshold some
-// flag is set. 
+// flag is set.
 
 
 
@@ -118,20 +118,20 @@ void handle_3()
 void Check_Bonus_Input() {
 		if(Bonus_Display_Flag==FIRST_BONUS) {
         Bonus_Wasted_Flag=ON;
-    } 
-		else if(Bonus_Display_Flag==SECOND_BONUS) 
+    }
+		else if(Bonus_Display_Flag==SECOND_BONUS)
 		{
-        if(!Bonus_Wasted_Flag) 
+        if(!Bonus_Wasted_Flag)
 				{
-            if(Key==KEY_1) 
+            if(Key==KEY_1)
 						{
                 No_Of_Points_Bonus_Taken++;
                 Points=Points+100;
 //								Points_Should_Update = 1;
 //								Points_Should_Clean = 1;
-            } 
+            }
 						//GDK_KEY_2, Get_User_Input() only calls this function when the input is '1' or '2'
-						else  
+						else
 						{
                 No_Of_Missiles_Bonus_Taken++;
                 Missile_Stock=Missile_Stock+50;
@@ -156,14 +156,14 @@ void Get_User_Input()
         New_Input_Flag=OFF; /* make sure no repetitions on same input */
 //      if (Key==UP) Accel_Input=1;        /*   UP    */
       if (Key==LEFT)  Rotate_Input=-1;      /*   LEFT  */
-      else if (Key==RIGHT) Rotate_Input=1;       /*   RIGHT */ 
+      else if (Key==RIGHT) Rotate_Input=1;       /*   RIGHT */
       else if (Key==SPACE)  New_Missile_Flag=ON;  /*   DOWN  */ // Used to be down
 //      else if (Key==KEY_1)    Check_Bonus_Input();        /*   P(oints) */
 //      else if (Key==KEY_2)    Check_Bonus_Input();        /*   M(issiles) */
 //		// probably not done right
 //  		else if (Key==KEY_3)   handle_3(); // was handled by kbd interrupt handler */ // hmm
-				// enter pauses the game 
-//        if (Key==GDK_KEY_Return) Freeze_Flag=Freeze_Flag^1; /* toggle freeze flag */ 
+				// enter pauses the game
+//        if (Key==GDK_KEY_Return) Freeze_Flag=Freeze_Flag^1; /* toggle freeze flag */
 //        if (Key==GDK_KEY_Escape)   End_Flag=ON;
     }
 //    if(Check_Mine_Flag) /* after first press of 3 */
@@ -206,34 +206,8 @@ void Clear_Interval()   /* clear double-press interval */
 
 
 
-void Find_Interval()   /* display double-press interval */
-{
-//    int svcolor;
-//    int x,y; // Unused
-    int interval;
-//		struct timeval tvDiff;
-//    interval=Double_Press_Interval=round(((double)(intv_t2-intv_t1)/(double)CLOCKS_PER_SEC)*1000.0); /* in milliseconds */  
-//		timeval_subtract(&tvDiff, &intv_t2, &intv_t2);
-		interval=intv_t2-intv_t1;
-//    if((interval<SF_DELAY*20)&&(interval>SF_DELAY)) /* only when interval makes sense */
-		if((interval < 20)&&(interval>1)) /* only when interval makes sense */
-    {		
-        if((interval>=Interval_Lower_Limit)&&(interval<=Interval_Upper_Limit)
-             &&(Mine_Flag==ALIVE)&&(Mine_Type==FOE))
-				{
-					printf("Got interval. 👁 💯 💯 💯 \n");
-   				 Missile_Type=VS_FOE;   /* rearm missile */
-//       		Mine_Char = Mine_Char;
-//				 Show_Mine_Type();
-//        Update_Interval(cr);
-				}
-    }
-}
-
-
 void Init_Session() {
     One_Game_Loops=One_Game_Duration*60*20;
-    Game_Type=SPACE_FORTRESS;
 }
 
 void Init_Game()
@@ -262,19 +236,6 @@ void Init_Game()
     No_Of_Bonus_Windows=0;
     Missile_Stock=100;
 
-		// We don't do anything with menus? 
-//    Select_Mine_Menus();
-    /*
-    clrscr(); // From graphics.h or something
-    gotoxy(30,5);
-    printf("SPACE  FORTRESS ");
-    gotoxy(20,15);
-    Select_Mine_Menus();
-    printf("Your foe mines are:");
-    for(int i=0;i<3;i++) printf("    %c",Foe_Menu[i][0]);
-    gotoxy(1,24);
-    printf("Type any  key to continue ..\n");
-    getch();*/
 }
 
 
@@ -307,9 +268,9 @@ int Generate_Non_Bonus_Char()
    int rn;
 
    do { rn=randrange(0,9); } // Used to be 10, appereantly random(n) generates in (0, n-1)
-   while(rn==Bonus_Indication_Index); // I think the only reason for this being here 
+   while(rn==Bonus_Indication_Index); // I think the only reason for this being here
 //	 is the the original random function always returned a number between 0 and n,
-//	 while other random fucntions can return a number in between m and n. 
+//	 while other random fucntions can return a number in between m and n.
    return(rn);
 }
 
@@ -324,8 +285,8 @@ void Generate_Resource_Character()
    		if(randrange(0,9)<7) /* display first bonus */
      	{
 				No_Of_Bonus_Windows++;
-				// An index for an array with bonus characters (like '$) of chartype 
-				rn=Bonus_Indication_Index; 
+				// An index for an array with bonus characters (like '$) of chartype
+				rn=Bonus_Indication_Index;
 //				Xor_Bonus_Char(rn); // Put the character/image currently passed to graphics
 				lastchar=Bonus_Display_Flag=FIRST_BONUS;
 				Bonus_Char_Should_Update = 1;
@@ -401,14 +362,15 @@ void AIM_iteration()
 	Loop_Counter++;
 	// This was done by processor interupts, but is allowed automatically by GTK
 	Get_User_Input();
-	// Pauses the game (when the flag is set, continues this loop) 
-//	while(Freeze_Flag) Get_User_Input(); 
+	// Pauses the game (when the flag is set, continues this loop)
+//	while(Freeze_Flag) Get_User_Input();
 	Move_Ship();
 	Handle_Missile();
 	//            if(Sound_Flag>1) Sound_Flag--;
 	//            if(Sound_Flag==1) {Sound_Flag--; nosound();}
 	Handle_Aim_Mine();
 	Test_Collisions();
+
 //	Handle_Fortress();
 //	if(Display_Interval_Flag) {   /* of double press */
 //	    if(Mine_Type==FOE) Find_Interval();
@@ -418,6 +380,7 @@ void AIM_iteration()
 //	Handle_Bonus();
 
 //	Score=Points+Velocity+Control+Speed;
+
 	if(Loop_Counter >= 2400) 
 	{
 		Loop_Counter = 0;
@@ -450,8 +413,8 @@ static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data
 {
 //	printf("Ship pos on draw: %d %d\n", Ship_X_Pos, Ship_Y_Pos);
 
-	// Oddly enough, clipping seems to work different accros surfaces. Therefore it is 
-	// sometimes wise to set things to always update here. (a clip within a quartz 	
+	// Oddly enough, clipping seems to work different accros surfaces. Therefore it is
+	// sometimes wise to set things to always update here. (a clip within a quartz
 	// surface erases everything outside of the clipping region)
 	unsigned int elapsed_time;
 	struct timeval loop_start_time, loop_end_time, loopDiff;
@@ -471,7 +434,7 @@ static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data
 
 
 //	for(int m = 0; m < MAX_NO_OF_MISSILES; m++)
-//	{ 
+//	{
 //		if (Missile_Flag[m]==ALIVE)
 //		{
 ////			Missile_Should_Update[m] = 1;
@@ -489,7 +452,7 @@ static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data
 //	Ship_Should_Update = 1;
 //	Fort_Should_Clean = 1;
 //	Ship_Should_Clean = 1;
-////	if(!Mine_Type_Should_Clean)	
+////	if(!Mine_Type_Should_Clean)
 ////	{
 ////		Mine_Type_Should_Update = 1;
 ////	}
@@ -538,7 +501,7 @@ gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
 {
 
 	set_key(event->keyval); // Only set the key here
-  return FALSE; 
+  return FALSE;
 }
 
 void animation_loop(GtkWidget *darea)
@@ -550,12 +513,12 @@ void animation_loop(GtkWidget *darea)
 	Init_Aim_Session();
 	Game_Counter=0;
 
-	do 
+	do
 	{   /* loop on number of games here */
 		Init_Game();
 //		Reset_Screen(cr); // Moved to set initial vals
 		Loop_Counter=0;
-		do 
+		do
 		{
 			gtk_widget_queue_draw(darea);
 			while(gtk_events_pending())
@@ -566,12 +529,12 @@ void animation_loop(GtkWidget *darea)
 		while(!Restart_Flag&&!End_Flag&&(Loop_Counter < One_Game_Loops));
 		Initialized_Graphics = 0;
 		Game_Counter++;
-		// Close_Graphics(cr); // Not sure if closing is appropiate (it's impossible to close 
-		// in this part of the program because we don't have acces to GTK cairo context) 
-	} 
+		// Close_Graphics(cr); // Not sure if closing is appropiate (it's impossible to close
+		// in this part of the program because we don't have acces to GTK cairo context)
+	}
 	while(!Restart_Flag && !End_Flag);
 
-	// And the clean up here (close graphics) 
+	// And the clean up here (close graphics)
 }
 
 int main(int argc, char *argv[])

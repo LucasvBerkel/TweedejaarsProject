@@ -23,10 +23,12 @@ def on_press(key):
 	global current_key
 
 	key_to_action = {Key.left : 0, Key.up : 1, Key.right : 2, Key.space : 3, Key.down : 3}
+
 	if key in key_to_action.keys():
 		current_key = key_to_action[key]
 	else:
 		current_key = 4
+
 
 def on_release(key):
 	pass
@@ -37,13 +39,26 @@ current_key = 3
 if render_mode.endswith("debug"):
 	print("Note that this script should be run as super user under OS X 👁")
 
+
+def on_release(key):
+	pass
+
+global render_mode
+render_mode = "human_debug"
+current_key = 3
+if render_mode.endswith("debug"):
+	print("Note that this script should be run as super user under OS X 👁")
+
+
 env = gym.make('SFC-v0')
 # setting the render mode does not actually	work
 
 # Configure enviroment
+
 #-------------------------------
 # ❗️👁❗️NOTE THE NO_DIR PARAM
 env.configure(mode=render_mode, record_path=None, no_direction=True)
+
 # env.step = env._step2
 
 # Collect events until released
@@ -51,13 +66,13 @@ count = 0
 with Listener(on_press=on_press, on_release=on_release) as listener:
 	for game in range(5):
 		env.reset()	
-		print("Reset")
 		for t in range(250000):
 			env.render()
 			if render_mode.endswith('debug'):
 				action = current_key
 			else:
 				action = env.action_space.sample()
+
 	
 			# Uncomment this for perfect play 👌		
 	#           ==============================
@@ -77,6 +92,23 @@ with Listener(on_press=on_press, on_release=on_release) as listener:
 	#			count += 1
 				# print("Episode finished after {} timesteps".format(t+1))
 	#				break
-print(count)
+
+
+			# Uncomment this for perfect play 👌
+#           ==============================
+			# action = env.best_action()
+#			==============================
+			observation, reward, done, info = env.step(action)
+
+			print(reward)
+
+			if done:
+				print("terminal")
+				break
+#			print("Done!")
+#			count += 1
+				# print("Episode finished after {} timesteps".format(t+1))
+#				break
+	print(count)
 #	env.write_out_stats("test")
 #	env.close()

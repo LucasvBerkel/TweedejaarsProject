@@ -5,7 +5,7 @@
 # You can copy/paste all of this 😘
 clang -march=native `pkg-config --cflags cairo` -Wall -g -fPIC -c  myvars.c DE_Minimal.c HM.c TCOL.c RS.c -Wno-dangling-else -Wno-switch -O3 $Switches;
 clang -march=native `pkg-config --cflags cairo --libs cairo` -shared -o control_frame_lib.so myvars.o HM.o RS.o TCOL.o DE_Minimal.o -O3 $Switches;
-#*** Add -D GUI_INTERFACE to enable acces to full size, full color renders of the game ***#
+# *** Add -D GUI_INTERFACE to enable acces to full size, full color renders of the game *** #
 clang -march=native `pkg-config --cflags cairo` -Wall -g -fPIC -c  myvars.c DE_Minimal.c HM.c TCOL.c RS.c -Wno-dangling-else -Wno-switch -O3 -D GUI_INTERFACE $Switches;
 clang -march=native `pkg-config --cflags cairo --libs cairo` -shared -o control_frame_lib_FULL.so myvars.o HM.o RS.o TCOL.o DE_Minimal.o -O3 -D GUI_INTERFACE $Switches;
 
@@ -49,7 +49,8 @@ clang -Wall -g -fPIC myvars.c TCOL.c DE_Minimal.c HM.c RS.c `pkg-config --cflags
 #define RENDER_WIDTH 84
 #define RENDER_HEIGHT 84
 
-#define DEFAULT_LINE_WIDTH 6.5
+
+#define DEFAULT_LINE_WIDTH 3.8
 
 // Globals
 #ifdef CV_SCALE
@@ -101,7 +102,7 @@ void Initialize_Graphics(cairo_t *cr)
 	else if(cairo_surface_get_type(cairo_get_target(cr)) == CAIRO_SURFACE_TYPE_IMAGE)
 	{
 		#ifdef __APPLE__
-			cairo_set_line_width(cr, 8.2);
+			cairo_set_line_width(cr, DEFAULT_LINE_WIDTH);
 		#else
 			cairo_set_line_width(cr, DEFAULT_LINE_WIDTH);
 		#endif
@@ -278,7 +279,8 @@ void clean(cairo_t *cr)
 	#ifdef GUI
 	cairo_set_source_rgb(cr, 0.0, 0.0, 0.0);
 	#else
-	cairo_set_source_rgba(cr, 0.0, 0.0, 0.0, 1.0);
+
+	cairo_set_source_rgba(cr, 0.0, 0.0, 0.0, 0.0);
 	#endif
 
 	#ifdef GUI_INTERFACE
@@ -292,16 +294,16 @@ void clean(cairo_t *cr)
 void update_drawing(cairo_t *cr)
 {
 
-		Draw_Ship_Nose(cr, Ship_X_Pos,Ship_Y_Pos,Ship_Headings,SHIP_SIZE_FACTOR*MaxX);
-		cairo_stroke(cr);
-		Draw_Ship(cr, Ship_X_Pos,Ship_Y_Pos,Ship_Headings,SHIP_SIZE_FACTOR*MaxX);
-		cairo_stroke(cr);
+	Draw_Ship(cr, Ship_X_Pos,Ship_Y_Pos,Ship_Headings,SHIP_SIZE_FACTOR*MaxX);
+	cairo_stroke(cr);
+	cairo_set_line_width(cr, DEFAULT_LINE_WIDTH+2.5);
+	Draw_Ship_Nose(cr, Ship_X_Pos,Ship_Y_Pos,Ship_Headings,SHIP_SIZE_FACTOR*MaxX);
+	cairo_stroke(cr);
+	cairo_set_line_width(cr, DEFAULT_LINE_WIDTH);
 
-		Draw_Square(cr, Square_X, Square_Y);
-		cairo_stroke_preserve(cr);
-		cairo_fill(cr);
-		// Restore old line width
-//		cairo_set_line_width(cr, DEFAULT_LINE_WIDTH);
+	Draw_Square(cr, Square_X, Square_Y);
+	cairo_stroke_preserve(cr);
+	cairo_fill(cr);
 }
 
 void Draw_Square(cairo_t *cr, int x, int y)
@@ -484,6 +486,7 @@ void Reset_Screen()
     Accel_Input=0; /* joystick forward */
 
 	Score=0.0;
+
 //	srand(time(NULL));
 	N_Squares = 0;
 	Square_Step = MAX_SQUARE_STEPS;

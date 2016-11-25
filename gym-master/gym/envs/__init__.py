@@ -424,7 +424,7 @@ register(
 
 # Space Forte
 # ----------------------------------------
-for game in ['AIM', 'SF', 'SFS']:
+for game in ['AIM', 'SF', 'SFS', 'SFC']:
 	register(
 		id='{}-v0'.format(game),
 		entry_point='gym.envs.space_fortress:SFEnv',

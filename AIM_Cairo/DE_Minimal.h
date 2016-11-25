@@ -5,7 +5,7 @@
 #define TEXT_WIDTH 8 // The width of character "z" in pixels (with monospace font)
 #else
 #define TEXT_HEIGHT 10
-#define TEXT_WIDTH 8 
+#define TEXT_WIDTH 8
 #endif
 #define SF_YELLOW 0.0, 0.0, 0.0, 1
 #define SF_GREEN 0.0, 0.0, 0.0, 0.4720

@@ -41,6 +41,7 @@ int Square_Step;
 int Square_Flag = KILL;
 int N_Squares = 0;
 
+
 //int Ship_Should_Update = 0;
 //int Mine_Should_Update = 0;
 //int Fort_Should_Update = 0;

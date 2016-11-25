@@ -54,38 +54,37 @@ void Get_User_Input()
     if (New_Input_Flag) /* new input occured */
     {
     	New_Input_Flag=OFF; /* make sure no repetitions on same input */
-		
 			
-			switch(Key) {
-			#ifdef NO_DIRECTION
-				case UP:
-					printf("Up\n");
-			 		Accel_Input=1;        /*   UP    */
-					break;
-				case LEFT:
-					printf("Left\n");
-					Rotate_Input=-1;      /*   LEFT  */
-					break;
-				case RIGHT:
-					printf("Right\n");
-					Rotate_Input=1;       /*   RIGHT */
-					break;
-				case DOWN:
-					printf("Down\n");
-					Accel_Input=-1;        /*   DOWN    */
-					break;
-			#else
-				case UP:
-			 		Accel_Input=1;        /*   UP    */
-					break;
-				case LEFT:
-					Rotate_Input=-1;      /*   LEFT  */
-					break;
-				case RIGHT:
-					Rotate_Input=1;       /*   RIGHT */
-					break;
-			#endif
-    		}
+		switch(Key) {
+		#ifdef NO_DIRECTION
+			case UP:
+				printf("Up\n");
+		 		Accel_Input=1;        /*   UP    */
+				break;
+			case LEFT:
+				printf("Left\n");
+				Rotate_Input=-1;      /*   LEFT  */
+				break;
+			case RIGHT:
+				printf("Right\n");
+				Rotate_Input=1;       /*   RIGHT */
+				break;
+			case DOWN:
+				printf("Down\n");
+				Accel_Input=-1;        /*   DOWN    */
+				break;
+		#else
+			case UP:
+		 		Accel_Input=1;        /*   UP    */
+				break;
+			case LEFT:
+				Rotate_Input=-1;      /*   LEFT  */
+				break;
+			case RIGHT:
+				Rotate_Input=1;       /*   RIGHT */
+				break;
+		#endif
+   		}
     		
 	}
 }
@@ -136,10 +135,11 @@ void SF_iteration()
 {
 
   Get_User_Input();
-	if(Accel_Input)
-	{
-		Score = direction_score();
-	}
+
+	// if(Accel_Input)
+	// {
+	// 	Score = direction_score();
+	// }
 
 	// Pauses the game (when the flag is set, continues this loop)
 //	while(Freeze_Flag) Get_User_Input();

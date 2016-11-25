@@ -65,153 +65,6 @@ extern void Handle_Fortress(); */
 /*int Ship_Killings_Counter=0; */
 
 
-// Okay to drop animation?
-void Gen_Explosion(int X_Pos,int Y_Pos,int Radius)
-{
-//  int i,j;
-//  int iarc;
-//	g_signal_connect(G_OBJECT(darea), "draw", G_CALLBACK(on_draw_event), NULL);
-//	cairo_reset_clip(cr);
-//	cairo_rectangle(cr, 0, 0, 320, 240);
-//	cairo_paint(cr);
-/* -- unused --
-  int X_dot,Y_dot;
-  int svcolor;
-  int Last_Pitch; */
-  Effect_Flag=ON;
-	Explosion_Flag=1;
-//  svccd olor=getcolor();
-
-	ExpRadius = Radius;
-	ExpX = X_Pos;
-	ExpY = Y_Pos;
-
-//  j=0;
-//  for(i=10;i<Radius;i=i+10)
-//  {
-////       setcolor(LIGHTRED);
-//		cairo_set_source_rgb(cr, 1.0, 102.0/255.0, 102.0/255.0);
-////       sound(200+10*i);
-//		for(iarc=i/5;iarc<360+i/5;iarc=iarc+20)
-//	  {
-////		 	void arc(int x, int y, int stangle, int endangle, int radius);
-//// 			arc function is used to draw an arc with center (x,y) and stangle specifies starting
-////			angle, endangle specifies the end angle and last parameter specifies the radius of the arc
-////			void cairo_arc (cairo_t *cr, double xc, double yc, double radius, double angle1, double angle2);
-//			cairo_new_sub_path(cr);
-//			cairo_arc(cr, X_Pos,Y_Pos, i, deg2rad(iarc), deg2rad(iarc+2));
-//
-////	    arc(X_Pos,Y_Pos,iarc,iarc+2,i);
-//		}
-////		printf("hey wow\n");
-////		while(gtk_events_pending())
-////		{
-////		printf("hm \n");
-////		}
-//
-//		cairo_stroke(cr);
-//		// -- DELAY HERE --
-//		ms_sleep(250.0/(double long)i);/* 100/i*5 */ // I guess a delay only makes sense when drawing on a window
-////		ms_sleep(100000);
-////	sound(200+15*i);
-////	setcolor(YELLOW);
-//		// This most surely does not do anything
-//		if (j>0)
-//		{
-//			cairo_set_source_rgb(cr,1,1,52/255);
-//	 		for(iarc=j/5;iarc<360+j/5;iarc=iarc+20)
-//			{
-//				cairo_new_sub_path(cr);
-//				cairo_arc(cr,X_Pos,Y_Pos,j,deg2rad(iarc),deg2rad(iarc+2));
-//			}
-//			cairo_stroke(cr);
-//		}
-//    j=i;  /* erase in de_fasage */
-//	}
-//	cairo_stroke(cr);
-
-//  Last_Pitch=200+10*i;
-//  for (i=0;i<150;i++)  /* final audio effect */
-//  {
-//		ms_sleep(5);
-//		Last_Pitch=Last_Pitch+80;
-//		sound(Last_Pitch);
-//  }
-//  setcolor(svcolor);
-//  nosound();
-}
-
-void Gen_Snap_Effect()
-{
-
-// ---- Don't forget to add the delays back in if needed  -----
-
-//  int Last_Pitch,i;
-//	int i;
-
-  Effect_Flag=ON;
-//  Last_Pitch=3000;
-//  for (i=0;i<30;i++)  /* final audio effect */
-//  {
-//		Mydelay(5);
-//		Last_Pitch=Last_Pitch-100;
-//		sound(Last_Pitch);
-//  }
-//  Mydelay(100);
-//  nosound();
-}
-
-void Zero_Vulner_Sound()
-{
-//  sound(600);
-//  Sound_Flag=4;
-//  return(0);
-}
-
-// -- These kind of animation functions maybe should get some sort of special treatment
-// within the step function as they redraw the ship with a delay multiple times --
-void Jitter_Ship()
-{
-//  int Jitter_Headings;
-//  int Jitter_X_Pos,Jitter_Y_Pos;
-//  int i;
-
-  Effect_Flag=ON;
-	Jitter_Flag=1;
-	// Call clean() with only ship update on?
-//  Draw_Ship(cr,Ship_X_Pos,Ship_Y_Pos,Ship_Headings,SHIP_SIZE_FACTOR*MaxX); /*erase ship */
-//	stroke_in_clip(cr);
-
-//  for (i=8;i>0;i--)
-//  {
-//    Jitter_Headings=Ship_Headings+2*i;
-//    Jitter_X_Pos=Ship_X_Pos+i*Fcos(Jitter_Headings);
-//    Jitter_Y_Pos=Ship_Y_Pos+i*Fsin(Jitter_Headings);
-////		Call update with only ship update on?
-////		clear_prev_path(cr, PrevShip);
-////    Draw_Ship(cr,Jitter_X_Pos,Jitter_Y_Pos,Jitter_Headings, SHIP_SIZE_FACTOR*MaxX);
-////		stroke_in_clip(cr);
-//    ms_sleep(((double long)i)*5L);
-////		clear_prev_path(cr, PrevShip);
-////    Draw_Ship(cr,Jitter_X_Pos,Jitter_Y_Pos,Jitter_Headings, SHIP_SIZE_FACTOR*MaxX);  /* erase ship */
-////		stroke_in_clip(cr);
-//    Jitter_Headings=Ship_Headings-2*i;
-//    Jitter_X_Pos=Ship_X_Pos+i*Fsin(Jitter_Headings);
-//    Jitter_Y_Pos=Ship_Y_Pos+i*Fcos(Jitter_Headings);
-////		clear_prev_path(cr, PrevShip);
-////    Draw_Ship(cr,Jitter_X_Pos,Jitter_Y_Pos,Jitter_Headings, SHIP_SIZE_FACTOR*MaxX);  /* draw ship */
-////		stroke_in_clip(cr);
-//    ms_sleep(((double long)i)*5L);
-////		clear_prev_path(cr, PrevShip);
-////    Draw_Ship(cr,Jitter_X_Pos,Jitter_Y_Pos,Jitter_Headings, SHIP_SIZE_FACTOR*MaxX);  /* erase ship */
-////		stroke_in_clip(cr);
-//  }
-//	clear_prev_path(cr, PrevShip);
-//	Draw_Ship(cr,Ship_X_Pos,Ship_Y_Pos,Ship_Headings, SHIP_SIZE_FACTOR*MaxX); /* restore ship to its previous position */
-//	Draw_Ship(cr,Ship_X_Pos,Ship_Y_Pos,Ship_Headings, SHIP_SIZE_FACTOR*MaxX); /* restore ship to its previous position */
-//	stroke_in_clip(cr);
-}
-
 void Reset_All_Missiles()
 {
   int i;
@@ -236,12 +89,10 @@ int Check_Collision(float First_X,float First_Y,float Second_X,
 void Test_Collisions()
 {
 
-  int breakflag;
   int i;
   int Handle_Missile_Flag;
 
   Handle_Missile_Flag=OFF;
-  breakflag=OFF;
 
   for(i=0;i<6;i++)   /* for all  possible missiles */
     {                  /* check against mine only */
@@ -252,11 +103,10 @@ void Test_Collisions()
         {
     Missile_Flag[i]=KILL;
     Handle_Missile_Flag=ON;
+
     Mine_Flag=KILL;
     Score=1.0;
     Handle_Mine();
-//    Update_Mines();
-//    Update_Score();
       } /* end missile vs. mine for aiming test */
     }
   if(Handle_Missile_Flag) Handle_Missile(); /* KILL them all */
