@@ -235,7 +235,7 @@ void Generate_Square()
    		 distance = sqrt(pow(x_diff,2) + pow(y_diff,2));
 
 		// + 0.5 square_width for middle point
-		if(distance > (2*SQUARE_WIDTH)
+		if(distance > (2*SQUARE_WIDTH))
 		{
 			found_loc = 1;
 		}
