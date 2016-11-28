@@ -287,7 +287,6 @@ void clean(cairo_t *cr)
 	cairo_set_source_rgb(SF_rgb_context, 0.0, 0.0, 0.0);
 	#endif
 	cairo_paint(cr);
-
 }
 
 // Apperently normal stroking is faster than stroking in a clipping area

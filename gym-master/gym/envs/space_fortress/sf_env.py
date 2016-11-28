@@ -110,7 +110,9 @@ class SFEnv(gym.Env):
 			self.act(action)
 			self.update_logic()
 			reward += self.score()
-			done = self.terminal_state() or done
+			done = self.terminal_state()
+			if done:
+				break
 		ob = np.ctypeslib.as_array(self.update_screen().contents)
 		return ob, reward, done, {}
 

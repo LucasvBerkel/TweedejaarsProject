@@ -595,7 +595,7 @@ void Reset_Screen()
     Bonus_Granted=OFF;
 
 	Score=0.0;
-
+	
         /*  reset variables */
     Ship_X_Pos=0.5*MaxX; /* on a 640 x 480 screen VGA-HI */
     Ship_Y_Pos=0.5*MaxY; /* same as above */
