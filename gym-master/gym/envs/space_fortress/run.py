@@ -34,7 +34,7 @@ def on_release(key):
 	pass
 
 global render_mode
-render_mode = "human_debug"
+render_mode = "minimal_debug"
 current_key = 3
 if render_mode.endswith("debug"):
 	print("Note that this script should be run as super user under OS X 👁")
@@ -44,7 +44,7 @@ def on_release(key):
 	pass
 
 global render_mode
-render_mode = "human_debug"
+render_mode = "minimal_debug"
 current_key = 3
 if render_mode.endswith("debug"):
 	print("Note that this script should be run as super user under OS X 👁")
@@ -57,7 +57,7 @@ env = gym.make('SFC-v0')
 
 #-------------------------------
 # ❗️👁❗️NOTE THE NO_DIR PARAM
-env.configure(mode=render_mode, record_path=None, no_direction=False)
+env.configure(mode=render_mode, record_path=None, no_direction=False, lib_suffix="GRID")
 
 # env.step = env._step2
 
@@ -101,7 +101,6 @@ with Listener(on_press=on_press, on_release=on_release) as listener:
 			observation, reward, done, info = env.step(action)
 
 			print(reward)
-
 			if done:
 				print("terminal")
 				break

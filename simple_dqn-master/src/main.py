@@ -35,6 +35,8 @@ envarg.add_argument("--screen_width", type=int, default=84, help="Screen width a
 envarg.add_argument("--screen_height", type=int, default=84, help="Screen height after resize.")
 envarg.add_argument("--record_screen_path", help="Record game screens under this path. Subfolder for each game is created.")
 envarg.add_argument("--record_sound_filename", help="Record game sound in this file.")
+envarg.add_argument("--libsuffix", type=str, default="", help="Searches for libraries with a suffix to allow for loading multiple libraries of the same game.")
+
 
 memarg = parser.add_argument_group('Replay memory')
 memarg.add_argument("--replay_size", type=int, default=1000000, help="Maximum size of replay memory.")
@@ -70,6 +72,7 @@ antarg.add_argument("--train_frequency", type=int, default=4, help="Perform trai
 antarg.add_argument("--train_repeat", type=int, default=1, help="Number of times to sample minibatch during training.")
 antarg.add_argument("--random_starts", type=int, default=30, help="Perform max this number of dummy actions after game restart, to produce more random game dynamics.")
 antarg.add_argument("--perfect_play", type=str2bool, default=False, help="Play the game perfect most of the time (see the agent class for more info).")
+antarg.add_argument("--no_direction", type=str2bool, default=False, help="Move according to x/y directions, without using the ships nose")
 
 nvisarg = parser.add_argument_group('Visualization')
 nvisarg.add_argument("--visualization_filters", type=int, default=4, help="Number of filters to visualize from each convolutional layer.")

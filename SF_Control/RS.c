@@ -54,23 +54,19 @@ void Get_User_Input()
     if (New_Input_Flag) /* new input occured */
     {
     	New_Input_Flag=OFF; /* make sure no repetitions on same input */
-			
+
 		switch(Key) {
 		#ifdef NO_DIRECTION
 			case UP:
-				printf("Up\n");
 		 		Accel_Input=1;        /*   UP    */
 				break;
 			case LEFT:
-				printf("Left\n");
 				Rotate_Input=-1;      /*   LEFT  */
 				break;
 			case RIGHT:
-				printf("Right\n");
 				Rotate_Input=1;       /*   RIGHT */
 				break;
 			case DOWN:
-				printf("Down\n");
 				Accel_Input=-1;        /*   DOWN    */
 				break;
 		#else
@@ -85,7 +81,7 @@ void Get_User_Input()
 				break;
 		#endif
    		}
-    		
+
 	}
 }
 

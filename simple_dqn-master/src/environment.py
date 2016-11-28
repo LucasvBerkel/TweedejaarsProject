@@ -103,7 +103,7 @@ class GymEnvironment(Environment):
 		if self.gym.spec.id in ["SFS-v0", "SFC-v0", "AIM-v0"]:
 			# Change this to a variable rendering mode
 			if args.display_screen == False:
-				self.gym.configure(mode="rgb_array")
+				self.gym.configure(mode="rgb_array", no_direction=args.no_direction)
 			else:
 				if args.display_screen == True or args.display_screen == 'true' or args.display_screen == 'True':
 					mode = "human_sleep"
@@ -115,7 +115,8 @@ class GymEnvironment(Environment):
 
 					record_path = None
  				print("Mode:", mode)
-				self.gym.configure(mode=mode, record_path=record_path)
+
+				self.gym.configure(mode=mode, record_path=record_path,no_direction=args.no_direction, lib_suffix=args.libsuffix)
 
 		self.obs = None
 		self.terminal = None
@@ -126,6 +127,7 @@ class GymEnvironment(Environment):
 	def numActions(self):
 		import gym
 		assert isinstance(self.gym.action_space, gym.spaces.Discrete)
+		print(self.gym._action_set)
 		return self.gym.action_space.n
 
 	def restart(self):
