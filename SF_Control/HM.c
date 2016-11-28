@@ -35,9 +35,9 @@ void Move_Ship()
 		Ship_Y_Pos = SHIP_MAX_SPEED * Accel_Input + Ship_Y_Pos;
 		Accel_Input = 0;
 	}
-		
+
 	#ifdef NO_WRAP
-	if(Ship_X_Pos<0) { 
+	if(Ship_X_Pos<0) {
 		Ship_X_Pos=0;
 	}
     else if(Ship_X_Pos>MaxX) {
@@ -48,18 +48,18 @@ void Move_Ship()
 	}
     else if(Ship_Y_Pos>MaxY) {
     	Ship_Y_Pos=MaxY;
-	}	
+	}
 	#else
-	if(Ship_X_Pos<0) { 
+	if(Ship_X_Pos<0) {
 		Ship_X_Pos=MaxX;
 	}
-    else if(Ship_X_Pos>MaxX) { 
+    else if(Ship_X_Pos>MaxX) {
     	Ship_X_Pos=0;
 	}
-    else if(Ship_Y_Pos<0) { 
+    else if(Ship_Y_Pos<0) {
 		Ship_Y_Pos=MaxY;
 	}
-    else if(Ship_Y_Pos>MaxY) { 
+    else if(Ship_Y_Pos>MaxY) {
     	Ship_Y_Pos=0;
 	}
 	#endif
@@ -99,7 +99,7 @@ void Move_Ship()
 		#else
 	    Ship_X_Speed=Ship_X_Speed+0.65*Ship_Accel*Fsin(Ship_Headings);
 	    Ship_Y_Speed=Ship_Y_Speed-0.65*Ship_Accel*Fcos(Ship_Headings);
-    	
+
     	/* assure it does not exceed MAXspeed */
 
 		if(fabsf(Ship_X_Speed)>Ship_Max_Speed)
@@ -191,7 +191,7 @@ void Handle_Square()
 			Square_Flag = ALIVE;
 			N_Squares++;
 
-			if (N_Squares >= MAX_SQUARES)
+			if (N_Squares > MAX_SQUARES)
 			{
 			 Terminal_State = 1;
 			 N_Squares = 0;
@@ -229,13 +229,13 @@ void Generate_Square()
 		new_square_x = randrange(0, WINDOW_WIDTH-SQUARE_WIDTH);
 		new_square_y = randrange(0, WINDOW_HEIGHT-SQUARE_WIDTH);
 
-		int x_diff = new_square_x - Square_X;
-		int y_diff = new_square_y - Square_Y;
+		int x_diff = new_square_x - Ship_X_Pos;
+		int y_diff = new_square_y - Ship_Y_Pos;
 
    		 distance = sqrt(pow(x_diff,2) + pow(y_diff,2));
 
 		// + 0.5 square_width for middle point
-		if(distance > ((2 * SQUARE_WIDTH) + SQUARE_WIDTH/2))
+		if(distance > (2*SQUARE_WIDTH))
 		{
 			found_loc = 1;
 		}

@@ -16,8 +16,11 @@ clang -Wall -g -fPIC myvars.c TCOL.c DE_Minimal.c HM.c RS.c `pkg-config --cflags
 -D GUI_INTERFACE ** Full sized and colored game renders **
 -D GRID_MOVEMENT ** Lowers the control order to a direct type of control **
 -D NO_WRAP ** Turns off wrapping **
--D NO_DIRECTION ** Turns off movement based on the ships nose direction ** 
+-D NO_DIRECTION ** Turns off movement based on the ships nose direction **
 -D DEBUG ** Sounds Effects/Printing messages on soundless linux **
+
+-- Full command:
+eval "$(cat DE_Minimal.c | grep -m 4 "\-\-cflags cairo")"; cp *.so ../gym-master/gym/envs/space_fortress/linux2
 
 ***************************** -------------------------------------- ******************************/
 
@@ -50,7 +53,11 @@ clang -Wall -g -fPIC myvars.c TCOL.c DE_Minimal.c HM.c RS.c `pkg-config --cflags
 #define RENDER_HEIGHT 84
 
 
+#ifndef GUI_INTERFACE
 #define DEFAULT_LINE_WIDTH 3.8
+#else
+#define DEFAULT_LINE_WIDTH 1.8
+#endif
 
 // Globals
 #ifdef CV_SCALE

@@ -19,9 +19,10 @@ clang -Wall -g -fPIC myvars.c TCOL.c DE_Minimal.c HM.c RS.c `pkg-config --cflags
 -D NO_WRAP ** Turns off wrapping **
 -D DEBUG ** Sounds Effects/Printing messages on soundless linux **
 
-********************************* -------------------------------------- **********************************/
+-- Full command:
+eval "$(cat DE_Minimal.c | grep -m 4 "\-\-cflags cairo")"; cp *.so ../gym-master/gym/envs/space_fortress/linux2
 
-// clang `pkg-config --cflags cairo` `pkg-config --libs cairo` -Wall -g -fPIC -c  myvars.c DE_Minimal.c HM.c TCOL.c RS.c -Wno-dangling-else -Wno-switch -O3; clang `pkg-config --cflags cairo` `pkg-config --libs cairo` -shared -o aim_frame_lib.so myvars.o HM.o RS.o TCOL.o DE_Minimal.o -O3; clang `pkg-config --cflags cairo` `pkg-config --libs cairo`  -Wall -g -fPIC -c  myvars.c DE_Minimal.c HM.c TCOL.c RS.c -Wno-dangling-else -Wno-switch -O3 -D GUI_INTERFACE; clang `pkg-config --cflags cairo` `pkg-config --libs cairo` -shared -o aim_frame_lib_FULL.so myvars.o HM.o RS.o TCOL.o DE_Minimal.o -O3 -D GUI_INTERFACE; cp aim_frame_lib_FULL.so /home/wijnand/Documents/git/TweedejaarsProject/gym-master/gym/envs/space_fortress/linux2/aim_frame_lib_FULL.so; cp aim_frame_lib.so /home/wijnand/Documents/git/TweedejaarsProject/gym-master/gym/envs/space_fortress/linux2/aim_frame_lib.so
+********************************* -------------------------------------- **********************************/
 
 #ifndef DE_H
 #define DE_H

@@ -11,6 +11,7 @@ class Agent:
 		self.net = deep_q_network
 		self.buf = StateBuffer(args)
 		self.num_actions = self.env.numActions()
+		print(self.num_actions)
 		self.random_starts = args.random_starts
 		self.history_length = args.history_length
 

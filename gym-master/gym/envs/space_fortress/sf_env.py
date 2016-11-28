@@ -77,9 +77,7 @@ class SFEnv(gym.Env):
 		# The number of bytes to read in from the returned image pointer
 		self.n_bytes = ((int(self.screen_height/self.scale)) * (int(self.screen_width/self.scale)))
 		# ... which happens to be equal to the amount of pixels in the image
-		# self.observation_space = spaces.Box(low=0, high=255, shape=(1, self.n_bytes))
-		self.action_space = gym.spaces.Discrete(len(self._action_set))
-
+		# self.observation_space =
 
 
 	@property
@@ -94,7 +92,7 @@ class SFEnv(gym.Env):
 	def best_action(self):
 		return self.best()
 
-	def _step(self, a):
+	def _step2(self, a):
 		action = self._action_set[a] # Select the action from the action dict
 		self.act(action)
 		ob = np.ctypeslib.as_array(self.update().contents)
@@ -102,11 +100,11 @@ class SFEnv(gym.Env):
 		ending = self.terminal_state()
 		return ob, reward, ending, {}
 
-	def _step2(self, a):
+	def _step(self, a):
 		action = self._action_set[a] # Select the action from the action dictq
 		reward = 0.0
 		done = False
-		for _ in range(3):
+		for _ in range(1):
 			self.act(action)
 			self.update_logic()
 			reward += self.score()
@@ -210,7 +208,7 @@ class SFEnv(gym.Env):
 		self.stop_drawing()
 
 
-	def _configure(self, mode='rgb_array', debug=False, record_path=None, write_stats=True, no_direction=False):
+	def _configure(self, mode='rgb_array', debug=False, record_path=None, no_direction=False, lib_suffix=""):
 		self.mode = mode
 		os = platform
 
@@ -227,9 +225,11 @@ class SFEnv(gym.Env):
 			cv2.namedWindow(self.game_name)
 
 		if self.mode.startswith('human'):
-			libname += "_frame_lib_FULL.so"
+			libname += "_frame_lib_FULL"
 		else:
-			libname += "_frame_lib.so"
+			libname += "_frame_lib"
+		libname += lib_suffix + ".so"
+
 		if os.startswith('linux'): # come up with something nicer for this:
 			from pathlib import Path
 			wijnand_dir = "/home/wijnand/Documents/git/TweedejaarsProject/gym-master/gym/envs/space_fortress/linux2"
@@ -281,14 +281,8 @@ class SFEnv(gym.Env):
 			else:
 				self._action_set[3] = 0
 		self.record_path = record_path
-		
+
 		# add down movement when in no_direction mode
 		if no_direction:
 			self._action_set[3] = 65364
-		
-		
-		
-		
-		
-		
-	
+		self.action_space = gym.spaces.Discrete(len(self._action_set))
