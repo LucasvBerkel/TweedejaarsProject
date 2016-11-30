@@ -70,7 +70,7 @@ antarg.add_argument("--exploration_decay_steps", type=float, default=1000000, he
 antarg.add_argument("--exploration_rate_test", type=float, default=0.05, help="Exploration rate used during testing.")
 antarg.add_argument("--train_frequency", type=int, default=4, help="Perform training after this many game steps.")
 antarg.add_argument("--train_repeat", type=int, default=1, help="Number of times to sample minibatch during training.")
-antarg.add_argument("--random_starts", type=int, default=30, help="Perform max this number of dummy actions after game restart, to produce more random game dynamics.")
+antarg.add_argument("--random_starts", type=int, default=5, help="Perform max this number of dummy actions after game restart, to produce more random game dynamics.")
 antarg.add_argument("--perfect_play", type=str2bool, default=False, help="Play the game perfect most of the time (see the agent class for more info).")
 antarg.add_argument("--no_direction", type=str2bool, default=False, help="Move according to x/y directions, without using the ships nose")
 
