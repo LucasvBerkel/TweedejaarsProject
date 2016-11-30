@@ -116,7 +116,7 @@ class GymEnvironment(Environment):
 					record_path = None
  				print("Mode:", mode)
 
-				self.gym.configure(mode=mode, record_path=record_path,no_direction=args.no_direction, lib_suffix=args.libsuffix)
+				self.gym.configure(mode=mode,no_direction=args.no_direction, lib_suffix=args.libsuffix, frame_skip=args.frame_skip)
 
 		self.obs = None
 		self.terminal = None
