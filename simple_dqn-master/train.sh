@@ -1,25 +1,18 @@
 #!/usr/bin/env bash
 
-mkdir -p results
-mkdir -p snapshots
+game_vers=$1
+game=${game_vers%-*}
+experiment=$2
+date="$(date +%s)"
+weights_prefix=runs/$game/${date}_$experiment/weights/${game}_${experiment}
+results=runs/$game/${date}_$experiment/${game}_${experiment}.csv
 
-file=$1
-full=${file##*/}
-game=${full%.*}
+mkdir -p runs/$game/${date}_$experiment/weights
 
-if [[ -z $2 ]] || [[ $2 == -* ]]; then
-  snapshots=snapshots/$game
-  results=results/$game.csv
-  shift
+if [ -d "/home/wijnand" ]; then
+  python2.7 src/main.py --save_weights_prefix $weights_prefix \
+--csv_file $results $game_vers $*
 else
-  # additional parameter is experiment label
-  label=$2
-  snapshots=snapshots/${game}_${label}
-  results=results/${game}_${label}.csv
-  shift
-  shift
+  python src/main.py --save_weights_prefix $weights_prefix \
+--csv_file $results $game_vers $*
 fi
-
-python src/main.py --save_weights_prefix $snapshots --csv_file $results $file $*
-
-
