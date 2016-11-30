@@ -104,7 +104,7 @@ class SFEnv(gym.Env):
 		action = self._action_set[a] # Select the action from the action dictq
 		reward = 0.0
 		done = False
-		for _ in range(1):
+		for _ in range(self.frame_skip):
 			self.act(action)
 			self.update_logic()
 			reward += self.score()
@@ -208,11 +208,12 @@ class SFEnv(gym.Env):
 		self.stop_drawing()
 
 
-	def _configure(self, mode='rgb_array', debug=False, record_path=None, no_direction=False, lib_suffix=""):
+	def _configure(self, mode='rgb_array', debug=False, record_path=None, no_direction=False, lib_suffix="", frame_skip=3):
 		self.mode = mode
 		os = platform
 
 		self.debug = debug
+		self.frame_skip = frame_skip
 
 		if self.game.lower() == ("sf") or self.game.lower() == ("sfs"):
 			libname = "sf"
