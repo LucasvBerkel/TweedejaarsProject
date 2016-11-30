@@ -482,7 +482,7 @@ void Reset_Screen()
 {
         /*  reset variables */
 //		printf("Maxxes: %d %d \n", MaxX, MaxY);
-    Ship_X_Pos=0.25*MaxX; /* on a 640 x 480 screen VGA-HI */
+    Ship_X_Pos=0.5*MaxX; 
     Ship_Y_Pos=0.5*MaxY; /* same as above */
 //		printf("Ship pos after reset: %d %d\n", Ship_X_Pos, Ship_Y_Pos);
     Ship_X_Speed=0.0;

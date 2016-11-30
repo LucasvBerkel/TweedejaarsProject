@@ -72,8 +72,6 @@ class SFEnv(gym.Env):
 		else:
 			pass
 
-
-
 		# The number of bytes to read in from the returned image pointer
 		self.n_bytes = ((int(self.screen_height/self.scale)) * (int(self.screen_width/self.scale)))
 		# ... which happens to be equal to the amount of pixels in the image

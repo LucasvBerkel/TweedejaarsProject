@@ -1,4 +1,5 @@
 /* ******************   Handle_Mine and all others elements   ***************** */
+/* ******************   Handle_Mine and all others elements   ***************** */
 #include <stdio.h>
 #include <stdlib.h>
 //#include <graphics.h>
@@ -104,25 +105,11 @@ void Move_Ship()
 
 		if(fabsf(Ship_X_Speed)>Ship_Max_Speed)
 		{
-			if(Ship_X_Speed<0)
-			{
-				Ship_X_Speed=-Ship_Max_Speed;
-			}
-		   else
-			{
-				Ship_X_Speed=Ship_Max_Speed;
-			}
+			Ship_X_Speed = Ship_X_Speed < 0 ? -Ship_Max_Speed : Ship_Max_Speed;
 		}
 		if(fabsf(Ship_Y_Speed)>Ship_Max_Speed)
 		{
-			if(Ship_Y_Speed<0)
-			{
-				Ship_Y_Speed=-Ship_Max_Speed;
-			}
-			  else
-			{
-				Ship_Y_Speed=Ship_Max_Speed;
-			}
+			Ship_Y_Speed = Ship_Y_Speed < 0 ? -Ship_Max_Speed : Ship_Max_Speed;
 	  }  /* end accel_input */
 		#endif
 

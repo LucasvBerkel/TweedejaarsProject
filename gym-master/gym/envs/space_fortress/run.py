@@ -57,7 +57,7 @@ env = gym.make('SFC-v0')
 
 #-------------------------------
 # ❗️👁❗️NOTE THE NO_DIR PARAM
-env.configure(mode=render_mode, record_path=None, no_direction=False, lib_suffix="GRID")
+env.configure(mode=render_mode, record_path=None, no_direction=False, frame_skip=1)
 
 # env.step = env._step2
 
