@@ -18,6 +18,7 @@ clang -Wall -g -fPIC myvars.c TCOL.c DE_Minimal.c HM.c RS.c `pkg-config --cflags
 -D NO_WRAP ** Turns off wrapping **
 -D NO_DIRECTION ** Turns off movement based on the ships nose direction **
 -D DEBUG ** Sounds Effects/Printing messages on soundless linux **
+-D ROTATE_ANGLE=theta ** The rotation of the ship in degrees **
 
 -- Full command:
 eval "$(cat DE_Minimal.c | grep -m 4 "\-\-cflags cairo")"; cp *.so ../gym-master/gym/envs/space_fortress/linux2

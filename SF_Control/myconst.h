@@ -44,6 +44,9 @@
 
 #define NO_INPUT 0
 #define SHIP_MAX_SPEED 5 // Used to be a variable for some reason
+#ifndef ROTATE_ANGLE
+#define ROTATE_ANGLE 10
+#endif
 #define NO_INPUT 0
 #define ON 1
 #define OFF 0

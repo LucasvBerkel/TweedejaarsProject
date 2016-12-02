@@ -77,7 +77,7 @@ void Move_Ship()
   if (Rotate_Input!=0)      /* if ship rotates */
      {
 //       Ship_Display_Update=1;  /* at least rotates */
-       Ship_Headings=Ship_Headings + Rotate_Input*Ship_Angular_Step;
+       Ship_Headings=Ship_Headings + Rotate_Input*ROTATE_ANGLE;
        if (Ship_Headings<0) {
          Ship_Headings= 359+Ship_Headings-1;
        }
