@@ -33,36 +33,22 @@ def on_press(key):
 def on_release(key):
 	pass
 
-global render_mode
-render_mode = "minimal_debug"
-current_key = 3
-if render_mode.endswith("debug"):
-	print("Note that this script should be run as super user under OS X 👁")
-
-
 def on_release(key):
 	pass
 
 global render_mode
-render_mode = "minimal_debug"
+render_mode = "human_debug"
 current_key = 3
 if render_mode.endswith("debug"):
 	print("Note that this script should be run as super user under OS X 👁")
 
 
 env = gym.make('SFC-v0')
-# setting the render mode does not actually	work
 
 # Configure enviroment
-
 #-------------------------------
-# ❗️👁❗️NOTE THE NO_DIR PARAM
-env.configure(mode=render_mode, record_path=None, no_direction=False, frame_skip=1)
+env.configure(mode=render_mode, record_path=None, no_direction=False, frame_skip=5)
 
-# env.step = env._step2
-
-# Collect events until released
-count = 0
 with Listener(on_press=on_press, on_release=on_release) as listener:
 	for game in range(5):
 		env.reset()
@@ -108,6 +94,6 @@ with Listener(on_press=on_press, on_release=on_release) as listener:
 #			count += 1
 				# print("Episode finished after {} timesteps".format(t+1))
 #				break
-	print(count)
+
 #	env.write_out_stats("test")
 #	env.close()
