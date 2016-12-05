@@ -19,6 +19,7 @@ clang -Wall -g -fPIC myvars.c TCOL.c DE_Minimal.c HM.c RS.c `pkg-config --cflags
 -D NO_DIRECTION ** Turns off movement based on the ships nose direction **
 -D DEBUG ** Sounds Effects/Printing messages on soundless linux **
 -D ROTATE_ANGLE=theta ** The rotation of the ship in degrees **
+-D NO_RANDOM_SPAWN ** Disable random spawn location and random ship orientation **
 
 -- Full command:
 eval "$(cat DE_Minimal.c | grep -m 4 "\-\-cflags cairo")"; cp *.so ../gym-master/gym/envs/space_fortress/linux2
@@ -57,7 +58,7 @@ eval "$(cat DE_Minimal.c | grep -m 4 "\-\-cflags cairo")"; cp *.so ../gym-master
 #ifndef GUI_INTERFACE
 #define DEFAULT_LINE_WIDTH 3.8
 #else
-#define DEFAULT_LINE_WIDTH 1.8
+#define DEFAULT_LINE_WIDTH 2.0
 #endif
 
 // Globals
@@ -301,12 +302,12 @@ void clean(cairo_t *cr)
 void update_drawing(cairo_t *cr)
 {
 
+	cairo_set_line_width(cr, DEFAULT_LINE_WIDTH);
 	Draw_Ship(cr, Ship_X_Pos,Ship_Y_Pos,Ship_Headings,SHIP_SIZE_FACTOR*MaxX);
 	cairo_stroke(cr);
-	cairo_set_line_width(cr, DEFAULT_LINE_WIDTH+2.5);
+	cairo_set_line_width(cr, DEFAULT_LINE_WIDTH+0.5);
 	Draw_Ship_Nose(cr, Ship_X_Pos,Ship_Y_Pos,Ship_Headings,SHIP_SIZE_FACTOR*MaxX);
 	cairo_stroke(cr);
-	cairo_set_line_width(cr, DEFAULT_LINE_WIDTH);
 
 	Draw_Square(cr, Square_X, Square_Y);
 	cairo_stroke_preserve(cr);
@@ -482,13 +483,18 @@ unsigned char* update_frame()
 void Reset_Screen()
 {
         /*  reset variables */
-//		printf("Maxxes: %d %d \n", MaxX, MaxY);
+	#ifdef NO_RANDOM_SPAWN
     Ship_X_Pos=0.5*MaxX; 
-    Ship_Y_Pos=0.5*MaxY; /* same as above */
+    Ship_Y_Pos=0.5*MaxY;
+    Ship_Headings=0;
+    #else
+    Ship_X_Pos=randrange(20,MaxX-20); 
+    Ship_Y_Pos=randrange(20,MaxY-20);
+    Ship_Headings=randrange(0,359);
+    #endif
 //		printf("Ship pos after reset: %d %d\n", Ship_X_Pos, Ship_Y_Pos);
     Ship_X_Speed=0.0;
     Ship_Y_Speed=0.0;
-    Ship_Headings=0;
     Rotate_Input=0; /* joystick left/right */
     Accel_Input=0; /* joystick forward */
 
