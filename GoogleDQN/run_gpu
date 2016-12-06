@@ -1,13 +1,20 @@
 #!/bin/bash
 
-if [ -z "$1" ]
-  then echo "Please provide the name of the game, e.g.  ./run_gpu breakout "; exit 0
-fi
-ENV=$1
-FRAMEWORK="alewrap"
+#FRAMEWORK="alewrap"
+FRAMEWORK="SF"
 
-game_path=$PWD"/roms/"
-env_params="useRGB=true"
+if [ $FRAMEWORK = "SF" ]
+	then ENV="SF_Control"
+else
+	if [ -z "$1" ]
+		then echo "Please provide the name of the game, e.g.  ./run_cpu breakout "; exit 0
+	fi
+	ENV=$1
+fi
+
+#game_path=$PWD"/roms/"
+game_path="/Users/rijnderwever/Desktop/NLR/NLR/TweedejaarsProject/gym-master/gym/envs/space_fortress/darwin/control_frame_lib.so"
+env_params="useRGB=false"
 agent="NeuralQLearner"
 n_replay=1
 netfile="\"convnet_atari3\""
