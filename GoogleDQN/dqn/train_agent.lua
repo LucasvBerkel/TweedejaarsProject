@@ -77,14 +77,29 @@ local episode_reward
 
 local screen, reward, terminal = game_env:getState()
 
+-- Delete all this! 👁 🍐
+--local hard_stop = 0
+--require 'image'
+
 print("Iteration ..", step)
 while step < opt.steps do
     step = step + 1
     local action_index = agent:perceive(reward, screen, terminal)
 
+--	if hard_stop > 500 then
+--		print("Bye! 🍒")
+--		os.exit()
+--	end
+--	hard_stop = hard_stop + 1
+
     -- game over? get next game!
     if not terminal then
-        screen, reward, terminal = game_env:step(game_actions[action_index], true)
+    	-- The state is not preprocessed here yet, however ours is.
+    	-- Furthermore, it seems to be normalized in the range of 0.0 and 1.0.
+    	-- To normalize the cairo array "v", we should v *= (1/255)
+
+        screen, reward, terminal = game_env:step(game_actions[2], true)
+
     else
         if opt.random_starts > 0 then
             screen, reward, terminal = game_env:nextRandomGame()
@@ -115,7 +130,7 @@ while step < opt.steps do
         local eval_time = sys.clock()
         for estep=1,opt.eval_steps do
             local action_index = agent:perceive(reward, screen, terminal, true, 0.05)
-
+			
             -- Play game in test mode (episodes don't end when losing a life)
             screen, reward, terminal = game_env:step(game_actions[action_index])
 

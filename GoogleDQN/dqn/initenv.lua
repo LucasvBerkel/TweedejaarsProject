@@ -112,11 +112,19 @@ function setup(_opt)
     local opt = torchSetup(_opt)
 
     -- load training framework and environment
-    local framework = require(opt.framework)
-    assert(framework)
+    if opt.framework == "SF" then
+		a = require("SFGameEnvironment")
+		assert(a) -- Check if this went well, it returns a boolean for some reason
+		-- there is a global called SFGameEnviroment that represents this class
+		gameEnv = SFGameEnvironment(opt)
+	else
+   	    local framework = require(opt.framework)
+	    assert(framework)
+	    gameEnv = framework.GameEnvironment(opt)		
+    end
 
-    local gameEnv = framework.GameEnvironment(opt)
     local gameActions = gameEnv:getActions()
+    
 
     -- agent options
     _opt.agent_params.actions   = gameActions
@@ -126,10 +134,13 @@ function setup(_opt)
         _opt.agent_params.network = _opt.network
     end
     _opt.agent_params.verbose = _opt.verbose
+    print(_opt.agent_params.state_dim)
+    -- This is not called ever
     if not _opt.agent_params.state_dim then
+    	error("\n\n  Thank you goodbey! 🍒")
         _opt.agent_params.state_dim = gameEnv:nObsFeature()
     end
-
+	print("Vector dimension", _opt.agent_params.state_dim)
     local agent = dqn[_opt.agent](_opt.agent_params)
 
     if opt.verbose >= 1 then
@@ -138,6 +149,8 @@ function setup(_opt)
             print(k, v)
         end
     end
+	
+	-- Action-pairs: (1,0), (2,1), ..., (i, i-1)
 
     return gameEnv, gameActions, agent, opt
 end

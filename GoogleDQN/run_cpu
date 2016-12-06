@@ -1,18 +1,30 @@
 #!/bin/bash
 
-if [ -z "$1" ]
-  then echo "Please provide the name of the game, e.g.  ./run_cpu breakout "; exit 0
-fi
-ENV=$1
-FRAMEWORK="alewrap"
 
-game_path=$PWD"/roms/"
-env_params="useRGB=true"
+# do like more fancy parsing here
+
+
+
+#FRAMEWORK="alewrap"
+FRAMEWORK="SF"
+
+if [ $FRAMEWORK = "SF" ]
+	then ENV="SF_Control"
+else
+	if [ -z "$1" ]
+		then echo "Please provide the name of the game, e.g.  ./run_cpu breakout "; exit 0
+	fi
+	ENV=$1
+fi
+
+#game_path=$PWD"/roms/"
+game_path="/Users/rijnderwever/Desktop/NLR/NLR/TweedejaarsProject/gym-master/gym/envs/space_fortress/darwin/control_frame_lib.so"
+env_params="useRGB=false"
 agent="NeuralQLearner"
 n_replay=1
 netfile="\"convnet_atari3\""
 update_freq=4
-actrep=4
+actrep=3 # lower this maybe, or lower ROTATE_ANGLE  
 discount=0.99
 seed=1
 learn_start=50000
@@ -35,7 +47,7 @@ eval_steps=125000
 prog_freq=5000
 save_freq=125000
 gpu=-1
-random_starts=30
+random_starts=30 # meh 👿
 pool_frms="type="$pool_frms_type",size="$pool_frms_size
 num_threads=4
 

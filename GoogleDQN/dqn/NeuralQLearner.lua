@@ -299,7 +299,16 @@ end
 
 function nql:perceive(reward, rawstate, terminal, testing, testing_ep)
     -- Preprocess state (will be set to nil if terminal)
-    local state = self:preprocess(rawstate):float()
+    local state = nil
+    if not SFGameEnvironment then
+	    state = self:preprocess(rawstate):float()
+    else
+    	-- Preprocess (normalization  between 0.0 and 1.0) 
+    	state = rawstate:float():div(255.0)
+    end
+    
+
+
     local curState
 
     if self.max_reward then

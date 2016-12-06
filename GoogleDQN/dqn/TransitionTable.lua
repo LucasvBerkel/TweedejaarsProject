@@ -299,6 +299,8 @@ end
 
 
 function trans:add_recent_state(s, term)
+
+	-- Lol is our preproccesing step even needed ?
     local s = s:clone():float():mul(255):byte()
     if #self.recent_s == 0 then
         for i=1,self.recentMemSize do

@@ -50,7 +50,6 @@ build-essential, gcc, g++, cmake, curl, libreadline-dev, git-core, libjpeg-dev,
 libpng-dev, ncurses-dev, imagemagick, unzip
 
 
-
 ----- Training DQN on Atari games -----
 
 Prior to running DQN on a game, you should copy its ROM in the 'roms' subdirectory.
