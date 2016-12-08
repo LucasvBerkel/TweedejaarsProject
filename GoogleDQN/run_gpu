@@ -13,13 +13,13 @@ else
 fi
 
 #game_path=$PWD"/roms/"
-game_path="/Users/rijnderwever/Desktop/NLR/NLR/TweedejaarsProject/gym-master/gym/envs/space_fortress/darwin/control_frame_lib.so"
+game_path="/home/rijnder/TweedejaarsProject/gym-master/gym/envs/space_fortress/linux2/control_frame_lib.so"
 env_params="useRGB=false"
 agent="NeuralQLearner"
 n_replay=1
-netfile="\"convnet_atari3\""
+netfile="\"/home/rijnder/Desktop/DQN3_0_1__FULL_Y.t7\""
 update_freq=4
-actrep=4
+actrep=3
 discount=0.99
 seed=1
 learn_start=50000
@@ -42,7 +42,7 @@ eval_steps=125000
 prog_freq=10000
 save_freq=125000
 gpu=0
-random_starts=30
+random_starts=5
 pool_frms="type="$pool_frms_type",size="$pool_frms_size
 num_threads=4
 
