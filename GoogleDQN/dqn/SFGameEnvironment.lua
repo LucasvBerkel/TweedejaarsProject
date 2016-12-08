@@ -213,6 +213,12 @@ end
 -- Function returns a table with valid actions in the current game.
 function gameEnv:getActions()
 	-- Adjust this to not control tasks
-
-    return {65361, 65362, 65363}
+	local str = require("string")
+	if str.find(self.game_path, "aim") then
+	    return {65361, 32, 65363}	
+	elseif str.find(self.game_path, "control") then
+	    return {65361, 65362, 65363}
+	else
+		return {65361, 65362, 65363}
+	end
 end
