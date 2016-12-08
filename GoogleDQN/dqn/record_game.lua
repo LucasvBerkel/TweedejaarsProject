@@ -92,7 +92,7 @@ for g=1,opt.games do
       -- Play game in test mode (episodes don't end when losing a life)
       screen, reward, terminal = game_env:step(game_actions[action_index])
     	im = torch.reshape(im, 84, 84)
-    	image.save("test_images/im" .. i .. ".png", im)
+    	image.save("stills/im" .. i .. ".png", im)
       i = i + 1
       -- if estep%1000 == 0 then collectgarbage() end
 
