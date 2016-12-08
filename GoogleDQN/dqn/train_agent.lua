@@ -98,7 +98,7 @@ while step < opt.steps do
     	-- Furthermore, it seems to be normalized in the range of 0.0 and 1.0.
     	-- To normalize the cairo array "v", we should v *= (1/255)
 
-        screen, reward, terminal = game_env:step(game_actions[2], true)
+        screen, reward, terminal = game_env:step(game_actions[action_index], true)
 
     else
         if opt.random_starts > 0 then
@@ -130,7 +130,7 @@ while step < opt.steps do
         local eval_time = sys.clock()
         for estep=1,opt.eval_steps do
             local action_index = agent:perceive(reward, screen, terminal, true, 0.05)
-			
+
             -- Play game in test mode (episodes don't end when losing a life)
             screen, reward, terminal = game_env:step(game_actions[action_index])
 

@@ -18,7 +18,7 @@ game_path=" "
 if [ -d "/home/wijnand" ]; then
   game_path="/home/wijnand/Documents/git/TweedejaarsProject/gym-master/gym/envs/space_fortress/linux2/control_frame_lib.so"
 else
-  game_path="/Users/rijnderwever/Desktop/NLR/NLR/TweedejaarsProject/gym-master/gym/envs/space_fortress/darwin/control_frame_lib.so"
+  game_path="/home/rijnder/TweedejaarsProject/gym-master/gym/envs/space_fortress/linux2/control_frame_lib.so"
 fi
 
 env_params="useRGB=false"
