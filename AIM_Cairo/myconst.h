@@ -14,7 +14,7 @@
 #define JITTER_MODE 1
 #define EXPLOSION_MODE 2
 
-#define SCALE_F 3.2
+#define SCALE_F 5.3
 
 #ifdef GUI
 #define POINTS_FONT_SIZE 9.5
