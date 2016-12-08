@@ -49,11 +49,11 @@ eval "$(cat DE_Minimal.c | grep -m 4 "\-\-cflags cairo")"; cp *.so ../gym-master
 #include "HM.h"
 #include "RS.h"
 
-#define RENDER_WIDTH 140
-#define RENDER_HEIGHT 140
+#define RENDER_WIDTH 84
+#define RENDER_HEIGHT 84
 
 // calculated from old version
-#define DEFAULT_LINE_WIDTH 2.0
+#define DEFAULT_LINE_WIDTH 13.0
 
 void Initialize_Graphics(cairo_t *cr)
 {
@@ -75,9 +75,9 @@ void Initialize_Graphics(cairo_t *cr)
 	cairo_scale(cr, 1.0/SCALE_F, 1.0/SCALE_F);
 	#endif
 
-	cairo_set_antialias(cr, CAIRO_ANTIALIAS_GRAY);
+	cairo_set_antialias(cr, CAIRO_ANTIALIAS_BEST);
 	cairo_set_line_cap(cr, CAIRO_LINE_CAP_SQUARE);
-	cairo_set_line_join(cr, CAIRO_LINE_JOIN_ROUND);
+	cairo_set_line_join(cr, CAIRO_LINE_JOIN_MITER);
 
 	cairo_set_operator (cr, CAIRO_OPERATOR_SOURCE);
 
