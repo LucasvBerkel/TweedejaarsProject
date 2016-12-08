@@ -239,6 +239,19 @@ unsigned char* get_original_screen()
 }
 
 
+unsigned char* update_screen()
+{
+	#ifdef GUI_INTERFACE
+	clean(SF_rgb_context);
+	#endif
+	#ifdef GUI_INTERFACE
+	update_drawing(SF_rgb_context);
+	#endif
+	clean(SF_canvas);
+	update_drawing(SF_canvas);
+	return cairo_image_surface_get_data(surface);
+}
+
 void set_key(int key_value)
 {
 	Lastkey = Key;
@@ -596,7 +609,7 @@ void Reset_Screen()
     Bonus_Granted=OFF;
 
 	Score=0.0;
-	
+
         /*  reset variables */
     Ship_X_Pos=0.5*MaxX; /* on a 640 x 480 screen VGA-HI */
     Ship_Y_Pos=0.5*MaxY; /* same as above */
