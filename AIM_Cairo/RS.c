@@ -394,7 +394,7 @@ void SF_iteration()
 // Returns the mode of the iteration, which might unnused?
 void game_iteration()
 {
-	AIM_iteration();
+	SF_iteration();
 
 }
 

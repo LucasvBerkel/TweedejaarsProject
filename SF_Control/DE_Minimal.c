@@ -55,10 +55,10 @@ eval "$(cat DE_Minimal.c | grep -m 4 "\-\-cflags cairo")"; cp *.so ../gym-master
 #define RENDER_HEIGHT 84
 
 
-#ifndef GUI_INTERFACE
+#ifdef GUI_INTERFACE
 #define DEFAULT_LINE_WIDTH 3.8
 #else
-#define DEFAULT_LINE_WIDTH 13.0
+#define DEFAULT_LINE_WIDTH 7.0
 #endif
 
 // Globals
@@ -305,7 +305,7 @@ void update_drawing(cairo_t *cr)
 	cairo_set_line_width(cr, DEFAULT_LINE_WIDTH);
 	Draw_Ship(cr, Ship_X_Pos,Ship_Y_Pos,Ship_Headings,SHIP_SIZE_FACTOR*MaxX);
 	cairo_stroke(cr);
-	cairo_set_line_width(cr, DEFAULT_LINE_WIDTH+2.5);
+	cairo_set_line_width(cr, DEFAULT_LINE_WIDTH+1.5);
 	Draw_Ship_Nose(cr, Ship_X_Pos,Ship_Y_Pos,Ship_Headings,SHIP_SIZE_FACTOR*MaxX);
 	cairo_stroke(cr);
 
