@@ -12,15 +12,8 @@ else
 	ENV=$1
 fi
 
-game_path=" "
 #game_path=$PWD"/roms/"
-
-if [ -d "/home/wijnand" ]; then
-  game_path="/home/wijnand/Documents/git/TweedejaarsProject/gym-master/gym/envs/space_fortress/linux2/control_frame_lib.so"
-else
-  game_path="/home/rijnder/TweedejaarsProject/gym-master/gym/envs/space_fortress/linux2/control_frame_lib.so"
-fi
-
+game_path="/home/rijnder/TweedejaarsProject/gym-master/gym/envs/space_fortress/linux2/control_frame_lib.so"
 env_params="useRGB=false"
 agent="NeuralQLearner"
 n_replay=1
@@ -49,7 +42,7 @@ eval_steps=125000
 prog_freq=10000
 save_freq=125000
 gpu=0
-random_starts=5
+random_starts=30
 pool_frms="type="$pool_frms_type",size="$pool_frms_size
 num_threads=4
 

@@ -1,5 +1,5 @@
 // To try: define stuff in every file individually with guards (myvars is not needed in DE)
-#ifndef GLOBALS 
+#ifndef GLOBALS
 #define GLOBALS
 #include "myconst.h"
 #include "myext.h"
@@ -12,9 +12,7 @@
 #endif
 
 void game_iteration();
-void AIM_iteration();
-void handle_F3();
-
+void SF_iteration();
 void Set_Timer();
 
 void Reset_Timer();
@@ -34,9 +32,9 @@ int timeval_subtract(struct timeval *result, struct timeval *t2, struct timeval 
 void Get_User_Input();
 
 
-/* Every update_X function here had a "return(0)" zero statement on it's last line, without  
-specifying a return type. I removed all of these return statements and modified the function 
-return type to void to surpress warnings. */ 
+/* Every update_X function here had a "return(0)" zero statement on it's last line, without
+specifying a return type. I removed all of these return statements and modified the function
+return type to void to surpress warnings. */
 
 
 void Init_Aim_Session();
@@ -65,6 +63,3 @@ int Run_SF(cairo_t *cr);
 void animation_loop(GtkWidget *darea);
 gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data);
 #endif
-
-
-

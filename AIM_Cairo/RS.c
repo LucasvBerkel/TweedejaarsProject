@@ -357,7 +357,7 @@ void Handle_Bonus()
 }
 
 
-void AIM_iteration()
+void SF_iteration()
 {
 	Loop_Counter++;
 	// This was done by processor interupts, but is allowed automatically by GTK
@@ -381,7 +381,7 @@ void AIM_iteration()
 
 //	Score=Points+Velocity+Control+Speed;
 
-	if(Loop_Counter >= 2400) 
+	if(Loop_Counter >= 2400)
 	{
 		Loop_Counter = 0;
 		Terminal_State = 1;
