@@ -73,6 +73,7 @@ time_history[1] = 0
 local total_reward
 local nrewards
 local nepisodes
+local nepochs = 1
 local episode_reward
 
 local screen, reward, terminal = game_env:getState()
@@ -111,7 +112,7 @@ while step < opt.steps do
     if step % opt.prog_freq == 0 then
         assert(step==agent.numSteps, 'trainer step: ' .. step ..
                 ' & agent.numSteps: ' .. agent.numSteps)
-        print("Steps: ", step)
+        -- print("Steps: ", step)
         agent:report()
         collectgarbage()
     end
@@ -177,13 +178,17 @@ while step < opt.steps do
 
         local training_rate = opt.actrep*opt.eval_freq/time_dif
 
+        time = os.date("*t")
+        print('====================================')
         print(string.format(
-            '\nSteps: %d (frames: %d), reward: %.2f, epsilon: %.2f, lr: %G, ' ..
+            '[' .. time.day .. '/' .. time.month .. '/' .. time.year .. ', ' .. time.hour .. ':' .. time.min .. ']' .. ': Finished epoch ' .. nepochs .. '.\n' ..
+            'Steps: %d (frames: %d), reward: %.2f, epsilon: %.2f, lr: %G, ' ..
             'training time: %ds, training rate: %dfps, testing time: %ds, ' ..
             'testing rate: %dfps,  num. ep.: %d,  num. rewards: %d',
             step, step*opt.actrep, total_reward, agent.ep, agent.lr, time_dif,
             training_rate, eval_time, opt.actrep*opt.eval_steps/eval_time,
             nepisodes, nrewards))
+        nepochs = nepochs + 1
     end
 
     if step % opt.save_freq == 0 or step == opt.steps then
