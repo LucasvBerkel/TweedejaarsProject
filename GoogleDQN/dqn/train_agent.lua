@@ -99,7 +99,6 @@ while step < opt.steps do
     	-- To normalize the cairo array "v", we should v *= (1/255)
 
         screen, reward, terminal = game_env:step(game_actions[action_index], true)
-
     else
         if opt.random_starts > 0 then
             screen, reward, terminal = game_env:nextRandomGame()
