@@ -149,6 +149,7 @@ while step < opt.steps do
                 screen, reward, terminal = game_env:nextRandomGame()
             end
         end
+   	end
 end
 
 
