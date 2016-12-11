@@ -71,11 +71,18 @@ function nql:__init(args)
               " is not a string!")
     end
 
+	print("test")
     local msg, err = pcall(require, self.network)
+   	print("test2")
     if not msg then
+       	print("test3")
         -- try to load saved agent
+        print(self.network)
         local err_msg, exp = pcall(torch.load, self.network)
         if not err_msg then
+        	print("😓")
+        	print(err_msg)
+        	print(exp)
             error("Could not find network file ")
         end
         if self.best and exp.best_model then
