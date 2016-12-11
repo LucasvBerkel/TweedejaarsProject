@@ -90,9 +90,9 @@ for g=1,opt.games do
   while not terminal do
       local action_index = agent:perceive(reward, screen, terminal, true, 0.05)
       -- Play game in test mode (episodes don't end when losing a life)
-      screen, reward, terminal = game_env:step(game_actions[action_index])
-    	im = torch.reshape(im, 84, 84)
-    	image.save("stills/im" .. i .. ".png", im)
+	  screen, reward, terminal = game_env:step(game_actions[action_index])
+	  screen = torch.reshape(screen, 84, 84)
+      image.save("stills/im" .. i .. ".png", screen)
       i = i + 1
       -- if estep%1000 == 0 then collectgarbage() end
 
@@ -141,5 +141,4 @@ for g=1,opt.games do
       step, step*opt.actrep, total_reward, agent.ep, agent.lr, time_dif,
       training_rate, eval_time, opt.actrep*opt.eval_steps/eval_time,
       nepisodes, nrewards))
-  end
 end
