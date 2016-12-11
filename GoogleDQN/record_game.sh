@@ -13,7 +13,7 @@ else
 fi
 
 #game_path=$PWD"/roms/"
-game_path="/Users/rijnderwever/Desktop/NLR/NLR/TweedejaarsProject/gym-master/gym/envs/space_fortress/darwin/aim_frame_lib.so"
+game_path="/home/rijnder/TweedejaarsProject/gym-master/gym/envs/space_fortress/linux2/control_frame_lib.so"
 env_params="useRGB=false"
 agent="NeuralQLearner"
 n_replay=1
