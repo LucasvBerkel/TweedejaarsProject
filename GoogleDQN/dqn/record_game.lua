@@ -77,6 +77,7 @@ local screen, reward, terminal = game_env:getState()
 i = 0
 
 print("Playing" .. opt.games .. "games")
+local eval_time = sys.clock()
 for g=1,opt.games do
 
 
@@ -87,7 +88,7 @@ for g=1,opt.games do
   nepisodes = 0
   episode_reward = 0
 
-  local eval_time = sys.clock()
+
   while not terminal do
       local action_index = agent:perceive(reward, screen, terminal, true, 0.05)
       -- Play game in test mode (episodes don't end when losing a life)
