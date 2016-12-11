@@ -17,8 +17,8 @@ game_path="/Users/rijnderwever/Desktop/NLR/NLR/TweedejaarsProject/gym-master/gym
 env_params="useRGB=false"
 agent="NeuralQLearner"
 n_replay=1
-netfile="\"/Users/rijnderwever/Desktop/DQN3_0_1__FULL_Y.t7\""
-#netfile="\"convnet_atari3\""
+#netfile="\"/Users/rijnderwever/Desktop/DQN3_0_1__FULL_Y.t7\""
+netfile="\"convnet_atari3\""
 update_freq=4
 actrep=1
 games=3
@@ -28,7 +28,7 @@ learn_start=50000
 pool_frms_type="\"max\""
 pool_frms_size=2
 initial_priority="false"
-replay_memory=1000000r
+replay_memory=1000000
 eps_end=0.1
 eps_endt=replay_memory
 lr=0.00025
@@ -45,7 +45,7 @@ pool_frms="type="$pool_frms_type",size="$pool_frms_size
 
 num_threads=4
 
-args="-framework $FRAMEWORK -game_path $game_path -env $ENV -env_params $env_params -agent $agent -agent_params $agent_params -actrep $actrep -gpu $gpu -random_starts $random_starts -pool_frms $pool_frms -seed $seed -threads $num_threads -games $games"
+args="-framework $FRAMEWORK -game_path $game_path -env $ENV -agent $agent -agent_params $agent_params -actrep $actrep -gpu $gpu -random_starts $random_starts -seed $seed -threads $num_threads -games $games -pool_frms $pool_frms"
 echo $args
 
 cd dqn
