@@ -75,7 +75,8 @@ local screen, reward, terminal = game_env:getState()
 --local hard_stop = 0
 --require 'image'
 i = 0
-print("Iteration ..", step)
+
+print("Playing" .. opt.games .. "games")
 for g=1,opt.games do
 
 
