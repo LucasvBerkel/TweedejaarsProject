@@ -108,36 +108,36 @@ for g=1,opt.games do
           nepisodes = nepisodes + 1
       end
   end
-
-  eval_time = sys.clock() - eval_time
-  start_time = start_time + eval_time
-  agent:compute_validation_statistics()
-  local ind = #reward_history+1
-  total_reward = total_reward/math.max(1, nepisodes)
-
-
-  if agent.v_avg then
-      v_history[ind] = agent.v_avg
-      td_history[ind] = agent.tderr_avg
-      qmax_history[ind] = agent.q_max
-  end
-  print("V", v_history[ind], "TD error", td_history[ind], "Qmax", qmax_history[ind])
-
-  reward_history[ind] = total_reward
-  reward_counts[ind] = nrewards
-  episode_counts[ind] = nepisodes
-
-  time_history[ind+1] = sys.clock() - start_time
-
-  local time_dif = time_history[ind+1] - time_history[ind]
-
-  local training_rate = opt.actrep*opt.eval_freq/time_dif
-
-  print(string.format(
-      '\nSteps: %d (frames: %d), reward: %.2f, epsilon: %.2f, lr: %G, ' ..
-      'training time: %ds, training rate: %dfps, testing time: %ds, ' ..
-      'testing rate: %dfps,  num. ep.: %d,  num. rewards: %d',
-      step, step*opt.actrep, total_reward, agent.ep, agent.lr, time_dif,
-      training_rate, eval_time, opt.actrep*opt.eval_steps/eval_time,
-      nepisodes, nrewards))
 end
+
+eval_time = sys.clock() - eval_time
+start_time = start_time + eval_time
+agent:compute_validation_statistics()
+local ind = #reward_history+1
+total_reward = total_reward/math.max(1, nepisodes)
+
+
+if agent.v_avg then
+   v_history[ind] = agent.v_avg
+   td_history[ind] = agent.tderr_avg
+   qmax_history[ind] = agent.q_max
+end
+print("V", v_history[ind], "TD error", td_history[ind], "Qmax", qmax_history[ind])
+
+reward_history[ind] = total_reward
+reward_counts[ind] = nrewards
+episode_counts[ind] = nepisodes
+
+time_history[ind+1] = sys.clock() - start_time
+
+local time_dif = time_history[ind+1] - time_history[ind]
+
+local training_rate = opt.actrep*opt.eval_freq/time_dif
+
+print(string.format(
+   '\nSteps: %d (frames: %d), reward: %.2f, epsilon: %.2f, lr: %G, ' ..
+   'training time: %ds, training rate: %dfps, testing time: %ds, ' ..
+   'testing rate: %dfps,  num. ep.: %d,  num. rewards: %d',
+   step, step*opt.actrep, total_reward, agent.ep, agent.lr, time_dif,
+   training_rate, eval_time, opt.actrep*opt.eval_steps/eval_time,
+   nepisodes, nrewards))
