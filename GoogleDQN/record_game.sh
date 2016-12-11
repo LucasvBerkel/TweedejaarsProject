@@ -17,8 +17,8 @@ game_path="/Users/rijnderwever/Desktop/NLR/NLR/TweedejaarsProject/gym-master/gym
 env_params="useRGB=false"
 agent="NeuralQLearner"
 n_replay=1
-#netfile="\"/Users/rijnderwever/Desktop/DQN3_0_1__FULL_Y.t7\""
-netfile="\"convnet_atari3\""
+netfile="\"~/Dropbox/SFC_epoch65_avg1.t7\""
+#netfile="\"convnet_atari3\""
 update_freq=4
 actrep=1
 games=3
