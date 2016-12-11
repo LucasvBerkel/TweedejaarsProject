@@ -106,7 +106,6 @@ for g=1,opt.games do
           total_reward = total_reward + episode_reward
           episode_reward = 0
           nepisodes = nepisodes + 1
-          screen, reward, terminal = game_env:nextRandomGame()
       end
   end
 
