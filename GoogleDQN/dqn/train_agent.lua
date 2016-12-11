@@ -149,83 +149,84 @@ while step < opt.steps do
                 screen, reward, terminal = game_env:nextRandomGame()
             end
         end
+end
 
-        eval_time = sys.clock() - eval_time
-        start_time = start_time + eval_time
-        agent:compute_validation_statistics()
-        local ind = #reward_history+1
-        total_reward = total_reward/math.max(1, nepisodes)
 
-        if #reward_history == 0 or total_reward > torch.Tensor(reward_history):max() then
-            agent.best_network = agent.network:clone()
-        end
+eval_time = sys.clock() - eval_time
+start_time = start_time + eval_time
+agent:compute_validation_statistics()
+local ind = #reward_history+1
+total_reward = total_reward/math.max(1, nepisodes)
 
-        if agent.v_avg then
-            v_history[ind] = agent.v_avg
-            td_history[ind] = agent.tderr_avg
-            qmax_history[ind] = agent.q_max
-        end
-        print("V", v_history[ind], "TD error", td_history[ind], "Qmax", qmax_history[ind])
+if #reward_history == 0 or total_reward > torch.Tensor(reward_history):max() then
+    agent.best_network = agent.network:clone()
+end
 
-        reward_history[ind] = total_reward
-        reward_counts[ind] = nrewards
-        episode_counts[ind] = nepisodes
+if agent.v_avg then
+    v_history[ind] = agent.v_avg
+    td_history[ind] = agent.tderr_avg
+    qmax_history[ind] = agent.q_max
+end
+print("V", v_history[ind], "TD error", td_history[ind], "Qmax", qmax_history[ind])
 
-        time_history[ind+1] = sys.clock() - start_time
+reward_history[ind] = total_reward
+reward_counts[ind] = nrewards
+episode_counts[ind] = nepisodes
 
-        local time_dif = time_history[ind+1] - time_history[ind]
+time_history[ind+1] = sys.clock() - start_time
 
-        local training_rate = opt.actrep*opt.eval_freq/time_dif
+local time_dif = time_history[ind+1] - time_history[ind]
 
-        time = os.date("*t")
-        print('====================================')
-        print(string.format(
-            '[' .. time.day .. '/' .. time.month .. '/' .. time.year .. ', ' .. time.hour .. ':' .. time.min .. ']' .. ': Finished epoch ' .. nepochs .. '.\n' ..
-            'Steps: %d (frames: %d), reward: %.2f, epsilon: %.2f, lr: %G, ' ..
-            'training time: %ds, training rate: %dfps, testing time: %ds, ' ..
-            'testing rate: %dfps,  num. ep.: %d,  num. rewards: %d',
-            step, step*opt.actrep, total_reward, agent.ep, agent.lr, time_dif,
-            training_rate, eval_time, opt.actrep*opt.eval_steps/eval_time,
-            nepisodes, nrewards))
-        nepochs = nepochs + 1
-    end
+local training_rate = opt.actrep*opt.eval_freq/time_dif
 
-    if step % opt.save_freq == 0 or step == opt.steps then
-        local s, a, r, s2, term = agent.valid_s, agent.valid_a, agent.valid_r,
-            agent.valid_s2, agent.valid_term
-        agent.valid_s, agent.valid_a, agent.valid_r, agent.valid_s2,
-            agent.valid_term = nil, nil, nil, nil, nil, nil, nil
-        local w, dw, g, g2, delta, delta2, deltas, tmp = agent.w, agent.dw,
-            agent.g, agent.g2, agent.delta, agent.delta2, agent.deltas, agent.tmp
-        agent.w, agent.dw, agent.g, agent.g2, agent.delta, agent.delta2,
-            agent.deltas, agent.tmp = nil, nil, nil, nil, nil, nil, nil, nil
+time = os.date("*t")
+print('====================================')
+print(string.format(
+    '[' .. time.day .. '/' .. time.month .. '/' .. time.year .. ', ' .. time.hour .. ':' .. time.min .. ']' .. ': Finished epoch ' .. nepochs .. '.\n' ..
+    'Steps: %d (frames: %d), reward: %.2f, epsilon: %.2f, lr: %G, ' ..
+    'training time: %ds, training rate: %dfps, testing time: %ds, ' ..
+    'testing rate: %dfps,  num. ep.: %d,  num. rewards: %d',
+    step, step*opt.actrep, total_reward, agent.ep, agent.lr, time_dif,
+    training_rate, eval_time, opt.actrep*opt.eval_steps/eval_time,
+    nepisodes, nrewards))
+nepochs = nepochs + 1
+end
 
-        local filename = opt.name
-        if opt.save_versions > 0 then
-            filename = filename .. "_" .. math.floor(step / opt.save_versions)
-        end
-        filename = filename
-        torch.save(filename .. ".t7", {agent = agent,
-                                model = agent.network,
-                                best_model = agent.best_network,
-                                reward_history = reward_history,
-                                reward_counts = reward_counts,
-                                episode_counts = episode_counts,
-                                time_history = time_history,
-                                v_history = v_history,
-                                td_history = td_history,
-                                qmax_history = qmax_history,
-                                arguments=opt})
-        if opt.saveNetworkParams then
-            local nets = {network=w:clone():float()}
-            torch.save(filename..'.params.t7', nets, 'ascii')
-        end
-        agent.valid_s, agent.valid_a, agent.valid_r, agent.valid_s2,
-            agent.valid_term = s, a, r, s2, term
-        agent.w, agent.dw, agent.g, agent.g2, agent.delta, agent.delta2,
-            agent.deltas, agent.tmp = w, dw, g, g2, delta, delta2, deltas, tmp
-        print('Saved:', filename .. '.t7')
-        io.flush()
-        collectgarbage()
-    end
+if step % opt.save_freq == 0 or step == opt.steps then
+local s, a, r, s2, term = agent.valid_s, agent.valid_a, agent.valid_r,
+    agent.valid_s2, agent.valid_term
+agent.valid_s, agent.valid_a, agent.valid_r, agent.valid_s2,
+    agent.valid_term = nil, nil, nil, nil, nil, nil, nil
+local w, dw, g, g2, delta, delta2, deltas, tmp = agent.w, agent.dw,
+    agent.g, agent.g2, agent.delta, agent.delta2, agent.deltas, agent.tmp
+agent.w, agent.dw, agent.g, agent.g2, agent.delta, agent.delta2,
+    agent.deltas, agent.tmp = nil, nil, nil, nil, nil, nil, nil, nil
+
+local filename = opt.name
+if opt.save_versions > 0 then
+    filename = filename .. "_" .. math.floor(step / opt.save_versions)
+end
+filename = filename
+torch.save(filename .. ".t7", {agent = agent,
+                        model = agent.network,
+                        best_model = agent.best_network,
+                        reward_history = reward_history,
+                        reward_counts = reward_counts,
+                        episode_counts = episode_counts,
+                        time_history = time_history,
+                        v_history = v_history,
+                        td_history = td_history,
+                        qmax_history = qmax_history,
+                        arguments=opt})
+if opt.saveNetworkParams then
+    local nets = {network=w:clone():float()}
+    torch.save(filename..'.params.t7', nets, 'ascii')
+end
+agent.valid_s, agent.valid_a, agent.valid_r, agent.valid_s2,
+    agent.valid_term = s, a, r, s2, term
+agent.w, agent.dw, agent.g, agent.g2, agent.delta, agent.delta2,
+    agent.deltas, agent.tmp = w, dw, g, g2, delta, delta2, deltas, tmp
+print('Saved:', filename .. '.t7')
+io.flush()
+collectgarbage()
 end
