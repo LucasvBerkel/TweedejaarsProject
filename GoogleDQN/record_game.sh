@@ -17,7 +17,7 @@ game_path="/home/rijnder/TweedejaarsProject/gym-master/gym/envs/space_fortress/l
 env_params="useRGB=false"
 agent="NeuralQLearner"
 n_replay=1
-netfile="\"~/Dropbox/SFC_epoch65_avg1.t7\""
+netfile="\"/home/rijnder/Dropbox/SFC_epoch65_avg1.t7\""
 #netfile="\"convnet_atari3\""
 update_freq=4
 actrep=1
