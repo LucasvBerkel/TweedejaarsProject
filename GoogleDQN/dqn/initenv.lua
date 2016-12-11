@@ -57,6 +57,7 @@ function torchSetup(_opt)
     if opt.gpu and opt.gpu >= 0 then
         require 'cutorch'
         require 'cunn'
+        require 'cunn'
         if opt.gpu == 0 then
             local gpu_id = tonumber(os.getenv('GPU_ID'))
             if gpu_id then opt.gpu = gpu_id+1 end
