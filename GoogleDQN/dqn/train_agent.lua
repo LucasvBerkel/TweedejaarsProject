@@ -29,7 +29,7 @@ cmd:option('-network', '', 'reload pretrained network')
 cmd:option('-agent', '', 'name of agent file to use')
 cmd:option('-agent_params', '', 'string of agent parameters')
 cmd:option('-seed', 1, 'fixed input seed for repeatable experiments')
-cmd:option('-saveNetworkParams', false,
+cmd:option('-saveNetworkParams', true,
            'saves the agent network in a separate file')
 cmd:option('-prog_freq', 5*10^3, 'frequency of progress output')
 cmd:option('-save_freq', 5*10^4, 'the model is saved every save_freq steps')
@@ -45,6 +45,14 @@ cmd:option('-threads', 1, 'number of BLAS threads')
 cmd:option('-gpu', -1, 'gpu flag')
 
 cmd:text()
+
+function range(x)
+  local l = {}
+  for i=0,x do
+    l[i] = i
+  end
+  return l
+end
 
 local opt = cmd:parse(arg)
 
@@ -71,6 +79,7 @@ local step = 0
 time_history[1] = 0
 
 local total_reward
+local best_reward = -999999
 local nrewards
 local nepisodes
 local episode_reward
@@ -163,7 +172,8 @@ while step < opt.steps do
         local time_dif = time_history[ind+1] - time_history[ind]
 
         local training_rate = opt.actrep*opt.eval_freq/time_dif
-
+        train_data={epoch=range(ind), average_reward=reward_history, meanq=qmax_history, nr_games=episode_counts, meancost=td_history[ind]}
+        csvigo.save{path=opt.name .. '.csv', data=train_data, verbose=false}
         print(string.format(
             '\nSteps: %d (frames: %d), reward: %.2f, epsilon: %.2f, lr: %G, ' ..
             'training time: %ds, training rate: %dfps, testing time: %ds, ' ..
@@ -199,6 +209,20 @@ while step < opt.steps do
                                 td_history = td_history,
                                 qmax_history = qmax_history,
                                 arguments=opt})
+        if total_reward > best_reward then
+            best_reward = total_reward
+            torch.save("best" .. ".t7", {agent = agent,
+                          model = agent.network,
+                          best_model = agent.best_network,
+                          reward_history = reward_history,
+                          reward_counts = reward_counts,
+                          episode_counts = episode_counts,
+                          time_history = time_history,
+                          v_history = v_history,
+                          td_history = td_history,
+                          qmax_history = qmax_history,
+                          arguments=opt})
+        end
         if opt.saveNetworkParams then
             local nets = {network=w:clone():float()}
             torch.save(filename..'.params.t7', nets, 'ascii')
