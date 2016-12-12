@@ -13,17 +13,18 @@ else
 fi
 
 #game_path=$PWD"/roms/"
-game_path="/home/rijnder/TweedejaarsProject/gym-master/gym/envs/space_fortress/linux2/control_frame_lib.so"
+game_path="/home/wijnand/Documents/git/TweedejaarsProject/SF_Control/control_frame_lib.so"
 env_params="useRGB=false"
 agent="NeuralQLearner"
 n_replay=1
-netfile="\"/home/rijnder/Dropbox/SFC_epoch65_avg1.t7\""
-#netfile="\"convnet_atari3\""
+netfile="\"/home/wijnand/Documents/git/TweedejaarsProject/GoogleDQN/SFC_avg1point2.t7\""
 update_freq=4
+
 actrep=4
 games=2
+
 discount=0.99
-seed=1
+seed=$(shuf -i 1-65000 -n 1)
 learn_start=50000
 pool_frms_type="\"max\""
 pool_frms_size=2
