@@ -98,7 +98,7 @@ while step < opt.steps do
         assert(step==agent.numSteps, 'trainer step: ' .. step ..
                 ' & agent.numSteps: ' .. agent.numSteps)
         print("Steps: ", step)
-        agent:report()
+        -- agent:report()
         collectgarbage()
     end
 
