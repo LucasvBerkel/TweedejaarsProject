@@ -78,7 +78,7 @@ local reward_history = {}
 local step = 0
 time_history[1] = 0
 
-local total_reward
+local total_reward = 0
 local best_reward = -999999
 local nrewards
 local nepisodes
@@ -172,7 +172,8 @@ while step < opt.steps do
         local time_dif = time_history[ind+1] - time_history[ind]
 
         local training_rate = opt.actrep*opt.eval_freq/time_dif
-        train_data={epoch=range(ind), average_reward=reward_history, meanq=qmax_history, nr_games=episode_counts, meancost=td_history[ind]}
+        -- train_data={epoch=range(ind), average_reward=reward_history, meanq=qmax_history, nr_games=episode_counts, meancost=td_history[ind]}
+        train_data={epoch=range(ind), average_reward=reward_history, meanq=qmax_history, nr_games=episode_counts, meancost=td_history}
         csvigo.save{path=opt.name .. '.csv', data=train_data, verbose=false}
         print(string.format(
             '\nSteps: %d (frames: %d), reward: %.2f, epsilon: %.2f, lr: %G, ' ..
