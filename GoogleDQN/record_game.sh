@@ -13,15 +13,14 @@ else
 fi
 
 #game_path=$PWD"/roms/"
-game_path="/home/wijnand/Documents/git/TweedejaarsProject/SF_Control/control_frame_lib.so"
-env_params="useRGB=false"
+game_path="/home/rijnder/TweedejaarsProject/SF_Control/control_frame_lib.so"
 agent="NeuralQLearner"
 n_replay=1
-netfile="\"/home/wijnand/Documents/git/TweedejaarsProject/GoogleDQN/SFC_avg1point2.t7\""
+netfile="\"/home/rijnder/TweedejaarsProject/GoogleDQN/dqn/DQN3_0_1__FULL_Y.t7\""
 update_freq=4
 
 actrep=4
-games=2
+games=20
 
 discount=0.99
 seed=$(shuf -i 1-65000 -n 1)

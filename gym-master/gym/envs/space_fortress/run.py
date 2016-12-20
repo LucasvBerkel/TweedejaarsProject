@@ -47,7 +47,7 @@ env = gym.make('SFC-v0')
 
 # Configure enviroment
 #-------------------------------
-env.configure(mode=render_mode, record_path=None, no_direction=False, frame_skip=5)
+env.configure(mode=render_mode, record_path=None, no_direction=False, frame_skip=4)
 
 with Listener(on_press=on_press, on_release=on_release) as listener:
 	for game in range(5):
@@ -67,13 +67,8 @@ with Listener(on_press=on_press, on_release=on_release) as listener:
 	#			else:
 	#				env.best_waction()
 	#			==============================
-			observation, reward, done, info = env.step(action)
 
 #			print(reward)
-
-			if done:
-				print("terminal")
-				break
 	#			print("Done!")
 	#			count += 1
 				# print("Episode finished after {} timesteps".format(t+1))
