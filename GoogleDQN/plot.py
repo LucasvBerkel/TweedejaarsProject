@@ -11,7 +11,7 @@ parser.add_argument("--png_file")
 parser.add_argument("--dpi", type = int, default = 80)
 parser.add_argument("--skiprows", type = int, default = 1)
 parser.add_argument("--delimiter", default = ",")
-parser.add_argument("--fields", type = lambda s: [item for item in s.split(',')], default = "meanq, average_reward,nr_games,meancost")
+parser.add_argument("--fields", type = lambda s: [item for item in s.split(',')],  default = "average_reward,meanq,nr_games,meancost")
 parser.add_argument("--figure_width", type = int, default = 16)
 parser.add_argument("--figure_height", type = int, default = 9)
 args = parser.parse_args()
@@ -26,27 +26,13 @@ dtype = [
 ]
 data = np.loadtxt(args.csv_file, skiprows = args.skiprows, delimiter = args.delimiter, dtype = dtype)
 
-print(data['nr_games'][0:2])
-import sys
-sys.exit(0)
 # definitions for plot titles
 labels = {
   "epoch": "Epoch",
-  "phase": "Phase",
-  "steps": "Number of steps",
   "nr_games": "Number of games",
   "average_reward": "Average reward",
-  "min_game_reward": "Min. game reward",
-  "max_game_reward": "Max. game reward",
-  "last_exploration_rate": "Exploration rate",
-  "total_train_steps": "Exploration steps",
-  "replay_memory_count": "Replay memory size",
   "meanq": "Average Q-value",
   "meancost": "Average loss",
-  "weight_updates": "Number of weight updates",
-  "total_time": "Total time elapsed",
-  "phase_time": "Phase time",
-  "steps_per_second": "Number of steps per second"
 }
 
 # calculate number of subplots
