@@ -5,11 +5,11 @@
 #define TEXT_WIDTH 8 // The width of character "z" in pixels (with monospace font)
 #else
 #define TEXT_HEIGHT 10
-#define TEXT_WIDTH 8 
+#define TEXT_WIDTH 8
 #endif
-#define SF_YELLOW 0.0, 0.0, 0.0, 0.9516
+#define SF_YELLOW 0.0, 0.0, 0.0, 1
 #define SF_GREEN 0.0, 0.0, 0.0, 0.4720
-#define SF_BLUE 0.0, 0.0, 0.0, 0.8575
+#define SF_BLUE 0.0, 0.0, 0.0, 0.66
 #define SF_ORANGE 0.0, 0.0, 0.0, 0.4724
 //#define WINDOW_WIDTH 240
 //#define WINDOW_HEIGHT 240 + (TEXT_HEIGHT*3)
@@ -24,6 +24,8 @@ void jitter_step2(cairo_t *cr, int step);
 void Reset_Screen();
 
 void Initialize_Graphics(cairo_t *cr);
+
+unsigned char* update_screen();
 
 void Close_Graphics(cairo_t *cr);
 void Close_Graphics_SF();
@@ -47,6 +49,8 @@ void Draw_Fort(cairo_t *cr, int x, int y, int Headings, int size );
 void Draw_Mine (cairo_t *cr, int x, int y, int size);
 void Draw_Missile (cairo_t *cr, int x, int y, int Headings, int size, int missile_idx);
 void Draw_Shell(cairo_t *cr, int x, int y, int Headings, int size);
+void Draw_Ship_Nose(cairo_t *cr, int x, int y, int Headings, int size);
+
 
 float Find_Headings(int x1, int y1, int x2, int y2);
 
@@ -56,8 +60,8 @@ void set_key(int key_value);
 void stop_drawing();
 
 int move_update();
-void update_frame(cairo_t *cr);
-unsigned char* update_frame_SF();
+
+unsigned char* update_frame();
 void stroke_in_clip(cairo_t *cr);
 
 void Show_Score(cairo_t *cr, int val, int x, int y);

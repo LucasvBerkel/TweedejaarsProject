@@ -273,12 +273,6 @@ class SFEnv(gym.Env):
 		# init
 		self.init_game()
 
-		if self.mode.endswith("debug"):
-
-			if self.game.lower() == ("sf"):
-				self._action_set[4] = 0
-			else:
-				self._action_set[3] = 0
 		self.record_path = record_path
 
 		# add down movement when in no_direction mode

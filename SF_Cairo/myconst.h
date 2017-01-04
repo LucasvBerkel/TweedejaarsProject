@@ -14,7 +14,7 @@
 #define JITTER_MODE 1
 #define EXPLOSION_MODE 2
 
-#define SCALE_F 5.6
+#define SCALE_F 5.3
 
 #ifdef GUI
 #define POINTS_FONT_SIZE 9.5
@@ -22,6 +22,9 @@
 #define POINTS_FONT_SIZE 12.0
 #endif
 
+#ifndef ROTATE_ANGLE
+#define ROTATE_ANGLE 10
+#endif
 
 #define SHIP_WON 1
 #define FORT_WON 2
@@ -36,9 +39,6 @@
 #define KEY_2 50
 #define KEY_3 51
 #define ENTER 13
-#define REGULAR_CRAP 1
-#define EXTENDED_CRAP 2
-#define NO_INPUT 0
 #define ON 1
 #define OFF 0
 #define NIL 0
@@ -73,7 +73,7 @@
 #define TEXT_BACKGROUND BLUE
 #define TEXT_LINE_COLOR MAGENTA
 
-#define COLLISION_DIST 22 // Used to be 22
+#define COLLISION_DIST 12 // Used to be 22
 #define RESOURCE_DISPLAY_INTERVAL 120
 #define NO_RESOURCE_DISPLAY_INTERVAL 40
 #define MINE_SHIP_DISTANCE 200 /* in screen pixels */

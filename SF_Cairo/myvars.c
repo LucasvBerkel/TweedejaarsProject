@@ -231,7 +231,7 @@ int Score_X;            /* Score value location within data line	*/
 
 int One_Game_Loops=3600; /*  number of loops in one game  3*60*20	*/
 int Game_Counter=0;
-int Score=0;
+float Score=0.0;
 int Points=0;
 int Velocity=0;
 int Control=0;
@@ -301,4 +301,4 @@ int No_Of_Bonus_Windows=0;
 int Fort_Lock_Counter=0;
 int Effect_Flag=OFF;
 
-#endif                      
+#endif

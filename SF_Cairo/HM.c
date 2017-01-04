@@ -28,12 +28,12 @@ int Mine_Dead_Counter=0;
 int Missile_Delay_Counter=0;
 
 
-// Not needed ? 
+// Not needed ?
 void Select_Mine_Menus()
 {
 	int ri, i;
 	for(i=0; i < 3; i++) // Populate each array with 3 random characters
-	{	
+	{
 		ri=randrange(0, 9);
 		Foe_Menu[i] = Char_Set[ri];
 		ri=randrange(0, 9);
@@ -42,8 +42,50 @@ void Select_Mine_Menus()
 	}
 }
 
+#ifdef NO_DIRECTION
+void Move_Ship()
+{
+	Ship_X_Old_Pos=Ship_X_Pos;
+	Ship_Y_Old_Pos=Ship_Y_Pos;
+	if (Rotate_Input!=0) {      // Ship moves left/right
+		Ship_X_Pos = SHIP_MAX_SPEED * Rotate_Input + Ship_X_Pos;
+		Rotate_Input = 0;
+	}
+	else if (Accel_Input!=0) {  // Ship moves up/down
+		Ship_Y_Pos = SHIP_MAX_SPEED * Accel_Input + Ship_Y_Pos;
+		Accel_Input = 0;
+	}
 
+	#ifdef NO_WRAP
+	if(Ship_X_Pos<0) {
+		Ship_X_Pos=0;
+	}
+    else if(Ship_X_Pos>MaxX) {
+    	Ship_X_Pos=MaxX;
+	}
+    else if(Ship_Y_Pos<0) {
+		Ship_Y_Pos=0;
+	}
+    else if(Ship_Y_Pos>MaxY) {
+    	Ship_Y_Pos=MaxY;
+	}
+	#else
+	if(Ship_X_Pos<0) {
+		Ship_X_Pos=MaxX;
+	}
+    else if(Ship_X_Pos>MaxX) {
+    	Ship_X_Pos=0;
+	}
+    else if(Ship_Y_Pos<0) {
+		Ship_Y_Pos=MaxY;
+	}
+    else if(Ship_Y_Pos>MaxY) {
+    	Ship_Y_Pos=0;
+	}
+	#endif
 
+}
+#else
 void Move_Ship()
 {
   Ship_Old_Headings=Ship_Headings;
@@ -54,45 +96,45 @@ void Move_Ship()
   if (Rotate_Input!=0)      /* if ship rotates */
      {
 //       Ship_Display_Update=1;  /* at least rotates */
-       Ship_Headings=Ship_Headings + Rotate_Input*Ship_Angular_Step;
-       if (Ship_Headings<0) Ship_Headings= 359+Ship_Headings-1;
-       if (Ship_Headings>359) Ship_Headings= Ship_Headings-359-1;
+       Ship_Headings=Ship_Headings + Rotate_Input*ROTATE_ANGLE;
+       if (Ship_Headings<0) {
+         Ship_Headings= 359+Ship_Headings-1;
+       }
+       else if (Ship_Headings>359) {
+         Ship_Headings= Ship_Headings-359-1;
+       }
        Rotate_Input=0;        /* reset input */
      }
   else if (Accel_Input!=0)
 	{
 
-       Ship_X_Speed=Ship_X_Speed+0.65*Ship_Accel*Fsin(Ship_Headings);
-			
-       Ship_Y_Speed=Ship_Y_Speed-0.65*Ship_Accel*Fcos(Ship_Headings);
-       Accel_Input=0; 	/* reset input */
+		#ifdef GRID_MOVEMENT
+		// Round because this is rounded down by integer casting, which makes diagonal movement
+		// a lot slower compared to vertical or horizontal movement
 
-       /* assure it does not exceed MAXspeed */
+
+	    Ship_Y_Speed=round(-4.4*Fcos(Ship_Headings));
+   		Ship_X_Speed=round(4.4*Fsin(Ship_Headings));
+
+		#else
+	    Ship_X_Speed=Ship_X_Speed+0.65*Ship_Accel*Fsin(Ship_Headings);
+	    Ship_Y_Speed=Ship_Y_Speed-0.65*Ship_Accel*Fcos(Ship_Headings);
+
+    	/* assure it does not exceed MAXspeed */
 
 		if(fabsf(Ship_X_Speed)>Ship_Max_Speed)
 		{
-			if(Ship_X_Speed<0)
-			{
-				Ship_X_Speed=-Ship_Max_Speed;
-			}
-		   else
-			{
-				Ship_X_Speed=Ship_Max_Speed;
-			}
+			Ship_X_Speed = Ship_X_Speed < 0 ? -Ship_Max_Speed : Ship_Max_Speed;
 		}
 		if(fabsf(Ship_Y_Speed)>Ship_Max_Speed)
 		{
-			if(Ship_Y_Speed<0)
-			{
-				Ship_Y_Speed=-Ship_Max_Speed;
-			}
-			  else
-			{
-				Ship_Y_Speed=Ship_Max_Speed;
-			}
+			Ship_Y_Speed = Ship_Y_Speed < 0 ? -Ship_Max_Speed : Ship_Max_Speed;
 	  }  /* end accel_input */
+		#endif
+    Accel_Input=0; 	/* reset input */
 
 	}
+
 		/* now update ship position */
 
   if ((Ship_X_Speed!=0.0)||(Ship_Y_Speed!=0.0))
@@ -101,26 +143,43 @@ void Move_Ship()
      Ship_X_Pos=Ship_X_Pos+Ship_X_Speed;
      Ship_Y_Pos=Ship_Y_Pos+Ship_Y_Speed;
 	/* check if crossed screen boundary */
-     if(Ship_X_Pos<0) { Ship_X_Pos=MaxX;
-	  Wrap_Around_Flag=ON; }
-     if(Ship_X_Pos>MaxX) { Ship_X_Pos=0;
-		     Wrap_Around_Flag=ON; }
-     if(Ship_Y_Pos<0) { Ship_Y_Pos=MaxY;
-	  Wrap_Around_Flag=ON; }
-     if(Ship_Y_Pos>MaxY) { Ship_Y_Pos=0;
-		     Wrap_Around_Flag=ON; }
-	/* check if bumped into the fortress */
-     if(sqrt(pow(Ship_X_Pos-MaxX/2,2)+
-      pow(Ship_Y_Pos-MaxY/2,2) ) < (COLLISION_DIST) )
-	 {
-	   Ship_X_Speed=-Ship_X_Speed;		/* reverse direction */
-	   Ship_Y_Speed=-Ship_Y_Speed;
-	   Ship_X_Pos=Ship_X_Pos+Ship_X_Speed; /* move ship out of range */
-	   Ship_Y_Pos=Ship_Y_Pos+Ship_Y_Speed;
-		}
+			#ifdef NO_WRAP
+			if(Ship_X_Pos<0 || Ship_X_Pos>MaxX)
+			{
+				Ship_X_Speed=-Ship_X_Speed;		/* reverse direction */
+				Ship_Y_Speed=-Ship_Y_Speed;
+				Ship_X_Pos=Ship_X_Pos+Ship_X_Speed; /* move ship out of range */
+				Ship_Y_Pos=Ship_Y_Pos+Ship_Y_Speed;
+			}
+			else if(Ship_Y_Pos<0 || Ship_Y_Pos>MaxY)
+			{
+//				Ship_X_Speed=Ship_X_Speed;		/* reverse direction */
+				Ship_Y_Speed=-Ship_Y_Speed;
+				Ship_X_Pos=Ship_X_Pos+Ship_X_Speed; /* move ship out of range */
+				Ship_Y_Pos=Ship_Y_Pos+Ship_Y_Speed;
+			}
+
+			#else
+	     if(Ship_X_Pos<0) { Ship_X_Pos=MaxX;
+		  Wrap_Around_Flag=ON; }
+	     if(Ship_X_Pos>MaxX) { Ship_X_Pos=0;
+			     Wrap_Around_Flag=ON; }
+	     if(Ship_Y_Pos<0) { Ship_Y_Pos=MaxY;
+		  Wrap_Around_Flag=ON; }
+	     if(Ship_Y_Pos>MaxY) { Ship_Y_Pos=0;
+			     Wrap_Around_Flag=ON; }
+			#endif
  	} /* end ship is moving */
 
+	#ifdef GRID_MOVEMENT  // If not floaty space movement
+	if(Accel_Input == 0)
+	{ // Reset speed to get grid like movement
+		Ship_X_Speed = 0;
+		Ship_Y_Speed = 0;
+	}
+	#endif
 }
+#endif
 
 void Fire_Shell()
 {
@@ -132,7 +191,7 @@ void Fire_Shell()
 //  Draw_Shell(cr, Shell_X_Pos,Shell_Y_Pos,Shell_Headings,
 //				SHELL_SIZE_FACTOR*MaxX);  /* first time */ // First time??
 //	stroke_in_clip(cr);
-//	Shell_Should_Update = 1; // first time apperantly 
+//	Shell_Should_Update = 1; // first time apperantly
 //	Shell_Should_Clean = 1;
 //  sound(800);
 //  Sound_Flag=6;
@@ -153,13 +212,8 @@ void Handle_Fortress(cairo_t *cr)
   nh=Find_Headings((MaxX/2.0), (MaxY/2.0), Ship_X_Pos,  Ship_Y_Pos);
   if (abs(Fort_Headings-nh)>10)
   {
-//		clear_prev_path(cr, PrevShip);
-		//       Draw_Fort(cr, MaxX/2,MaxY/2,Fort_Headings,FORT_SIZE_FACTOR*MaxX);
-		//						/* erase old position */
+
 		Fort_Headings=nh;
-//		Draw_Fort(cr, MaxX/2,MaxY/2,Fort_Headings,FORT_SIZE_FACTOR*MaxX);
-//		stroke_in_clip(cr);
-		/* draw new position */
 		Fort_Lock_Counter=0;  /* reset firing counter */
   }
 }
@@ -233,8 +287,8 @@ void Handle_Speed_Score()
 
 }
 
-// 
-// This function is supposed to erease the last show mine identification type 
+//
+// This function is supposed to erease the last show mine identification type
 void Clear_Mine_Type(cairo_t *cr)
 {
 //  int x,y;
@@ -244,7 +298,7 @@ void Clear_Mine_Type(cairo_t *cr)
 //	cairo_translate(cr, 0, Panel_Y_Start);
 //  x=IFF_X; y=Data_Line;
 //	cairo_set_source_rgb(cr, 0, 0, 0);
-//	cairo_rectangle(cr, x, y, TEXT_WIDTH, TEXT_HEIGHT); // 
+//	cairo_rectangle(cr, x, y, TEXT_WIDTH, TEXT_HEIGHT); //
 //	cairo_clip_preserve(cr);
 //	cairo_fill(cr);
 //	cairo_reset_clip(cr);
@@ -258,7 +312,7 @@ void Show_Mine_Type(char *Minetype)
 //  int svcolor;
 //  int x,y;
 //	Mine_Type_Should_Update = 1;
-	
+
 }
 
 void Reset_Mine_Headings()
@@ -279,7 +333,7 @@ void Generate_Mine()
   int a;
   do
   {
-//    Mine_X_Pos=random(MaxX); // Maybe not available, what does it do? 
+//    Mine_X_Pos=random(MaxX); // Maybe not available, what does it do?
 //    Mine_Y_Pos=random(MaxY);
 		Mine_X_Pos=randrange(0, MaxX);
 		Mine_Y_Pos=randrange(0, MaxY);
@@ -301,7 +355,7 @@ void Generate_Mine()
 ////      t0=clock(); /* when "a mine is born .."? */  // Why and how does it access this?
 //    }
 
-  if (Mine_Type==FRIEND) 
+  if (Mine_Type==FRIEND)
 	{
 		Mine_Indicator = (char*)Friend_Menu[randrange(0,2)];
 	}
@@ -316,7 +370,7 @@ void Generate_Mine()
 void Move_Mine()
 {
 //		stroke_in_clip(cr);
-		// Do something with cairo_save() if approiate 
+		// Do something with cairo_save() if approiate
 //    Draw_Mine(cr, Mine_X_Pos,Mine_Y_Pos,MINE_SIZE_FACTOR*MaxX); /* erase mine */
 //		Mine_Should_Clean = 1;
 
@@ -340,22 +394,16 @@ void Handle_Mine()
  switch(Mine_Flag)
  {
   case KILL  : {
-		  Handle_Speed_Score();
-//		  Draw_Mine(cr, Mine_X_Pos,Mine_Y_Pos,MINE_SIZE_FACTOR*MaxX);
-//			clear_prev_path(cr, PrevMine);
-//			Mine_Should_Clean = 1;
-							/* erase mine */
+		  // Handle_Speed_Score();
 		  Mine_Flag=DEAD;
 		  Mine_Dead_Counter=0;
 		  Missile_Type=VS_FRIEND;
 		  Missile_Vs_Mine_Only=OFF;
 		  Timing_Flag=OFF;
-//		  Clear_Mine_Type(cr); /* clear mine type display */
-//			Mine_Type_Should_Clean = 1;
-//		  Clear_Interval(); // Double press checking  
 		  break;
 		}
   case DEAD   : {
+		// Uncomment to spawn mines (and maybe some other stuff)
 //		  if(Mine_Dead_Counter++ >= Mine_Wait_Loops)
 //		    {
 //		      Generate_Mine();
@@ -498,34 +546,3 @@ void Handle_Missile()
 //	printf("Yo man! \n");
 //}
 //
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
