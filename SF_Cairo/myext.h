@@ -24,7 +24,7 @@
 //	int score;
 //};
 
-// Addded for backwards compability 
+// Addded for backwards compability
 extern int Missile_X;
 extern int Missile_Y;
 
@@ -239,7 +239,7 @@ extern int Score_X;            /* Score value location within data line	*/
 extern int Game_Counter;
 extern int No_Of_Games;
 extern int One_Game_Duration;
-extern int Score;
+extern float Score;
 extern int Points;
 extern int Velocity;
 extern int Control;

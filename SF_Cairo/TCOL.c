@@ -31,28 +31,6 @@ int Data_Update_Counter=20;
 int Last_Center_Dist;
 int Wrap_Around_Flag=OFF;
 
-//extern Get_Ship_Input(); // not used or something
-/* Uncomment (for HM.c)
-extern void Update_Ship_Dynamics();
-extern void Update_Ship_Display();
-extern void Move_Ship();
-extern void Fire_Missile();
-extern void Handle_Missile(cairo_t *cr);
-extern void Generate_Mine();
-extern void Move_Mine();
-extern void Handle_Mine(cairo_t *cr);
-extern void Fire_Shell();
-extern void Handle_Shell(cairo_t *cr);
-extern void Handle_Fortress(); */
-
-// ------- Uncomment (RE) ------------ //
-//extern Update_Vulner();
-//extern Update_Velocity();
-//extern Update_Control();
-//extern Update_Points();
-//extern Reset_Screen();
-//extern Mydelay(unsigned Timedelay);
-// --------------------------------- //
 
 
 // Added in header
@@ -86,79 +64,6 @@ void Gen_Explosion(int X_Pos,int Y_Pos,int Radius)
 	ExpX = X_Pos;
 	ExpY = Y_Pos;
 
-//  j=0;
-//  for(i=10;i<Radius;i=i+10)
-//  {
-////       setcolor(LIGHTRED);
-//		cairo_set_source_rgb(cr, 1.0, 102.0/255.0, 102.0/255.0);
-////       sound(200+10*i);
-//		for(iarc=i/5;iarc<360+i/5;iarc=iarc+20)
-//	  {
-////		 	void arc(int x, int y, int stangle, int endangle, int radius);
-//// 			arc function is used to draw an arc with center (x,y) and stangle specifies starting
-////			angle, endangle specifies the end angle and last parameter specifies the radius of the arc
-////			void cairo_arc (cairo_t *cr, double xc, double yc, double radius, double angle1, double angle2);
-//			cairo_new_sub_path(cr);
-//			cairo_arc(cr, X_Pos,Y_Pos, i, deg2rad(iarc), deg2rad(iarc+2));
-//
-////	    arc(X_Pos,Y_Pos,iarc,iarc+2,i);
-//		}
-////		printf("hey wow\n");
-////		while(gtk_events_pending())
-////		{
-////		printf("hm \n");
-////		}
-//
-//		cairo_stroke(cr);
-//		// -- DELAY HERE --
-//		ms_sleep(250.0/(double long)i);/* 100/i*5 */ // I guess a delay only makes sense when drawing on a window
-////		ms_sleep(100000);
-////	sound(200+15*i);
-////	setcolor(YELLOW);
-//		// This most surely does not do anything
-//		if (j>0)
-//		{
-//			cairo_set_source_rgb(cr,1,1,52/255);
-//	 		for(iarc=j/5;iarc<360+j/5;iarc=iarc+20)
-//			{
-//				cairo_new_sub_path(cr);
-//				cairo_arc(cr,X_Pos,Y_Pos,j,deg2rad(iarc),deg2rad(iarc+2));
-//			}
-//			cairo_stroke(cr);
-//		}
-//    j=i;  /* erase in de_fasage */
-//	}
-//	cairo_stroke(cr);
-
-//  Last_Pitch=200+10*i;
-//  for (i=0;i<150;i++)  /* final audio effect */
-//  {
-//		ms_sleep(5);
-//		Last_Pitch=Last_Pitch+80;
-//		sound(Last_Pitch);
-//  }
-//  setcolor(svcolor);
-//  nosound();
-}
-
-void Gen_Snap_Effect()
-{
-
-// ---- Don't forget to add the delays back in if needed  -----
-
-//  int Last_Pitch,i;
-//	int i;
-
-  Effect_Flag=ON;
-//  Last_Pitch=3000;
-//  for (i=0;i<30;i++)  /* final audio effect */
-//  {
-//		Mydelay(5);
-//		Last_Pitch=Last_Pitch-100;
-//		sound(Last_Pitch);
-//  }
-//  Mydelay(100);
-//  nosound();
 }
 
 void Zero_Vulner_Sound()
@@ -178,38 +83,7 @@ void Jitter_Ship()
 
   Effect_Flag=ON;
 	Jitter_Flag=1;
-	// Call clean() with only ship update on?
-//  Draw_Ship(cr,Ship_X_Pos,Ship_Y_Pos,Ship_Headings,SHIP_SIZE_FACTOR*MaxX); /*erase ship */
-//	stroke_in_clip(cr);
 
-//  for (i=8;i>0;i--)
-//  {
-//    Jitter_Headings=Ship_Headings+2*i;
-//    Jitter_X_Pos=Ship_X_Pos+i*Fcos(Jitter_Headings);
-//    Jitter_Y_Pos=Ship_Y_Pos+i*Fsin(Jitter_Headings);
-////		Call update with only ship update on?
-////		clear_prev_path(cr, PrevShip);
-////    Draw_Ship(cr,Jitter_X_Pos,Jitter_Y_Pos,Jitter_Headings, SHIP_SIZE_FACTOR*MaxX);
-////		stroke_in_clip(cr);
-//    ms_sleep(((double long)i)*5L);
-////		clear_prev_path(cr, PrevShip);
-////    Draw_Ship(cr,Jitter_X_Pos,Jitter_Y_Pos,Jitter_Headings, SHIP_SIZE_FACTOR*MaxX);  /* erase ship */
-////		stroke_in_clip(cr);
-//    Jitter_Headings=Ship_Headings-2*i;
-//    Jitter_X_Pos=Ship_X_Pos+i*Fsin(Jitter_Headings);
-//    Jitter_Y_Pos=Ship_Y_Pos+i*Fcos(Jitter_Headings);
-////		clear_prev_path(cr, PrevShip);
-////    Draw_Ship(cr,Jitter_X_Pos,Jitter_Y_Pos,Jitter_Headings, SHIP_SIZE_FACTOR*MaxX);  /* draw ship */
-////		stroke_in_clip(cr);
-//    ms_sleep(((double long)i)*5L);
-////		clear_prev_path(cr, PrevShip);
-////    Draw_Ship(cr,Jitter_X_Pos,Jitter_Y_Pos,Jitter_Headings, SHIP_SIZE_FACTOR*MaxX);  /* erase ship */
-////		stroke_in_clip(cr);
-//  }
-//	clear_prev_path(cr, PrevShip);
-//	Draw_Ship(cr,Ship_X_Pos,Ship_Y_Pos,Ship_Headings, SHIP_SIZE_FACTOR*MaxX); /* restore ship to its previous position */
-//	Draw_Ship(cr,Ship_X_Pos,Ship_Y_Pos,Ship_Headings, SHIP_SIZE_FACTOR*MaxX); /* restore ship to its previous position */
-//	stroke_in_clip(cr);
 }
 
 void Reset_All_Missiles()
@@ -238,43 +112,43 @@ void Test_Collisions()
   int breakflag;
   int i;
   int Handle_Missile_Flag;
-  int goodshot;
+
 
   Handle_Missile_Flag=OFF;
   breakflag=OFF;
 
 	/******* mine vs. ship collision ***********/
-
-  if(Mine_Flag==ALIVE)
-    if(Check_Collision(Ship_X_Pos,Ship_Y_Pos,Mine_X_Pos,Mine_Y_Pos, COLLISION_DIST) )
-      {
-	Ship_Killings_Counter++;
-	Ship_Damaged_By_Mines++;
-	breakflag=ON; 	/* no use to check others */
-	if(Ship_Killings_Counter>=4)
-	   {
-	     Points=Points-100;
-	     Gen_Explosion(Ship_X_Pos,Ship_Y_Pos,80);
-//			 Terminal_State = 1;
-				Terminal_State_Flag = FORT_WON;
-	     Ship_Killings_Counter=0;
-//	     Reset_Screen(cr);
-	   }
-	 else
-	   {
-	     Points=Points-50;
-	     Mine_Flag=KILL;
-	     Handle_Mine(); 		/* kill mine */
-	     if(Shell_Flag==ALIVE)
-	     {
-		  	Shell_Flag=KILL;      /* kill shell */
-		  	Handle_Shell();
-	     }
-	     Reset_All_Missiles();    	/* kill all missiles */
-//	     Gen_Snap_Effect();
-	     Jitter_Ship();		/* leaves ship on screen */
-	   }
-      }  /* end ship vs. mine collision */
+  // int goodshot;
+//   if(Mine_Flag==ALIVE)
+//     if(Check_Collision(Ship_X_Pos,Ship_Y_Pos,Mine_X_Pos,Mine_Y_Pos, COLLISION_DIST) )
+//       {
+// 	Ship_Killings_Counter++;
+// 	Ship_Damaged_By_Mines++;
+// 	breakflag=ON; 	/* no use to check others */
+// 	if(Ship_Killings_Counter>=4)
+// 	   {
+// 	     Points=Points-100;
+// 	     Gen_Explosion(Ship_X_Pos,Ship_Y_Pos,80);
+// //			 Terminal_State = 1;
+// 				Terminal_State_Flag = FORT_WON;
+// 	     Ship_Killings_Counter=0;
+// //	     Reset_Screen(cr);
+// 	   }
+// 	 else
+// 	   {
+// 	     Points=Points-50;
+// 	     Mine_Flag=KILL;
+// 	     Handle_Mine(); 		/* kill mine */
+// 	     if(Shell_Flag==ALIVE)
+// 	     {
+// 		  	Shell_Flag=KILL;      /* kill shell */
+// 		  	Handle_Shell();
+// 	     }
+// 	     Reset_All_Missiles();    	/* kill all missiles */
+// //	     Gen_Snap_Effect();
+// 	     Jitter_Ship();		/* leaves ship on screen */
+// 	   }
+//       }  /* end ship vs. mine collision */
 
 
 		/******** shell vs. ship collision *********/
@@ -286,68 +160,68 @@ void Test_Collisions()
 	     Ship_Killings_Counter++;
 	     Ship_Damaged_By_Fortress++;
 	     breakflag=ON;
-	     if(Ship_Killings_Counter>=4)
-	       {
-		 Points=Points-100;
-		 Gen_Explosion(Ship_X_Pos,Ship_Y_Pos,80);
-//			Terminal_State = 1;
-			Terminal_State_Flag = FORT_WON;
-		 Ship_Killings_Counter=0;
+       Score = -1.0;
+	     if(Ship_Damaged_By_Fortress>=1) // was 4
+	     {
+		//  Points=Points-100;
+		    // Gen_Explosion(Ship_X_Pos,Ship_Y_Pos,80);
+			  Terminal_State = 1;
+			  Terminal_State_Flag = FORT_WON;
+		    Ship_Damaged_By_Fortress=0;
 //		 Reset_Screen();
-	       }
+	     }
 	     else
-	       {
-		 Points=Points-50;
-		 Shell_Flag=KILL;        /* kill shell */
-		 Handle_Shell(); // Uncomment when done
-		 if(Mine_Flag==ALIVE)    /* kill  mine  */
-		   {
-		     Mine_Flag=KILL;
-		     Handle_Mine(); /* erase mine and reset counters */
-		   }
-		 Reset_All_Missiles();
-		 Gen_Snap_Effect();
-		 Jitter_Ship();     	/* leaves ship on screen */
-	       }
+	     {
+  		//  Points=Points-50;
+  		 Shell_Flag=KILL;        /* kill shell */
+  		 Handle_Shell(); // Uncomment when done
+  		 if(Mine_Flag==ALIVE)    /* kill  mine  */
+  		   {
+  		     Mine_Flag=KILL;
+  		     Handle_Mine(); /* erase mine and reset counters */
+  		   }
+  		 Reset_All_Missiles();
+  		//  Jitter_Ship();     	/* leaves ship on screen */
+	     }
 	   }
 
   if(!breakflag)
   for(i=0;i<MAX_NO_OF_MISSILES;i++)   /* for all  possible missiles */
   {                  /* check against mine and fortress */
-    if(Mine_Flag==ALIVE)
-      if(Missile_Flag[i]==ALIVE)
+    // if(Mine_Flag==ALIVE)
+    //   if(Missile_Flag[i]==ALIVE)
 
 		/***** check missile vs. mine ********/
 
-	 if(Check_Collision(Missile_X_Pos[i],Missile_Y_Pos[i],
-			    Mine_X_Pos,Mine_Y_Pos,COLLISION_DIST) )
-
-	   {
-	     Missile_Flag[i]=KILL;
-	     Handle_Missile_Flag=ON;
-	     goodshot=OFF;
-	     if((Missile_Type==VS_FRIEND)&&(Mine_Type==FRIEND))
-	       {
-		 goodshot=ON;
-		 Points=Points+20;
-		 Vulner_Counter++;
-//		 Update_Vulner(cr);
-
-	       }
-	     else
-	     if((Missile_Type==VS_FOE)&&(Mine_Type==FOE))
-	       {
-		 goodshot=ON;
-		 Points=Points+30;
-	       }
-	     if(goodshot)
-	       {
-		 goodshot=OFF; /* redundant */
-		 Gen_Snap_Effect();
-		 Mine_Flag=KILL;
-		 Handle_Mine();
-	       }
-	  } /* end missile vs. mine */
+// 	 if(Check_Collision(Missile_X_Pos[i],Missile_Y_Pos[i],
+// 			    Mine_X_Pos,Mine_Y_Pos,COLLISION_DIST) )
+//
+// 	   {
+// 	     Missile_Flag[i]=KILL;
+// 	     Handle_Missile_Flag=ON;
+// 	     goodshot=OFF;
+// 	     if((Missile_Type==VS_FRIEND)&&(Mine_Type==FRIEND))
+// 	       {
+// 		 goodshot=ON;
+// 		 Points=Points+20;
+// 		 Vulner_Counter++;
+// //		 Update_Vulner(cr);
+//
+// 	       }
+// 	     else
+// 	     if((Missile_Type==VS_FOE)&&(Mine_Type==FOE))
+// 	       {
+// 		 goodshot=ON;
+// 		 Points=Points+30;
+// 	       }
+// 	     if(goodshot)
+// 	       {
+// 		 goodshot=OFF; /* redundant */
+// 		 Gen_Snap_Effect();
+// 		 Mine_Flag=KILL;
+// 		 Handle_Mine();
+// 	       }
+// 	  } /* end missile vs. mine */
 
 		/******** misile vs. fortress *********/
 
@@ -356,53 +230,79 @@ void Test_Collisions()
 	 if(Check_Collision(Missile_X_Pos[i],Missile_Y_Pos[i],
 			    MaxX/2,MaxY/2,COLLISION_DIST) )
 	 {
-	   Missile_Flag[i]=KILL;
-	   Handle_Missile_Flag=ON;
-	   if(Missile_Type==VS_FRIEND)
-	    if(Vulner_Counter>=11) /* fortress destruction */
-	     if(Loop_Counter-Last_Missile_Hit<6)  /* 6 loops ...*/
-	      {
-				Fortress_Destroyed++;
-				Points=Points+204; /* including the last missile */ // was 104
-				Vulner_Counter=0;
-         if(Bonus_Granted)
-		     {
-//			Write_Bonus_Message();     /* erase bonus message */
-					Bonus_Granted=OFF;
-		     }
-		Gen_Explosion(Missile_X_Pos[i],Missile_Y_Pos[i],120);
-		Terminal_State_Flag = SHIP_WON;
-//		Terminal_State = 1;
-//		Reset_Screen(cr)
-		Handle_Missile_Flag=OFF;
-		Last_Missile_Hit=Loop_Counter;
-		break;  /* no more missiles checks */
-	      }
-	     else /*  >=6 you're too slow my friend.. */
-	      {
-		Points=Points+50; /* is this correct */ // was 4
-		Vulner_Counter++;
-//		Update_Vulner(cr);
-		Last_Missile_Hit=Loop_Counter;
-	      }
-	    else /* Vulner_Counter<11 */
-			{
-				if(Loop_Counter-Last_Missile_Hit>=6)
-				{
-				  Vulner_Counter++;
-//					Update_Vulner(cr);
-				  Points=Points+50;
-				  Last_Missile_Hit=Loop_Counter;
-				}
-				else /* double strike before it's OK */
-				{
-				  Vulner_Counter=0; /* for speeeding, ha ha ha .... */
-//					Update_Vulner(cr);
-				  Last_Missile_Hit=Loop_Counter;
-//				  Zero_Vulner_Sound();
-				}
-			}
-	 } /* missile vs. fortress */
+
+    // New: (copied from shell vs. ship)
+     Missile_Flag[i]=KILL;
+     Handle_Missile_Flag=ON;
+    if(Loop_Counter-Last_Missile_Hit>11)  /* 6 loops ...*/
+	  {
+      Vulner_Counter++;
+      Score = 1.0;
+      if(Vulner_Counter>=2) // was 4 (DEATH)
+      {
+       Terminal_State = 1;
+       Terminal_State_Flag = SHIP_WON;
+       Vulner_Counter=0;
+       Handle_Missile_Flag=OFF;
+  //		 Reset_Screen();
+      }
+      else
+      {
+        Last_Missile_Hit=Loop_Counter;
+     //  Points=Points-50;
+     //  Jitter_Ship();     	/* leaves ship on screen */
+      }
+    }
+  }
+
+    // Old:
+	  //  Missile_Flag[i]=KILL;
+	  //  Handle_Missile_Flag=ON;
+// 	   if(Missile_Type==VS_FRIEND)
+// 	    if(Vulner_Counter>=11) /* fortress destruction */ // was 11
+// 	     if(Loop_Counter-Last_Missile_Hit<6)  /* 6 loops ...*/
+// 	      {
+// 				Fortress_Destroyed++;
+// 				Points=Points+204; /* including the last missile */ // was 104
+// 				Vulner_Counter=0;
+//          if(Bonus_Granted)
+// 		     {
+// //			Write_Bonus_Message();     /* erase bonus message */
+// 					Bonus_Granted=OFF;
+// 		     }
+// 		// Gen_Explosion(Missile_X_Pos[i],Missile_Y_Pos[i],120);
+// 		Terminal_State_Flag = SHIP_WON;
+// //		Terminal_State = 1;
+// //		Reset_Screen(cr)
+// 		Handle_Missile_Flag=OFF;
+// 		Last_Missile_Hit=Loop_Counter;
+// 		break;  /* no more missiles checks */
+// 	      }
+// 	     else /*  >=6 you're too slow my friend.. */
+// 	      {
+// 		Points=Points+50; /* is this correct */ // was 4
+// 		Vulner_Counter++;
+// //		Update_Vulner(cr);
+// 		Last_Missile_Hit=Loop_Counter;
+// 	      }
+// 	    else /* Vulner_Counter<11 */
+// 			{
+// 				if(Loop_Counter-Last_Missile_Hit>=6)
+// 				{
+// 				  Vulner_Counter++;
+// //					Update_Vulner(cr);
+// 				  Points=Points+50;
+// 				  Last_Missile_Hit=Loop_Counter;
+// 				}
+// 				else /* double strike before it's OK */
+// 				{
+// 				  Vulner_Counter=0; /* for speeeding, ha ha ha .... */
+// //					Update_Vulner(cr);
+// 				  Last_Missile_Hit=Loop_Counter;
+// //				  Zero_Vulner_Sound();
+// 				}
+// 			}
+// 	 } /* missile vs. fortress */
   } /* end for missile do-loop */
   if(Handle_Missile_Flag) Handle_Missile(); /* KILL them all */
 }

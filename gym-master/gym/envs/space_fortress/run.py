@@ -43,11 +43,14 @@ if render_mode.endswith("debug"):
 	print("Note that this script should be run as super user under OS X 👁")
 
 
-env = gym.make('SFC-v0')
+env = gym.make('SFS-v0')
 
 # Configure enviroment
 #-------------------------------
-env.configure(mode=render_mode, record_path=None, no_direction=False, frame_skip=4)
+
+env.configure(mode=render_mode, record_path=None, no_direction=False, frame_skip=1)
+
+
 
 with Listener(on_press=on_press, on_release=on_release) as listener:
 	for game in range(5):
@@ -67,8 +70,8 @@ with Listener(on_press=on_press, on_release=on_release) as listener:
 	#			else:
 	#				env.best_waction()
 	#			==============================
-			observation, reward, done, info = env.step(action)
 
+			observation, reward, done, _ = env.step(action)
 			print(reward)
 
 			if done:
