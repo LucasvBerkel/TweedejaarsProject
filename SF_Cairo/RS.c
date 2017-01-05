@@ -376,6 +376,10 @@ void Handle_Bonus()
 void SF_iteration()
 {
 	Loop_Counter++;
+	if(Loop_Counter>MAX_LOOPS) {
+		Terminal_State = 1;
+		return;		
+	}
 	// This was done by processor interupts, but is allowed automatically by GTK
 	Get_User_Input();
 	// Pauses the game (when the flag is set, continues this loop)
@@ -388,6 +392,8 @@ void SF_iteration()
 	Test_Collisions();
 	Handle_Shell();
 	Handle_Fortress();
+	
+
 	// if(Display_Interval_Flag) {   /* of double press */
 	//     if(Mine_Type==FOE) Find_Interval();
 	//     Display_Interval_Flag=OFF;

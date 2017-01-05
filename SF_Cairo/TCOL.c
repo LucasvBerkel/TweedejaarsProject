@@ -33,16 +33,6 @@ int Wrap_Around_Flag=OFF;
 
 
 
-// Added in header
-//char *Small_Expl_Buffer;
-//int Data_Update_Counter=20;
-//int Last_Center_Dist;
-//int Wrap_Around_Flag=OFF;
-/* int Last_Missile_Hit=0;  to measure interval between two consecutive
-			    hits of the fortress */
-/*int Ship_Killings_Counter=0; */
-
-
 // Okay to drop animation?
 void Gen_Explosion(int X_Pos,int Y_Pos,int Radius)
 {
@@ -160,7 +150,7 @@ void Test_Collisions()
 	     Ship_Killings_Counter++;
 	     Ship_Damaged_By_Fortress++;
 	     breakflag=ON;
-       Score = -1.0;
+       Score = -1.0; // Breakflag is when something is already hit?
 	     if(Ship_Damaged_By_Fortress>=1) // was 4
 	     {
 		//  Points=Points-100;
@@ -225,35 +215,40 @@ void Test_Collisions()
 
 		/******** misile vs. fortress *********/
 
-  if(!Missile_Vs_Mine_Only)
-    if(Missile_Flag[i]==ALIVE)
+//  if(!Missile_Vs_Mine_Only) // was on, torn for mines ❗️
+//    if(Missile_Flag[i]==ALIVE) // same as above
 	 if(Check_Collision(Missile_X_Pos[i],Missile_Y_Pos[i],
 			    MaxX/2,MaxY/2,COLLISION_DIST) )
 	 {
-
-    // New: (copied from shell vs. ship)
-     Missile_Flag[i]=KILL;
-     Handle_Missile_Flag=ON;
-    if(Loop_Counter-Last_Missile_Hit>11)  /* 6 loops ...*/
-	  {
-      Vulner_Counter++;
-      Score = 1.0;
-      if(Vulner_Counter>=2) // was 4 (DEATH)
-      {
-       Terminal_State = 1;
-       Terminal_State_Flag = SHIP_WON;
-       Vulner_Counter=0;
-       Handle_Missile_Flag=OFF;
-  //		 Reset_Screen();
-      }
-      else
-      {
-        Last_Missile_Hit=Loop_Counter;
-     //  Points=Points-50;
-     //  Jitter_Ship();     	/* leaves ship on screen */
-      }
-    }
+	    // New: (copied from shell vs. ship)
+	     Missile_Flag[i]=KILL;
+	    printf("Hit!!🤠 \n");
+//		printf("Loop_Counter: %d Last_Missile_Hit: %d\n", Loop_Counter, Last_Missile_Hit);
+	    if(Loop_Counter-Last_Missile_Hit>10)  /* 6 loops ...*/
+		{
+	     Handle_Missile_Flag=ON;
+		
+	      Score = 1.0;
+	      if(Vulner_Counter > 1) // was >= 4 (DEATH)
+	      {
+	       Terminal_State = 1;
+	       Terminal_State_Flag = SHIP_WON;
+	       Vulner_Counter = 0;
+//	       Handle_Missile_Flag=OFF;
+   	       break;
+	      }
+	      else {
+		      Vulner_Counter++;
+	     //  Points=Points-50;
+	     //  Jitter_Ship();     	/* leaves ship on screen */
+	      }
+    	}
+	    else {
+    		printf("Too fast! 🐡\n");	
+	    }
+	    Last_Missile_Hit=Loop_Counter;
   }
+  
 
     // Old:
 	  //  Missile_Flag[i]=KILL;

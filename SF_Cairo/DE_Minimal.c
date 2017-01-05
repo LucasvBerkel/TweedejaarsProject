@@ -328,7 +328,9 @@ float get_score()
 // Resets the Space fortress game (i.e. the non gtk standard drawing for learning surface)
 void reset_sf()
 {
+	#ifdef GUI
 	Initialized_Graphics = 0;
+	#endif
 	set_initial_vals();
 //	Reset_Screen(SF_canvas);
 }
@@ -871,12 +873,12 @@ void Reset_Screen()
   Ship_Headings=randrange(0,359);
   #endif
 
-
-	Score=0.0;
+  Last_Missile_Hit = -11;
+  Score=0.0;
   Ship_X_Speed=0.0;
   Ship_Y_Speed=0.0;
   Ship_Headings=0;
-	Vulner_Counter = 0;
+  srand(time(NULL));
 	Ship_Damaged_By_Fortress = 0;
   Mine_Flag=DEAD;
   for(int i=0;i<MAX_NO_OF_MISSILES;i++) Missile_Flag[i]=DEAD;

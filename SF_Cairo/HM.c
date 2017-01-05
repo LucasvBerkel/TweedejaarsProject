@@ -83,6 +83,15 @@ void Move_Ship()
     	Ship_Y_Pos=0;
 	}
 	#endif
+	
+	// Check fort bump
+    if(sqrt(pow(Ship_X_Pos-MaxX/2,2)+ pow(Ship_Y_Pos-MaxY/2,2) ) < COLLISION_DIST)
+	{
+	   Ship_X_Speed=-Ship_X_Speed;		/* reverse direction */
+	   Ship_Y_Speed=-Ship_Y_Speed;
+	   Ship_X_Pos=Ship_X_Pos+Ship_X_Speed; /* move ship out of range */
+	   Ship_Y_Pos=Ship_Y_Pos+Ship_Y_Speed;
+	}
 
 }
 #else
@@ -169,8 +178,17 @@ void Move_Ship()
 	     if(Ship_Y_Pos>MaxY) { Ship_Y_Pos=0;
 			     Wrap_Around_Flag=ON; }
 			#endif
- 	} /* end ship is moving */
-
+ 	}
+ 	
+	// Check fort bump
+    if(sqrt(pow(Ship_X_Pos-MaxX/2,2)+ pow(Ship_Y_Pos-MaxY/2,2) ) < COLLISION_DIST )
+	{
+	   Ship_X_Speed=-Ship_X_Speed;		/* reverse direction */
+	   Ship_Y_Speed=-Ship_Y_Speed;
+	   Ship_X_Pos=Ship_X_Pos+Ship_X_Speed; /* move ship out of range */
+	   Ship_Y_Pos=Ship_Y_Pos+Ship_Y_Speed;
+	}
+ 	
 	#ifdef GRID_MOVEMENT  // If not floaty space movement
 	if(Accel_Input == 0)
 	{ // Reset speed to get grid like movement
@@ -178,6 +196,8 @@ void Move_Ship()
 		Ship_Y_Speed = 0;
 	}
 	#endif
+	
+	
 }
 #endif
 
@@ -483,6 +503,8 @@ void Handle_Missile()
       switch(Missile_Flag[i])
       {
 	 case KILL  : {
+		 	Missile_X_Pos[i] = -1;
+		 	Missile_X_Pos[i] = -1;
 //			clear_prev_path(cr,PrevMissile);
 //			Missile_Should_Clean[i] = 1;
 //			Draw_Missile(cr, Missile_X_Pos[i],Missile_Y_Pos[i],
