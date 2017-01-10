@@ -37,7 +37,7 @@ def on_release(key):
 	pass
 
 global render_mode
-render_mode = "human_debug"
+render_mode = "minimal_debug"
 current_key = 3
 if render_mode.endswith("debug"):
 	print("Note that this script should be run as super user under OS X 👁")
