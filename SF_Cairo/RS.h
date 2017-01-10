@@ -16,7 +16,7 @@ void SF_iteration();
 void handle_F3();
 
 void Set_Timer();
-
+void reset_sf();
 void Reset_Timer();
 void ms_sleep(unsigned long miliseconds);
 //Set_Kbd_Rate(unsigned char Rate);

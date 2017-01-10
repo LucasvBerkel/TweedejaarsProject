@@ -1,4 +1,3 @@
-// Ubuntu upstream clang is not at 3.9 yet, so alias clang to clang3.9 on Ubuntu
 /****************************************** COMPILE THINGY **************************************
 
 |** Compile a shared library **|
@@ -68,9 +67,14 @@ void Initialize_Graphics(cairo_t *cr)
 	MaxX = WINDOW_WIDTH;
 	MaxY = WINDOW_WIDTH;
 
-	cairo_scale(cr, 1.0/SCALE_F, 1.0/SCALE_F);
 	#ifdef GUI_INTERFACE
 	cairo_scale(SF_rgb_context, 1, 1);
+	#endif
+
+	#ifdef GUI
+	cairo_scale(cr, 1, 1);
+	#else
+	cairo_scale(cr, 1.0/SCALE_F, 1.0/SCALE_F);
 	#endif
 
 	cairo_set_antialias(cr, CAIRO_ANTIALIAS_BEST);
@@ -483,10 +487,19 @@ void Draw_Fort(cairo_t *cr, int x, int y, int Headings, int size )
 
 //	svcolor=getcolor(); /* save present color */
 //	setcolor(FORT_COLOR); // blueee
+
+	#ifdef GUI
+	cairo_set_source_rgb(cr, 0.33, 1.0, 1.0);
+	#else
 	cairo_set_source_rgba(cr, SF_BLUE);
+	#endif
+	
 	#ifdef GUI_INTERFACE
 	cairo_set_source_rgb(SF_rgb_context, 0.33, 1.0, 1.0);
 	#endif
+	
+
+
 	x1=x;
 	y1=y;
 	x2=x1+size*Fsin(Headings);
@@ -639,7 +652,12 @@ void Draw_Missile (cairo_t *cr, int x, int y, int Headings, int size, int missil
 	int Right_Wing_Headings;
 	int Left_Wing_Headings;
 
+	#ifdef GUI
+	cairo_set_source_rgb(cr, 1.0, 0.0, 0.0);
+	#else
 	cairo_set_source_rgba(cr, 0.0, 0.0, 0.0, 0.2126);
+	#endif
+
 	#ifdef GUI_INTERFACE
 	cairo_set_source_rgb(SF_rgb_context, 1.0, 0.0, 0.0);
 	#endif
@@ -676,7 +694,12 @@ void Draw_Shell(cairo_t *cr, int x, int y, int Headings, int size)
 
 //	svcolor=getcolor(); /* save present color */
 //	setcolor(SHELL_COLOR);
+	#ifdef GUI
+	cairo_set_source_rgb(cr, 1.0, 0.0, 0.0);
+	#else
 	cairo_set_source_rgba(cr, 0.0, 0.0, 0.0, 0.2126);
+	#endif
+	
 	#ifdef GUI_INTERFACE
 	cairo_set_source_rgb(SF_rgb_context, 1.0, 0.0, 0.0);
 	#endif
@@ -735,7 +758,6 @@ void start_drawing()
 	reset_sf();
 	// restore the line width
 	//	cairo_set_line_width(SF_canvas, (224.1 * 1) / ((double) MaxY * 1));
-	//	Draw_Frame(SF_canvas); // Draw the basis
 		// Done in reset_sf -> set_initial_vals -> reset_screen now.
 }
 
@@ -872,7 +894,7 @@ void Reset_Screen()
   Ship_Y_Pos=randrange(20,MaxY-20);
   Ship_Headings=randrange(0,359);
   #endif
-
+  Loop_Counter = 0;
   Last_Missile_Hit = -11;
   Score=0.0;
   Ship_X_Speed=0.0;

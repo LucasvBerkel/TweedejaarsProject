@@ -151,17 +151,25 @@ void Test_Collisions()
 	     Ship_Damaged_By_Fortress++;
 	     breakflag=ON;
        Score = -1.0; // Breakflag is when something is already hit?
-	     if(Ship_Damaged_By_Fortress>=1) // was 4
+	     if(Ship_Damaged_By_Fortress>=2) // was 4
 	     {
+	     	Shell_Flag=KILL;
 		//  Points=Points-100;
 		    // Gen_Explosion(Ship_X_Pos,Ship_Y_Pos,80);
 			  Terminal_State = 1;
 			  Terminal_State_Flag = FORT_WON;
 		    Ship_Damaged_By_Fortress=0;
+   	      	#ifdef DEBUG
+	      	system("say \"Game over :(.\"&");
+	      	reset_sf();
+	      	#endif
 //		 Reset_Screen();
 	     }
 	     else
 	     {
+   	      	#ifdef DEBUG
+	      	system("say \"Ouch!\"&");
+	      	#endif
   		//  Points=Points-50;
   		 Shell_Flag=KILL;        /* kill shell */
   		 Handle_Shell(); // Uncomment when done
@@ -222,7 +230,6 @@ void Test_Collisions()
 	 {
 	    // New: (copied from shell vs. ship)
 	     Missile_Flag[i]=KILL;
-	    printf("Hit!!🤠 \n");
 //		printf("Loop_Counter: %d Last_Missile_Hit: %d\n", Loop_Counter, Last_Missile_Hit);
 	    if(Loop_Counter-Last_Missile_Hit>10)  /* 6 loops ...*/
 		{
@@ -231,6 +238,10 @@ void Test_Collisions()
 	      Score = 1.0;
 	      if(Vulner_Counter > 1) // was >= 4 (DEATH)
 	      {
+	      	#ifdef DEBUG
+	      	system("say \"You won!\"&");
+	      	reset_sf();
+	      	#endif
 	       Terminal_State = 1;
 	       Terminal_State_Flag = SHIP_WON;
 	       Vulner_Counter = 0;
@@ -238,13 +249,18 @@ void Test_Collisions()
    	       break;
 	      }
 	      else {
+	      	#ifdef DEBUG
+	      	system("say \"Gotcha!\"&");
+	      	#endif
 		      Vulner_Counter++;
 	     //  Points=Points-50;
 	     //  Jitter_Ship();     	/* leaves ship on screen */
 	      }
     	}
 	    else {
-    		printf("Too fast! 🐡\n");	
+	      	#ifdef DEBUG
+	      	system("say \"Too fast.\"&");
+	      	#endif
 	    }
 	    Last_Missile_Hit=Loop_Counter;
   }

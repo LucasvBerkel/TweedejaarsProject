@@ -58,7 +58,7 @@
 #define ANIMATION_DELAY_EXP 60  // In Milliseconds
 #define ANIMATION_DELAY_JITTER 10
 // All the color values have been altered to be RGB tuples
-#define MAX_LOOPS 420
+#define MAX_LOOPS 260
 
 #define SHIP_COLOR YELLOW
 #define HEX_COLOR GREEN

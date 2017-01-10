@@ -29,6 +29,7 @@ unsigned char* update_screen();
 
 void Close_Graphics(cairo_t *cr);
 void Close_Graphics_SF();
+void set_initial_vals();
 
 float Fcos(int Headings_Degs);
 float Fsin(int Headings_Degs);
