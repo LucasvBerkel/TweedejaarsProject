@@ -283,7 +283,7 @@ int go_back;
 
 struct aim_sess_results Aiming_Game_Results;
 game_type Game_Type=SPACE_FORTRESS;
-int Last_Missile_Hit=0;  /* to measure interval between two consecutive
+int Last_Missile_Hit=-11;  /* to measure interval between two consecutive
 			    hits of the fortress */
 int Ship_Killings_Counter=0;
 int  Panel_Y_End;

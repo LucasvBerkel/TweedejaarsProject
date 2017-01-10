@@ -25,11 +25,9 @@
 //#include "myconst.h"
 //#include "myvars.h"
 
-#ifdef GUI // Prefer Minimal shared libray when not using GUI
-#include "DE.h"
-#else
+
 #include "DE_Minimal.h"
-#endif
+
 #include "HM.h"
 #include "TCOL.h"
 #include "RS.h"
@@ -376,6 +374,13 @@ void Handle_Bonus()
 void SF_iteration()
 {
 	Loop_Counter++;
+	if(Loop_Counter>MAX_LOOPS) {
+		Terminal_State = 1;
+		#ifdef GUI
+		reset_sf();
+		#endif
+		return;		
+	}
 	// This was done by processor interupts, but is allowed automatically by GTK
 	Get_User_Input();
 	// Pauses the game (when the flag is set, continues this loop)
@@ -388,6 +393,8 @@ void SF_iteration()
 	Test_Collisions();
 	Handle_Shell();
 	Handle_Fortress();
+	
+
 	// if(Display_Interval_Flag) {   /* of double press */
 	//     if(Mine_Type==FOE) Find_Interval();
 	//     Display_Interval_Flag=OFF;
@@ -431,69 +438,23 @@ static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data
 
 	if(Initialized_Graphics == 0)
 	{
-	  set_initial_vals();
+	  reset_sf();
 		Initialized_Graphics = 1;
 	}
-	// Main sf stuff
-
-
-//	for(int m = 0; m < MAX_NO_OF_MISSILES; m++)
-//	{
-//		if (Missile_Flag[m]==ALIVE)
-//		{
-////			Missile_Should_Update[m] = 1;
-//		}
-//	}
-
 
 	clean(cr);
-	Draw_Frame(cr);
-	game_iteration();
+	SF_iteration();
 
-//	Fort_Should_Update = 1;
-//	Ship_Should_Update = 1;
-//	Fort_Should_Clean = 1;
-//	Ship_Should_Clean = 1;
-////	if(!Mine_Type_Should_Clean)
-////	{
-////		Mine_Type_Should_Update = 1;
-////	}
-//	Points_Should_Update = 1; // Show the first time around right?
-//	Velocity_Should_Update = 1;
-//	Speed_Should_Update = 1;
-//	Vulner_Should_Update = 1;
-//	Interval_Should_Update = 1;
-//	Shots_Should_Update = 1;
-//	Control_Should_Update = 1;
-
-
-	Draw_Hexagone(cr, MaxX/2,MaxY/2,SMALL_HEXAGONE_SIZE_FACTOR*MaxX);
-	stroke_in_clip(cr);
-
-	if(!Jitter_Flag && !Explosion_Flag)
+	gettimeofday(&loop_end_time, NULL);
+	timeval_subtract(&loopDiff, &loop_end_time, &loop_start_time);
+	elapsed_time = round(loopDiff.tv_usec/1000.0);
+   if(elapsed_time < SF_DELAY)
 	{
-		gettimeofday(&loop_end_time, NULL);
-		timeval_subtract(&loopDiff, &loop_end_time, &loop_start_time);
-//		elapsed_time=((double)(clock()-loop_start_time)/(double)CLOCKS_PER_SEC)*1000.0;
-		elapsed_time = round(loopDiff.tv_usec/1000.0);
-    if(elapsed_time < SF_DELAY)
-		{
-//				printf("Sleeping for %Lf \n", SF_DELAY-elapsed_time);
-//        ms_sleep(SF_DELAY-elapsed_time);  /* wait up to 50 milliseconds */
-		  	tim.tv_nsec = (SF_DELAY-elapsed_time) * 1000000L;
-				nanosleep(&tim , NULL);
-		}
+	  	tim.tv_nsec = (SF_DELAY-elapsed_time) * 1000000L;
+			nanosleep(&tim , NULL);
 	}
-	if(Jitter_Flag)
-	{
-		ms_sleep((((unsigned long)Jitter_Step)*5L) + ANIMATION_DELAY_JITTER);
-	}
-	else if(Explosion_Flag)
-	{
-		ms_sleep((250.0/ ((double) Explosion_Step)) + ANIMATION_DELAY_EXP);
-	}
+
 	update_drawing(cr);
-
 	return FALSE; // Not sure why this should return false
 }
 
@@ -501,17 +462,12 @@ static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data
 
 gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
 {
-
-	set_key(event->keyval); // Only set the key here
+  set_key(event->keyval); // Only set the key here
   return FALSE;
 }
 
 void animation_loop(GtkWidget *darea)
 {
- 	FILE *fp;
-  fp = fopen("/tmp/Desktop/SF_Log.txt", "w+");
-	fclose(fp);
-
 	Init_Session();
 	Game_Counter=0;
 
@@ -531,6 +487,7 @@ void animation_loop(GtkWidget *darea)
 		while(!Restart_Flag&&!End_Flag&&(Loop_Counter < One_Game_Loops));
 		Initialized_Graphics = 0;
 		Game_Counter++;
+//		printf("Died, restart ? %d end? %d \n", Restart_Flag, End_Flag);
 		// Close_Graphics(cr); // Not sure if closing is appropiate (it's impossible to close
 		// in this part of the program because we don't have acces to GTK cairo context)
 	}
@@ -544,7 +501,7 @@ int main(int argc, char *argv[])
 	Initialized_Graphics = 0;
 
 // Basic GTK initialization
- 	GtkWidget *window;
+  GtkWidget *window;
   GtkWidget *darea;
   gtk_init(&argc, &argv);
   window = gtk_window_new(GTK_WINDOW_TOPLEVEL);

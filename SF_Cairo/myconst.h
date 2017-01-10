@@ -58,6 +58,7 @@
 #define ANIMATION_DELAY_EXP 60  // In Milliseconds
 #define ANIMATION_DELAY_JITTER 10
 // All the color values have been altered to be RGB tuples
+#define MAX_LOOPS 260
 
 #define SHIP_COLOR YELLOW
 #define HEX_COLOR GREEN
@@ -73,7 +74,7 @@
 #define TEXT_BACKGROUND BLUE
 #define TEXT_LINE_COLOR MAGENTA
 
-#define COLLISION_DIST 12 // Used to be 22
+#define COLLISION_DIST 22 // Used to be 22 // used to be 12
 #define RESOURCE_DISPLAY_INTERVAL 120
 #define NO_RESOURCE_DISPLAY_INTERVAL 40
 #define MINE_SHIP_DISTANCE 200 /* in screen pixels */

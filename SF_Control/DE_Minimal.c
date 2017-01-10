@@ -56,7 +56,7 @@ eval "$(cat DE_Minimal.c | grep -m 4 "\-\-cflags cairo")"; cp *.so ../gym-master
 
 
 #ifdef GUI_INTERFACE
-#define DEFAULT_LINE_WIDTH 3.8
+#define DEFAULT_LINE_WIDTH 2.8
 #else
 #define DEFAULT_LINE_WIDTH 7.0
 #endif
