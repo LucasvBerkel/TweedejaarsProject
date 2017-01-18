@@ -1,3 +1,7 @@
 simple_dqn-master/snapshots
 GoogleDQN/torch
 GoogleDQN/dqn/DQN3_0_1__FULL_Y.t7
+*.so
+*.jpg
+*.png
+gym-master/gym/envs/space_fortress/run.pygym-master/gym/envs/space_fortress/run.py
