@@ -37,7 +37,7 @@ def on_release(key):
 	pass
 
 global render_mode
-render_mode = "human_debug"
+render_mode = "minimal_debug"
 current_key = 3
 if render_mode.endswith("debug"):
 	print("Note that this script should be run as super user under OS X 👁")
@@ -48,7 +48,7 @@ env = gym.make('SFS-v0')
 # Configure enviroment
 #-------------------------------
 
-env.configure(mode=render_mode, record_path=None, no_direction=False, frame_skip=1)
+env.configure(mode=render_mode, record_path=None, no_direction=False, frame_skip=2 )
 
 
 
@@ -57,10 +57,10 @@ with Listener(on_press=on_press, on_release=on_release) as listener:
 		env.reset()
 		for t in range(250000):
 			env.render()
-			if render_mode.endswith('debug'):
-				action = current_key
-			else:
-				action = env.action_space.sample()
+#			if render_mode.endswith('debug'):
+			action = current_key
+#			else:
+#				action = env.action_space.sample()
 
 
 			# Uncomment this for perfect play 👌
