@@ -48,7 +48,7 @@ env = gym.make('SFS-v0')
 # Configure enviroment
 #-------------------------------
 
-env.configure(mode=render_mode, record_path=None, no_direction=False, frame_skip=1)
+env.configure(mode=render_mode, record_path=None, no_direction=False, frame_skip=2)
 
 
 
