@@ -161,7 +161,7 @@ void Test_Collisions()
 		    Ship_Damaged_By_Fortress=0;
    	      	#ifdef DEBUG
 	      	system("say \"Game over :(.\"&");
-	      	reset_sf();
+//	      	reset_sf();
 	      	#endif
 //		 Reset_Screen();
 	     }
@@ -240,7 +240,7 @@ void Test_Collisions()
 	      {
 	      	#ifdef DEBUG
 	      	system("say \"You won!\"&");
-	      	reset_sf();
+//	      	reset_sf();
 	      	#endif
 	       Terminal_State = 1;
 	       Terminal_State_Flag = SHIP_WON;

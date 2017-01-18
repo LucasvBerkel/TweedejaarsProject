@@ -57,10 +57,10 @@ with Listener(on_press=on_press, on_release=on_release) as listener:
 		env.reset()
 		for t in range(250000):
 			env.render()
-			if render_mode.endswith('debug'):
-				action = current_key
-			else:
-				action = env.action_space.sample()
+#			if render_mode.endswith('debug'):
+			action = current_key
+#			else:
+#				action = env.action_space.sample()
 
 
 			# Uncomment this for perfect play 👌

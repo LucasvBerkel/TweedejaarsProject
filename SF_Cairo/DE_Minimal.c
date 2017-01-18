@@ -883,6 +883,7 @@ void explosion_step2(cairo_t *cr, int X_Pos,int Y_Pos, int step)
 
 void Reset_Screen()
 {
+	printf("Reseting\n");
         /*  reset variables */
 				/*  reset variables */
 	#ifdef NO_RANDOM_SPAWN
@@ -899,11 +900,13 @@ void Reset_Screen()
   Score=0.0;
   Ship_X_Speed=0.0;
   Ship_Y_Speed=0.0;
-  Ship_Headings=0;
   srand(time(NULL));
 	Ship_Damaged_By_Fortress = 0;
   Mine_Flag=DEAD;
-  for(int i=0;i<MAX_NO_OF_MISSILES;i++) Missile_Flag[i]=DEAD;
+  for(int i=0;i<MAX_NO_OF_MISSILES;i++)  {
+  	Missile_X_Pos[i]=-200;
+  	Missile_Flag[i]=DEAD;
+  }
   Missile_Type=VS_FRIEND;
   Missile_Vs_Mine_Only=OFF;
   Missiles_Counter=0;
