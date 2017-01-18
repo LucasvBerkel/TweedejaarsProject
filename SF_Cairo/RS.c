@@ -376,6 +376,7 @@ void SF_iteration()
 	Loop_Counter++;
 	if(Loop_Counter>MAX_LOOPS) {
 		Terminal_State = 1;
+		Score = -1;
 		#ifdef GUI
 		reset_sf();
 		#endif
@@ -391,6 +392,7 @@ void SF_iteration()
 	//            if(Sound_Flag==1) {Sound_Flag--; nosound();}
 	// Handle_Mine();
 	Test_Collisions();
+//	printf("Score at collisions: %f\n", Score);
 	Handle_Shell();
 	Handle_Fortress();
 	
@@ -403,6 +405,7 @@ void SF_iteration()
 	// Handle_Bonus();
 
 //	Score=Points+Velocity+Control+Speed;
+//	printf("Score at end of iteration: %f\n", Score);
 }
 
 
