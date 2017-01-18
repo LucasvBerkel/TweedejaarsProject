@@ -254,7 +254,8 @@ float score_function()
 	float x = Prev_Square_Dist/(m_sqr);
 	float t = MAX_SQUARE_STEPS - (float) Square_Step;
 	float score = -1.0*(x*(t*t)) + Prev_Square_Dist;
-	return score + 1.0; // Add one because we always should get some points
+	// Add small constant because we always should get some points
+	return (score/Prev_Square_Dist) + 0.05; // Also normalize the score in between 0 and 1
 }
 
 void Test_Collisions()
@@ -293,7 +294,8 @@ void Test_Collisions()
 			#endif
 		#endif
 		Square_Flag = KILL;
-		Score = 1;
+		Score = 1.0;
+		// Score = score_function();
 	}
 }
 

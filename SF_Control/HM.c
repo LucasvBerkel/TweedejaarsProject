@@ -230,7 +230,7 @@ void Generate_Square()
 
 	}
 
-  	Prev_Square_Dist = distance;
+  Prev_Square_Dist = distance;
 
 	Square_X = new_square_x;
 	Square_Y = new_square_y;
