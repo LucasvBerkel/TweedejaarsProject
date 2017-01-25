@@ -18,7 +18,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
 -- The GameEnvironment class.
 -- the torch.class call creates a global variable containing this class. You can access it's
--- init by calling it as a function with "_opt" as an argument 
+-- init by calling it as a function with "_opt" as an argument
 local gameEnv = torch.class('SFGameEnvironment') -- Maybe should use a dot
 local ffi = require "ffi"
 
@@ -28,25 +28,43 @@ function gameEnv:__init(_opt)
 	self.lib = ffi.load(_opt.game_path)
 	print("INIT! 🍧")
 
-	-- [[ is a fucking string in lua 
-	ffi.cdef([[
-	void start_drawing();
-	unsigned char* update_screen();
-	void SF_iteration(); 
-	void set_key(int key_value);
-	float get_score();
-	int get_terminal_state();
-	void reset_sf();
-	]])
-	
+	-- [[ is a fucking string in lua
+	if _opt.full_render then
+		print("full rendering!")
+		ffi.cdef([[
+		void start_drawing();
+		unsigned char* update_screen();
+		void SF_iteration();
+		void set_key(int key_value);
+		float get_score();
+		int get_terminal_state();
+		void reset_sf();
+		unsigned char* get_original_screen();
+		]])
+	else
+		ffi.cdef([[
+		void start_drawing();
+		unsigned char* update_screen();
+		void SF_iteration();
+		void set_key(int key_value);
+		float get_score();
+		int get_terminal_state();
+		void reset_sf();
+		]])
+	end
+
 	local n_pixels = 84*84
-	
+
 	self.buf = ffi.new("uint8_t[?]", n_pixels)
+	if _opt.full_render then
+		self.pretty_buf = ffi.new("uint8_t[?]", 448*448*2)
+		self.pretty_frame = torch.ByteTensor(448*448*2)
+	end
 	self.frame = torch.ByteTensor(n_pixels)
-	
+
 	self.lib.start_drawing()
-	
-    local _opt = _opt or {}
+
+  local _opt = _opt or {}
 
 
     -- defaults to emulator speed
@@ -88,7 +106,7 @@ function gameEnv:reset(_env, _params, _gpu)
 --    local params = _params or {useRGB=true}
     -- if no game name given use previous name if available
 --    if self.gamse then
-    env = "SF Control" 
+    env = "SFS"
     env = _env or env
 
 
@@ -99,9 +117,9 @@ function gameEnv:reset(_env, _params, _gpu)
 
     -- start the game
     if self.verbose > 0 then
-        print('\nPlaying:', "SF Control")
+        print('\nPlaying:', "SFS")
     end
-    
+
     self.lib.reset_sf()
 
     self:_resetState()
@@ -123,12 +141,12 @@ function gameEnv:_step(action)
 
 	self.lib.set_key(action)
 	self.lib.SF_iteration()
-	
---	  .so code here 
+
+--	  .so code here
 --    assert(action)
 --    local x = self.game:play(action)
 --    self._screen:paint(x.data)
-    return self.lib.get_score(), self.lib.get_terminal_state() == 1 
+    return self.lib.get_score(), self.lib.get_terminal_state() == 1
 end
 
 
@@ -209,16 +227,21 @@ function gameEnv:nObsFeature()
 	return 7056
 end
 
+function gameEnv:pretty_screen()
+	self.pretty_buf = self.lib.get_original_screen()
+	ffi.copy(self.pretty_frame:data(), self.pretty_buf, 448*448*2)
+	return self.pretty_frame
+end
 
 -- Function returns a table with valid actions in the current game.
 function gameEnv:getActions()
 	-- Adjust this to not control tasks
 	local str = require("string")
 	if str.find(self.game_path, "aim") then
-	    return {65361, 32, 65363}	
+	    return {65361, 32, 65363}
 	elseif str.find(self.game_path, "control") then
 	    return {65361, 65362, 65363}
-	else
-		return {65361, 65362, 65363}
+	else -- Assume SFS
+		return {65361, 65362, 65363, 32} -- Add a NOOP?
 	end
 end

@@ -32,6 +32,7 @@ cmd:option('-saveNetworkParams', false,
            'saves the agent network in a separate file')
 
 cmd:option('-games', 3, 'number of games to play')
+cmd:option('-full_render', 1, 'enable full-size and RGB color rendering')
 
 cmd:option('-verbose', 2,
            'the higher the level, the more information is printed to screen')
@@ -41,9 +42,14 @@ cmd:option('-gpu', -1, 'gpu flag')
 cmd:text()
 
 local opt = cmd:parse(arg)
-
+if opt.full_render > 0 then
+  opt.full_render = true
+else
+  opt.full_render = false
+end
 --- General setup.
 local game_env, game_actions, agent, opt = setup(opt)
+
 
 -- override print to always flush the output
 local old_print = print
@@ -92,8 +98,14 @@ for g=1,opt.games do
   while not terminal do
       local action_index = agent:perceive(reward, screen, terminal, true, 0.05)
       -- Play game in test mode (episodes don't end when losing a life)
-	  screen, reward, terminal = game_env:step(game_actions[action_index])
-	  screen = torch.reshape(screen, 84, 84)
+      screen, reward, terminal = game_env:step(game_actions[action_index])
+      if opt.full_render then
+        -- print(game_env:pretty_screen(), type(game_env:pretty_screen()))
+        -- print(game_env:pretty_screen():size())
+        screen = torch.reshape(game_env:pretty_screen(), 448, 448, 2)
+      else
+        screen = torch.reshape(screen, 84, 84)
+      end
       image.save("stills/im" .. i .. ".png", screen)
       i = i + 1
       -- if estep%1000 == 0 then collectgarbage() end

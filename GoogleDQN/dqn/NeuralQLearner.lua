@@ -270,6 +270,7 @@ function nql:qLearnMinibatch()
     self.lr = math.max(self.lr, self.lr_end)
 
     -- use gradients
+    -- I guess this does rmsprop ?
     self.g:mul(0.95):add(0.05, self.dw)
     self.tmp:cmul(self.dw, self.dw)
     self.g2:mul(0.95):add(0.05, self.tmp)
@@ -310,10 +311,10 @@ function nql:perceive(reward, rawstate, terminal, testing, testing_ep)
     if not SFGameEnvironment then
 	    state = self:preprocess(rawstate):float()
     else
-    	-- Preprocess (normalization  between 0.0 and 1.0) 
+    	-- Preprocess (normalization  between 0.0 and 1.0)
     	state = rawstate:float():div(255.0)
     end
-    
+
 
 
     local curState

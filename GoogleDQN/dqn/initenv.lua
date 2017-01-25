@@ -14,6 +14,7 @@ require 'Scale'
 require 'NeuralQLearner'
 require 'TransitionTable'
 require 'Rectifier'
+require 'csvigo'
 
 
 function torchSetup(_opt)
@@ -121,11 +122,11 @@ function setup(_opt)
 	else
    	    local framework = require(opt.framework)
 	    assert(framework)
-	    gameEnv = framework.GameEnvironment(opt)		
+	    gameEnv = framework.GameEnvironment(opt)
     end
 
     local gameActions = gameEnv:getActions()
-    
+
 
     -- agent options
     _opt.agent_params.actions   = gameActions
@@ -150,7 +151,7 @@ function setup(_opt)
             print(k, v)
         end
     end
-	
+
 	-- Action-pairs: (1,0), (2,1), ..., (i, i-1)
 
     return gameEnv, gameActions, agent, opt
