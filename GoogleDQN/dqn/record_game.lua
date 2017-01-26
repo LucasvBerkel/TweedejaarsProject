@@ -84,6 +84,8 @@ i = 0
 
 print("Playing" .. opt.games .. "games")
 local eval_time = sys.clock()
+moves_file = io.open("moves.txt", "a")
+io.output(moves_file)
 for g=1,opt.games do
 
 
@@ -106,6 +108,7 @@ for g=1,opt.games do
       else
         screen = torch.reshape(screen, 84, 84)
       end
+      io.write(action_index, "\n")
       image.save("stills/im" .. i .. ".png", screen)
       i = i + 1
       -- if estep%1000 == 0 then collectgarbage() end
@@ -124,6 +127,7 @@ for g=1,opt.games do
   end
 end
 
+io.close()
 eval_time = sys.clock() - eval_time
 start_time = start_time + eval_time
 agent:compute_validation_statistics()
