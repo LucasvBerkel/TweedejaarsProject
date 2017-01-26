@@ -20,7 +20,7 @@ netfile="\"/home/rijnder/TweedejaarsProject/GoogleDQN/dqn/SFS-1.85-GRID-630Nodes
 update_freq=2
 
 actrep=2
-games=1
+games=20
 full_render=0
 
 discount=0.99
