@@ -191,7 +191,13 @@ class SFEnv(gym.Env):
 		csvfile.close()
 
 
-
+	def save_image(self, path):
+		new_frame = self.pretty_screen().contents
+		img = np.ctypeslib.as_array(new_frame)
+		img = np.reshape(img, (self.screen_height, self.screen_width, 2))
+		img = cv2.cvtColor(img, cv2.COLOR_BGR5652RGB)
+		img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+		cv2.imwrite(path, img)
 
 #	def exit_handler(self):
 #		print("Writing stats...")
