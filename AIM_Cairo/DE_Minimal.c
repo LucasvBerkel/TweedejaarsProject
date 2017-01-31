@@ -11,7 +11,7 @@ clang -march=native `pkg-config --cflags cairo --libs cairo` -shared -o aim_fram
 
 
 |** Compile a playable GUI version **|
-clang -Wall -g -fPIC myvars.c TCOL.c DE_Minimal.c HM.c RS.c `pkg-config --cflags cairo pkg-config --libs cairo pkg-config --cflags gtk+-3.0 pkg-config --libs gtk+-3.0 ` -lm -o Control -Wno-dangling-else -Wno-switch -D GUI
+clang -Wall -g -fPIC myvars.c TCOL.c DE_Minimal.c HM.c RS.c `pkg-config --cflags cairo pkg-config --libs cairo pkg-config --cflags gtk+-3.0 pkg-config --libs gtk+-3.0 ` -lm -o Aim -Wno-dangling-else -Wno-switch -D GUI
 
 -- Switches:
 -D GUI_INTERFACE ** Full sized and colored game renders **
@@ -54,7 +54,9 @@ eval "$(cat DE_Minimal.c | grep -m 4 "\-\-cflags cairo")"; cp *.so ../gym-master
 
 // calculated from old version
 #ifdef GUI_INTERFACE
-#define DEFAULT_LINE_WIDTH 3.8
+#define DEFAULT_LINE_WIDTH 0.4
+#elif GUI
+#define DEFAULT_LINE_WIDTH 2.4
 #else
 #define DEFAULT_LINE_WIDTH 7.0
 #endif
@@ -84,26 +86,7 @@ void Initialize_Graphics(cairo_t *cr)
 	cairo_set_line_join(cr, CAIRO_LINE_JOIN_MITER);
 
 	cairo_set_operator (cr, CAIRO_OPERATOR_SOURCE);
-
-//	cairo_set_line_width(cr, 10); // Line width equal to one pixel
-	if(cairo_surface_get_type(cairo_get_target(cr)) == CAIRO_SURFACE_TYPE_XLIB)
-	{
-		// Supply a value VAL between 100.0 and 240.0 (as a double)
-		cairo_set_line_width(cr, (135.0 * 1) / ((double) MaxY * 1));
-	}
-	else if(cairo_surface_get_type(cairo_get_target(cr)) == CAIRO_SURFACE_TYPE_IMAGE)
-	{
-		#ifdef __APPLE__
-			cairo_set_line_width(cr, 8.2);
-		#else
-			cairo_set_line_width(cr, DEFAULT_LINE_WIDTH);
-		#endif
-	}
-	else // Mostly quartz?
-	{
-		cairo_set_line_width(cr, (95.1 * 1) / ((double) MaxY * 1)); // for image_surf use 239
-	}
-//	cairo_set_line_width(cr, (90.1 * 1) / ((double) MaxY * 1));
+	cairo_set_line_width(cr, DEFAULT_LINE_WIDTH);
 
 
 	dx=MaxX/8;
@@ -142,6 +125,8 @@ float Fsin(int Headings_Degs) /* compute sin of 0 - 359 degrees */
 	arc=Headings_Degs*ARC_CONV; /* convert degrees to radians */
 	return(sin(arc));
 }
+
+
 
 void cairo_line(cairo_t *cr, int x1, int y1, int x2, int y2)
 {
@@ -322,7 +307,13 @@ void Draw_Hexagone(cairo_t *cr,int X_Center,int Y_Center,int Hex_Outer_Radius)
 
 //	svcolor=getcolor(); /* save present color */
 //	setcolor(HEX_COLOR);
+
+	#ifdef GUI
+	cairo_set_source_rgb(cr, 0.0, 0.66, 0.0);
+	#else
 	cairo_set_source_rgba(cr, SF_GREEN);
+	#endif
+
 	#ifdef GUI_INTERFACE
 	cairo_set_source_rgb(SF_rgb_context, 0.0, 0.66, 0.0);
 	#endif
@@ -383,7 +374,12 @@ void Draw_Ship(cairo_t *cr, int x, int y, int Headings, int size)
 
 //	svcolor=getcolor(); /* save present color */
 //	setcolor(SHIP_COLOR); // yellow
+	#ifdef GUI
+	cairo_set_source_rgb(cr, 1.0, 1.0, 0.33);
+	#else
 	cairo_set_source_rgba(cr, SF_YELLOW);
+	#endif
+
 	#ifdef GUI_INTERFACE
 	cairo_set_source_rgb(SF_rgb_context, 1.0, 1.0, 0.33);
 	#endif
@@ -412,7 +408,13 @@ void Draw_Mine(cairo_t *cr, int x, int y, int size)	/* x,y is on screen center l
 
 //	svcolor=getcolor(); /* save present color */
 //	setcolor(MINE_COLOR); // maybe different than blue for easier recogniztion?
+
+	#ifdef GUI
+	cairo_set_source_rgb(cr, 0.33, 1.0, 1.0);
+	#else
 	cairo_set_source_rgba(cr, SF_BLUE);
+	#endif
+
 	#ifdef GUI_INTERFACE
 	cairo_set_source_rgb(SF_rgb_context, 0.33, 1.0, 1.0);
 	#endif
@@ -441,8 +443,14 @@ void Draw_Missile (cairo_t *cr, int x, int y, int Headings, int size, int missil
 //	int svcolor;
 
 //	svcolor=getcolor(); /* save present color */
-//	setcolor(MISSILE_COLOR);
+
+	#ifdef GUI
+	cairo_set_source_rgb(cr, 1.0, 0.0, 0.0);
+	#else
 	cairo_set_source_rgba(cr, 0.0, 0.0, 0.0, 0.2);
+	#endif
+
+
 	#ifdef GUI_INTERFACE
 	cairo_set_source_rgb(SF_rgb_context, 1.0, 0.0, 0.0);
 	#endif
@@ -482,6 +490,11 @@ void update_drawing(cairo_t *cr)
 //		cairo_bounding_box(cr);
 //		Ship_Should_Update = 0;
 //	}
+	#ifdef GUI
+	Draw_Hexagone(cr, MaxX/2,MaxY/2,SMALL_HEXAGONE_SIZE_FACTOR*MaxX);
+	cairo_stroke(cr);
+	#endif
+
 
 //	Draw_Fort(cr, MaxX/2,MaxY/2,Fort_Headings,FORT_SIZE_FACTOR*MaxX);
 //	stroke_in_clip(cr);

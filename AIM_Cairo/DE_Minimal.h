@@ -54,6 +54,7 @@ float Find_Headings(int x1, int y1, int x2, int y2);
 void start_drawing();
 void set_key(int key_value);
 void stop_drawing();
+void reset_sf();
 
 int move_update();
 unsigned char* update_frame();

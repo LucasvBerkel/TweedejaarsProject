@@ -24,11 +24,9 @@
 //#include "myconst.h"
 //#include "myvars.h"
 
-#ifdef GUI // Prefer Minimal shared libray when not using GUI
-#include "DE.h"
-#else
+
 #include "DE_Minimal.h"
-#endif
+
 #include "HM.h"
 #include "TCOL.h"
 #include "RS.h"
@@ -419,7 +417,7 @@ static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data
 	unsigned int elapsed_time;
 	struct timeval loop_start_time, loop_end_time, loopDiff;
 	struct timespec tim;
-  tim.tv_sec = 0;
+  	tim.tv_sec = 0;
 
 	gettimeofday(&loop_start_time, NULL); // Get the time at this point
 
@@ -427,26 +425,24 @@ static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data
 
 	if(Initialized_Graphics == 0)
 	{
-	  set_initial_vals();
+	  	reset_sf();
 		Initialized_Graphics = 1;
 	}
-	// Main sf stuff
 
-
-//	for(int m = 0; m < MAX_NO_OF_MISSILES; m++)
-//	{
-//		if (Missile_Flag[m]==ALIVE)
-//		{
-////			Missile_Should_Update[m] = 1;
-//		}
-//	}
- 	FILE *log;
-  log = fopen("/tmp/SF_Log.txt", "a");
-	fprintf(log, "Ship Position: (%d, %d) Ship Headings: %d \n", Ship_X_Pos, Ship_Y_Pos, Ship_Headings);
-	fclose(log);
 	clean(cr);
-	Draw_Frame(cr);
-	game_iteration();
+	SF_iteration();
+
+	gettimeofday(&loop_end_time, NULL);
+	timeval_subtract(&loopDiff, &loop_end_time, &loop_start_time);
+	elapsed_time = round(loopDiff.tv_usec/1000.0);
+   if(elapsed_time < SF_DELAY)
+	{
+	  	tim.tv_nsec = (SF_DELAY-elapsed_time) * 1000000L;
+			nanosleep(&tim , NULL);
+	}
+
+	update_drawing(cr);
+	return FALSE; // Not sure why this should return false
 
 //	Fort_Should_Update = 1;
 //	Ship_Should_Update = 1;
@@ -463,34 +459,6 @@ static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data
 //	Interval_Should_Update = 1;
 //	Shots_Should_Update = 1;
 //	Control_Should_Update = 1;
-
-
-	Draw_Hexagone(cr, MaxX/2,MaxY/2,SMALL_HEXAGONE_SIZE_FACTOR*MaxX);
-	stroke_in_clip(cr);
-
-	if(!Jitter_Flag && !Explosion_Flag)
-	{
-		gettimeofday(&loop_end_time, NULL);
-		timeval_subtract(&loopDiff, &loop_end_time, &loop_start_time);
-//		elapsed_time=((double)(clock()-loop_start_time)/(double)CLOCKS_PER_SEC)*1000.0;
-		elapsed_time = round(loopDiff.tv_usec/1000.0);
-    if(elapsed_time < SF_DELAY)
-		{
-//				printf("Sleeping for %Lf \n", SF_DELAY-elapsed_time);
-//        ms_sleep(SF_DELAY-elapsed_time);  /* wait up to 50 milliseconds */
-		  	tim.tv_nsec = (SF_DELAY-elapsed_time) * 1000000L;
-				nanosleep(&tim , NULL);
-		}
-	}
-	if(Jitter_Flag)
-	{
-		ms_sleep((((unsigned long)Jitter_Step)*5L) + ANIMATION_DELAY_JITTER);
-	}
-	else if(Explosion_Flag)
-	{
-		ms_sleep((250.0/ ((double) Explosion_Step)) + ANIMATION_DELAY_EXP);
-	}
-	update_drawing(cr);
 
 	return FALSE; // Not sure why this should return false
 }
